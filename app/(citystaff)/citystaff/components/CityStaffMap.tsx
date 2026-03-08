@@ -7,35 +7,15 @@ import {
   MarkerContent,
   MarkerPopup,
   MapControls,
+  MapLineLayer,
+  MapLayerFilter,
   type MapViewport,
 } from "@/components/ui/map";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useMapData } from "@/lib/hooks/use-map-data";
+import { useLayerVisibility } from "@/lib/hooks/use-layer-visibility";
 
 const MONTGOMERY_CENTER: [number, number] = [-86.3077, 32.3792];
-
-const markers = [
-  {
-    id: "city-hall",
-    label: "Montgomery City Hall",
-    description: "103 N Perry St",
-    longitude: -86.3005,
-    latitude: 32.3795,
-  },
-  {
-    id: "water-treatment",
-    label: "Water Treatment Plant",
-    description: "2810 Eastern Blvd",
-    longitude: -86.2635,
-    latitude: 32.3548,
-  },
-  {
-    id: "public-works",
-    label: "Public Works Department",
-    description: "120 N Decatur St",
-    longitude: -86.3065,
-    latitude: 32.3825,
-  },
-];
 
 export function CityStaffMap() {
   const [viewport, setViewport] = useState<MapViewport>({
@@ -45,41 +25,109 @@ export function CityStaffMap() {
     pitch: 0,
   });
 
+  const { geojson, layers, isLoading } = useMapData("citystaff");
+  const { visibleLayers, toggle, isVisible } = useLayerVisibility(layers);
+
+  const pointFeatures =
+    geojson?.features?.filter(
+      (f) => f.geometry?.type === "Point" && isVisible(f.properties?._layerId),
+    ) ?? [];
+
+  const lineFeatures =
+    geojson?.features?.filter(
+      (f) =>
+        (f.geometry?.type === "LineString" ||
+          f.geometry?.type === "MultiLineString") &&
+        isVisible(f.properties?._layerId),
+    ) ?? [];
+
+  const hasFeatures = pointFeatures.length > 0 || lineFeatures.length > 0;
+
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden" data-tour-step-id="citystaff-map">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">Infrastructure Map</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <Map
-          viewport={viewport}
-          onViewportChange={setViewport}
-          className="h-[500px] w-full"
-        >
-          <MapControls showZoom />
+        <div className="relative">
+          <Map
+            viewport={viewport}
+            onViewportChange={setViewport}
+            className="h-[500px] w-full"
+          >
+            <MapControls showZoom />
+            <MapLayerFilter
+              layers={layers}
+              visibleLayers={visibleLayers}
+              onToggle={toggle}
+            />
 
-          {markers.map((marker) => (
-            <MapMarker
-              key={marker.id}
-              longitude={marker.longitude}
-              latitude={marker.latitude}
-            >
-              <MarkerContent>
-                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-600 text-white text-xs font-bold">
-                  I
-                </div>
-              </MarkerContent>
-              <MarkerPopup>
-                <div className="p-2">
-                  <p className="text-sm font-medium">{marker.label}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {marker.description}
-                  </p>
-                </div>
-              </MarkerPopup>
-            </MapMarker>
-          ))}
-        </Map>
+            {/* Paving project polylines */}
+            {lineFeatures.length > 0 && (
+              <MapLineLayer
+                id="paving-projects"
+                data={{ type: "FeatureCollection", features: lineFeatures }}
+                color="#f59e0b"
+                width={3}
+                opacity={0.8}
+              />
+            )}
+
+            {/* Code violation markers */}
+            {hasFeatures &&
+              pointFeatures.map((feature, i) => {
+                const layerId = feature.properties?._layerId;
+                return (
+                  <MapMarker
+                    key={`${layerId}-${feature.properties?.OBJECTID ?? feature.properties?.OffenceNum ?? `staff-${i}`}`}
+                    longitude={
+                      (feature.geometry as GeoJSON.Point).coordinates[0]
+                    }
+                    latitude={
+                      (feature.geometry as GeoJSON.Point).coordinates[1]
+                    }
+                  >
+                    <MarkerContent>
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white text-xs font-bold">
+                        V
+                      </div>
+                    </MarkerContent>
+                    <MarkerPopup>
+                      <div className="p-2">
+                        <p className="text-sm font-medium">
+                          {feature.properties?.CaseType ?? "Code Violation"}
+                        </p>
+                        {feature.properties?.Address1 && (
+                          <p className="text-xs text-muted-foreground">
+                            {feature.properties.Address1}
+                          </p>
+                        )}
+                        {feature.properties?.CaseStatus && (
+                          <p className="text-xs text-muted-foreground">
+                            Status: {feature.properties.CaseStatus}
+                          </p>
+                        )}
+                        {feature.properties?.District && (
+                          <p className="text-xs text-muted-foreground">
+                            District: {feature.properties.District}
+                          </p>
+                        )}
+                      </div>
+                    </MarkerPopup>
+                  </MapMarker>
+                );
+              })}
+          </Map>
+
+          {/* Loading overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+              <div className="rounded-md bg-background px-3 py-2 text-sm text-muted-foreground shadow-sm">
+                Loading map data...
+              </div>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

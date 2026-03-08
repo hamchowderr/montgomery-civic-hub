@@ -1,74 +1,27 @@
 "use client";
 
-import { useState, useRef, useEffect, type FormEvent } from "react";
+import { useChatStream } from "@/lib/hooks/use-chat-stream";
 import { ChatMessage } from "@/components/ChatMessage";
+import { Shimmer } from "@/components/ai-elements/shimmer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send } from "lucide-react";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
-
 export function ResearcherChat() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content:
-        "Welcome, researcher! I can help you explore crime statistics, 911 call data, demographic trends, and available public datasets for Montgomery. What would you like to analyze?",
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [sessionId] = useState(() => crypto.randomUUID());
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const trimmed = input.trim();
-    if (!trimmed || loading) return;
-
-    const userMessage: Message = { role: "user", content: trimmed };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/chat/researcher", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed, sessionId }),
-      });
-
-      const data = await res.json();
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: data.reply ?? "Sorry, something went wrong.",
-        },
-      ]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Unable to reach the server. Please try again.",
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const {
+    messages,
+    input,
+    setInput,
+    loading,
+    toolStatus,
+    handleSubmit,
+    scrollRef,
+  } = useChatStream(
+    "researcher",
+    "Welcome, researcher! I can help you explore crime statistics, 911 call data, demographic trends, and available public datasets for Montgomery. What would you like to analyze?",
+  );
 
   return (
     <Card className="flex h-[500px] flex-col">
@@ -81,11 +34,24 @@ export function ResearcherChat() {
             {messages.map((msg, i) => (
               <ChatMessage key={i} role={msg.role} content={msg.content} />
             ))}
-            {loading && <ChatMessage role="assistant" content="Thinking..." />}
+            {toolStatus && (
+              <div className="px-2 py-1">
+                <Shimmer className="text-sm">{toolStatus}</Shimmer>
+              </div>
+            )}
+            {loading &&
+              !toolStatus &&
+              messages[messages.length - 1]?.role !== "assistant" && (
+                <ChatMessage role="assistant" content="Thinking..." />
+              )}
           </div>
         </ScrollArea>
 
-        <form onSubmit={handleSubmit} className="flex gap-2">
+        <form
+          onSubmit={handleSubmit}
+          className="flex gap-2"
+          data-tour-step-id="researcher-chat-input"
+        >
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
