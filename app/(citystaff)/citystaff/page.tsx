@@ -36,7 +36,7 @@ function CityStaffContent() {
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               City Staff Dashboard
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="hidden text-sm text-muted-foreground sm:block">
               Infrastructure, Budgets &amp; Operations
             </p>
           </div>

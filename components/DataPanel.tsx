@@ -80,40 +80,40 @@ export function DataPanel({
   });
 
   return (
-    <div className="flex h-full flex-col border bg-card">
+    <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-card">
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className="flex w-full flex-1 flex-col"
       >
-        <div className="border-b px-4 py-2 flex items-center justify-between">
+        <div className="border-b px-3 py-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
           <TabsList className="gap-1">
             <TabsTrigger
               value="map"
               data-tour-step-id={`${portalId}-map-view`}
-              className="gap-2 px-5"
+              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <MapPin className="size-4" />
-              Map
+              <span className="hidden sm:inline">Map</span>
             </TabsTrigger>
             <TabsTrigger
               value="table"
               data-tour-step-id={`${portalId}-table-view`}
-              className="gap-2 px-5"
+              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <Table2 className="size-4" />
-              Table
+              <span className="hidden sm:inline">Table</span>
             </TabsTrigger>
             <TabsTrigger
               value="chart"
               data-tour-step-id={`${portalId}-chart-view`}
-              className="gap-2 px-5"
+              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <BarChart3 className="size-4" />
-              Chart
+              <span className="hidden sm:inline">Chart</span>
             </TabsTrigger>
           </TabsList>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* Year filter */}
             <div className="flex items-center gap-2">
               <CalendarRange className="size-3.5 text-muted-foreground" />

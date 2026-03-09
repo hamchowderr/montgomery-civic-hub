@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { useCopilotChatStream } from "@/lib/hooks/use-copilot-chat-stream";
 import { ChatMessage } from "@/components/ChatMessage";
@@ -14,12 +14,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import {
   Send,
   Sparkles,
   PanelLeft,
   PanelRight,
   GripVertical,
+  MessageCircle,
 } from "lucide-react";
 
 interface PortalLayoutProps {
@@ -28,6 +30,18 @@ interface PortalLayoutProps {
   welcomeMessage: string;
   chatPlaceholder: string;
   children: ReactNode;
+}
+
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    setMatches(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [query]);
+  return matches;
 }
 
 function Handle() {
@@ -48,6 +62,7 @@ export function PortalLayout({
   children,
 }: PortalLayoutProps) {
   const [chatSide, setChatSide] = useState<"left" | "right">("right");
+  const [chatOpen, setChatOpen] = useState(false);
   const {
     messages,
     input,
@@ -58,9 +73,12 @@ export function PortalLayout({
     scrollRef,
   } = useCopilotChatStream(portal, welcomeMessage);
 
+  const isMobile = !useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+
   const chatContent = (
     <div
-      className="flex h-full flex-col border bg-card"
+      className="flex h-full flex-col overflow-hidden rounded-lg border bg-card"
       data-tour-step-id={`${portal}-chat`}
     >
       {/* Chat header */}
@@ -71,29 +89,31 @@ export function PortalLayout({
           </div>
           <h3 className="text-sm font-semibold">{chatTitle}</h3>
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-7"
-                onClick={() =>
-                  setChatSide((s) => (s === "right" ? "left" : "right"))
-                }
-              >
-                {chatSide === "right" ? (
-                  <PanelLeft className="size-3.5" />
-                ) : (
-                  <PanelRight className="size-3.5" />
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              Move chat to {chatSide === "right" ? "left" : "right"}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="hidden lg:block">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7"
+                  onClick={() =>
+                    setChatSide((s) => (s === "right" ? "left" : "right"))
+                  }
+                >
+                  {chatSide === "right" ? (
+                    <PanelLeft className="size-3.5" />
+                  ) : (
+                    <PanelRight className="size-3.5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                Move chat to {chatSide === "right" ? "left" : "right"}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
 
       {/* Messages */}
@@ -136,53 +156,90 @@ export function PortalLayout({
     </div>
   );
 
+  if (isMobile) {
+    return (
+      <div className="min-h-0 flex-1">
+        {/* Full-height data panel */}
+        <div className="h-full">{children}</div>
+
+        {/* Floating chat button */}
+        <Button
+          onClick={() => setChatOpen(true)}
+          className="fixed bottom-4 right-4 z-50 size-14 rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 md:hidden"
+        >
+          <MessageCircle className="size-6" />
+        </Button>
+
+        {/* Bottom sheet with chat */}
+        <Sheet open={chatOpen} onOpenChange={setChatOpen}>
+          <SheetContent side="bottom" className="h-[90vh] p-0">
+            <SheetTitle className="sr-only">{chatTitle}</SheetTitle>
+            {chatContent}
+          </SheetContent>
+        </Sheet>
+      </div>
+    );
+  }
+
+  if (isDesktop) {
+    return (
+      <div className="min-h-0 flex-1">
+        <Group
+          key={chatSide}
+          orientation="horizontal"
+          style={{ display: "flex", height: "100%", width: "100%" }}
+        >
+          {chatSide === "left" ? (
+            <>
+              <Panel
+                defaultSize="28%"
+                minSize="20%"
+                maxSize="50%"
+                className="overflow-hidden rounded-t-lg"
+              >
+                {chatContent}
+              </Panel>
+              <Handle />
+              <Panel
+                defaultSize="72%"
+                minSize="40%"
+                className="overflow-hidden rounded-t-lg"
+              >
+                <div className="h-full">{children}</div>
+              </Panel>
+            </>
+          ) : (
+            <>
+              <Panel
+                defaultSize="72%"
+                minSize="40%"
+                className="overflow-hidden rounded-t-lg"
+              >
+                <div className="h-full">{children}</div>
+              </Panel>
+              <Handle />
+              <Panel
+                defaultSize="28%"
+                minSize="20%"
+                maxSize="50%"
+                className="overflow-hidden rounded-t-lg"
+              >
+                {chatContent}
+              </Panel>
+            </>
+          )}
+        </Group>
+      </div>
+    );
+  }
+
+  // Tablet: simple flex row, no resize
   return (
     <div className="min-h-0 flex-1">
-      <Group
-        key={chatSide}
-        orientation="horizontal"
-        style={{ display: "flex", height: "100%", width: "100%" }}
-      >
-        {chatSide === "left" ? (
-          <>
-            <Panel
-              defaultSize="28%"
-              minSize="20%"
-              maxSize="50%"
-              className="overflow-hidden rounded-t-lg"
-            >
-              {chatContent}
-            </Panel>
-            <Handle />
-            <Panel
-              defaultSize="72%"
-              minSize="40%"
-              className="overflow-hidden rounded-t-lg"
-            >
-              <div className="h-full">{children}</div>
-            </Panel>
-          </>
-        ) : (
-          <>
-            <Panel
-              defaultSize="72%"
-              minSize="40%"
-              className="overflow-hidden rounded-t-lg"
-            >
-              <div className="h-full">{children}</div>
-            </Panel>
-            <Handle />
-            <Panel
-              defaultSize="28%"
-              minSize="20%"
-              maxSize="50%"
-              className="overflow-hidden rounded-t-lg"
-            >
-              {chatContent}
-            </Panel>
-          </>
-        )}
-      </Group>
+      <div className="flex h-full w-full">
+        <div className="min-w-0 flex-1">{children}</div>
+        <div className="w-80 shrink-0">{chatContent}</div>
+      </div>
     </div>
   );
 }

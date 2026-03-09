@@ -37,7 +37,7 @@ function ResidentContent() {
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               Resident Dashboard
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="hidden text-sm text-muted-foreground sm:block">
               Neighborhood Safety &amp; City Services
             </p>
           </div>

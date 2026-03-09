@@ -240,7 +240,7 @@ export function BusinessMap() {
     ) ?? [];
 
   return (
-    <div data-tour-step-id="business-map" className="h-full">
+    <div data-tour-step-id="business-map" className="h-full min-h-[300px]">
       <div className="relative h-full">
         <Map
           viewport={viewport}

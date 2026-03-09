@@ -413,7 +413,7 @@ export function ResidentMap() {
   const show311Legend = isVisible("311-requests");
 
   return (
-    <div data-tour-step-id="resident-map" className="h-full">
+    <div data-tour-step-id="resident-map" className="h-full min-h-[300px]">
       <div className="relative h-full">
         <Map
           viewport={viewport}

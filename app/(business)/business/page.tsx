@@ -36,7 +36,7 @@ function BusinessContent() {
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               Business Portal
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="hidden text-sm text-muted-foreground sm:block">
               Permits, Licenses &amp; Economic Intelligence
             </p>
           </div>

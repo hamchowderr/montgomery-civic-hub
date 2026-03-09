@@ -46,7 +46,13 @@ export function PortalNav() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <nav className="flex items-center justify-between border-b bg-card/80 px-4 py-2 backdrop-blur-sm">
+    <nav className="flex min-w-0 items-center justify-between border-b bg-card/80 px-4 py-2 backdrop-blur-sm">
+      {/* Mobile home link */}
+      <Link href="/" className="mr-2 flex items-center sm:hidden">
+        <div className="flex size-8 items-center justify-center rounded-md bg-accent">
+          <span className="text-xs font-bold text-accent-foreground">M</span>
+        </div>
+      </Link>
       {/* Logo / Home link */}
       <Link href="/" className="mr-4 hidden items-center gap-2 sm:flex">
         <div className="flex size-7 items-center justify-center rounded-md bg-accent">
@@ -55,7 +61,7 @@ export function PortalNav() {
       </Link>
 
       {/* Portal tabs */}
-      <div className="flex items-center gap-0.5">
+      <div className="flex min-w-0 items-center gap-0.5">
         {portals.map((portal) => {
           const isActive = pathname.startsWith(portal.href);
           return (
@@ -64,7 +70,7 @@ export function PortalNav() {
                 variant={isActive ? "default" : "ghost"}
                 size="sm"
                 className={cn(
-                  "gap-1.5 text-sm",
+                  "gap-1.5 text-sm min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0",
                   isActive && "pointer-events-none",
                   !isActive && "text-muted-foreground hover:text-foreground",
                 )}
@@ -83,7 +89,7 @@ export function PortalNav() {
         size="icon"
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         aria-label="Toggle theme"
-        className="ml-auto text-muted-foreground hover:text-foreground"
+        className="ml-auto min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 text-muted-foreground hover:text-foreground"
       >
         <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
         <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
