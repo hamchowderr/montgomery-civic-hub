@@ -15,6 +15,7 @@ import type {
 import { allTools } from "./tools";
 import { getSystemPrompt } from "./prompts";
 import { queryFeatureServer } from "@/lib/arcgis";
+import { DATASET_NAME_TO_URL } from "@/lib/arcgis-client";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 
@@ -91,7 +92,16 @@ async function executeArcgisQuery(
   portal: string,
   convex: ConvexHttpClient | null,
 ): Promise<unknown> {
-  // Check Convex dataset_registry first
+  // 1. Primary: use the hardcoded DATASET_NAME_TO_URL mapping (instant, no network)
+  const directUrl = DATASET_NAME_TO_URL[input.dataset];
+  if (directUrl) {
+    return queryFeatureServer(directUrl, {
+      where: input.where,
+      limit: input.limit,
+    });
+  }
+
+  // 2. Check Convex dataset_registry for dynamically registered datasets
   if (convex) {
     try {
       const cached = await convex.query(api.datasetRegistry.getByName, {
@@ -108,33 +118,37 @@ async function executeArcgisQuery(
     }
   }
 
-  // Fall back to ArcGIS Hub v3 API
-  const datasetRes = await fetch(
-    `https://opendata-citymgm.hub.arcgis.com/api/v3/datasets?filter[name]=${encodeURIComponent(input.dataset)}&page[size]=1`,
-  );
-  if (!datasetRes.ok) return { error: "Dataset not found" };
-  const datasetData = await datasetRes.json();
-  const featureUrl = datasetData.data?.[0]?.attributes?.url;
-  if (!featureUrl) return { error: `Dataset "${input.dataset}" not found` };
+  // 3. Last resort: ArcGIS Hub v3 API search (may fail from cloud IPs)
+  try {
+    const datasetRes = await fetch(
+      `https://opendata-citymgm.hub.arcgis.com/api/v3/datasets?filter[name]=${encodeURIComponent(input.dataset)}&page[size]=1`,
+    );
+    if (!datasetRes.ok) return { error: `Dataset "${input.dataset}" not found in local catalog or Hub API` };
+    const datasetData = await datasetRes.json();
+    const featureUrl = datasetData.data?.[0]?.attributes?.url;
+    if (!featureUrl) return { error: `Dataset "${input.dataset}" not found` };
 
-  // Cache for future requests
-  if (convex) {
-    try {
-      await convex.mutation(api.mutations.insertDatasetRegistry, {
-        name: input.dataset,
-        featureServerUrl: featureUrl,
-        portals: [portal],
-        fields: {},
-      });
-    } catch {
-      // Non-critical
+    // Cache for future requests
+    if (convex) {
+      try {
+        await convex.mutation(api.mutations.insertDatasetRegistry, {
+          name: input.dataset,
+          featureServerUrl: featureUrl,
+          portals: [portal],
+          fields: {},
+        });
+      } catch {
+        // Non-critical
+      }
     }
-  }
 
-  return queryFeatureServer(featureUrl, {
-    where: input.where,
-    limit: input.limit,
-  });
+    return queryFeatureServer(featureUrl, {
+      where: input.where,
+      limit: input.limit,
+    });
+  } catch {
+    return { error: `Dataset "${input.dataset}" not found in local catalog and Hub API is unreachable` };
+  }
 }
 
 async function executeBrightdataSearch(input: {
