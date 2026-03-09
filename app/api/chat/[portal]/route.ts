@@ -12,10 +12,10 @@ const convex = process.env.NEXT_PUBLIC_CONVEX_URL
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { portal: string } },
+  { params }: { params: Promise<{ portal: string }> },
 ) {
   try {
-    const { portal } = params;
+    const { portal } = await params;
     const validPortals = ["resident", "business", "citystaff", "researcher"];
     if (!validPortals.includes(portal)) {
       return Response.json({ error: "Invalid portal" }, { status: 400 });
