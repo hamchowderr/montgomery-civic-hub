@@ -1,0 +1,48 @@
+---
+title: "Year Filter"
+sidebarTitle: "Year Filter"
+description: "Filter all data views by date range — from 2018 to present."
+icon: "calendar-range"
+---
+
+## Overview
+
+The Year Filter is a global date range control that affects all data views (Map, Table, and Chart) simultaneously. It generates ArcGIS SQL WHERE clauses that scope queries to your selected time period.
+
+## How to Use
+
+1. Find the **Year Filter Bar** at the top of the data panel
+2. Set the **From** year using the left dropdown
+3. Set the **To** year using the right dropdown
+4. All data views update automatically
+
+The default range is **2018 to the current year**.
+
+## What It Affects
+
+| View | How It Filters |
+|---|---|
+| **Map** | Only shows data points within the selected year range |
+| **Table** | Filters table records to the selected date range |
+| **Chart** | Restricts chart data to the selected time period |
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Pre/Post Pandemic Comparison">
+    Set the range to 2018-2019 to see pre-pandemic baselines, then switch to 2020-2021 to compare.
+  </Accordion>
+  <Accordion title="Current Year Focus">
+    Set both From and To to the current year to see only recent data.
+  </Accordion>
+  <Accordion title="Trend Analysis">
+    Use the full range (2018-present) to see long-term trends in charts.
+  </Accordion>
+  <Accordion title="District-Level Analysis">
+    Combine the year filter with map district overlays to see how neighborhoods change over time.
+  </Accordion>
+</AccordionGroup>
+
+## AI Integration
+
+The AI assistant can set the year filter for you. For example, asking "Show me 311 requests from 2022" will automatically adjust the year range.
