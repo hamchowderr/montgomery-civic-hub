@@ -66,4 +66,20 @@ export default defineSchema({
     data: v.any(),
     fetchedAt: v.number(),
   }).index("by_chartId", ["chartId"]),
+
+  users: defineTable({
+    clerkId: v.string(),
+    email: v.string(),
+    name: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+    role: v.optional(
+      v.union(
+        v.literal("resident"),
+        v.literal("business"),
+        v.literal("citystaff"),
+        v.literal("researcher"),
+      ),
+    ),
+    createdAt: v.number(),
+  }).index("by_clerkId", ["clerkId"]),
 });
