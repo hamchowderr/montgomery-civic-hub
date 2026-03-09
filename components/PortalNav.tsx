@@ -1,18 +1,10 @@
 "use client";
 
+import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
+import { Briefcase, Building2, GraduationCap, Home, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { SignInButton, UserButton } from "@clerk/nextjs";
-import { Authenticated, Unauthenticated } from "convex/react";
-import {
-  Sun,
-  Moon,
-  Home,
-  Briefcase,
-  Building2,
-  GraduationCap,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +39,7 @@ export function PortalNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { isSignedIn } = useAuth();
 
   return (
     <nav className="flex items-center justify-between border-b bg-card/80 px-4 py-2 backdrop-blur-sm">
@@ -93,20 +86,19 @@ export function PortalNav() {
           <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
         </Button>
 
-        <Authenticated>
+        {isSignedIn ? (
           <UserButton
             appearance={{
               elements: { avatarBox: "size-7" },
             }}
           />
-        </Authenticated>
-        <Unauthenticated>
+        ) : (
           <SignInButton mode="redirect">
             <Button variant="outline" size="sm">
               Sign In
             </Button>
           </SignInButton>
-        </Unauthenticated>
+        )}
       </div>
     </nav>
   );

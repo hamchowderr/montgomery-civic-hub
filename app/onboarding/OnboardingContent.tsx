@@ -1,10 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Home, Briefcase, Building2, GraduationCap } from "lucide-react";
+import { useConvexAuth, useMutation } from "convex/react";
 import type { LucideIcon } from "lucide-react";
+import { Briefcase, Building2, GraduationCap, Home } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { api } from "@/convex/_generated/api";
 
 const portals: {
   role: "resident" | "business" | "citystaff" | "researcher";
@@ -50,11 +50,15 @@ const portals: {
 
 export default function OnboardingContent() {
   const router = useRouter();
+  const { isAuthenticated } = useConvexAuth();
   const setRole = useMutation(api.users.setUserRole);
 
-  async function handleSelect(
-    role: "resident" | "business" | "citystaff" | "researcher",
-  ) {
+  async function handleSelect(role: "resident" | "business" | "citystaff" | "researcher") {
+    if (!isAuthenticated) {
+      // Convex auth not ready yet — just navigate, role will be set later
+      router.push(`/${role}`);
+      return;
+    }
     await setRole({ role });
     router.push(`/${role}`);
   }
@@ -62,9 +66,7 @@ export default function OnboardingContent() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Welcome to Montgomery Civic Hub
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight">Welcome to Montgomery Civic Hub</h1>
         <p className="mt-2 text-muted-foreground">
           Choose your primary portal to get started. You can switch anytime.
         </p>
@@ -77,16 +79,12 @@ export default function OnboardingContent() {
             onClick={() => handleSelect(portal.role)}
             className={`flex flex-col items-center gap-3 rounded-xl border p-6 transition-colors ${portal.bgColor}`}
           >
-            <div
-              className={`flex size-12 items-center justify-center rounded-lg ${portal.color}`}
-            >
+            <div className={`flex size-12 items-center justify-center rounded-lg ${portal.color}`}>
               <portal.icon className="size-6" />
             </div>
             <div className="text-center">
               <h2 className="text-lg font-semibold">{portal.label}</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {portal.description}
-              </p>
+              <p className="mt-1 text-sm text-muted-foreground">{portal.description}</p>
             </div>
           </button>
         ))}
