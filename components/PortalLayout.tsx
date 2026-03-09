@@ -2,6 +2,7 @@
 
 import { useState, useEffect, type ReactNode } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { useCopilotChatStream } from "@/lib/hooks/use-copilot-chat-stream";
 import { ChatMessage } from "@/components/ChatMessage";
 import { Shimmer } from "@/components/ai-elements/shimmer";
@@ -76,9 +77,65 @@ export function PortalLayout({
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
+  // AI-readable: layout state
+  useCopilotReadable({
+    description:
+      "Portal layout state including chat panel position and visibility",
+    value: {
+      chatSide,
+      chatOpen,
+      isMobile,
+      isDesktop,
+      layout: isMobile
+        ? "mobile-sheet"
+        : isDesktop
+          ? "desktop-resizable"
+          : "tablet-fixed",
+    },
+  });
+
+  // AI action: move chat panel
+  useCopilotAction({
+    name: "set_chat_position",
+    description:
+      "Move the chat panel to the left or right side of the layout (desktop only)",
+    parameters: [
+      {
+        name: "side",
+        type: "string",
+        description: "Which side to place the chat panel",
+        required: true,
+        enum: ["left", "right"],
+      },
+    ],
+    handler: ({ side }) => {
+      setChatSide(side as "left" | "right");
+      return `Chat moved to ${side} side`;
+    },
+  });
+
+  // AI action: toggle chat panel (mobile)
+  useCopilotAction({
+    name: "toggle_chat_panel",
+    description:
+      "Open or close the chat panel (primarily for mobile bottom sheet)",
+    parameters: [
+      {
+        name: "open",
+        type: "boolean",
+        description: "Whether to open (true) or close (false) the chat panel",
+        required: true,
+      },
+    ],
+    handler: ({ open }) => {
+      setChatOpen(open);
+      return open ? "Chat panel opened" : "Chat panel closed";
+    },
+  });
+
   const chatContent = (
     <div
-      className="flex h-full flex-col overflow-hidden rounded-lg border bg-card"
+      className="flex h-full flex-col overflow-hidden bg-card"
       data-tour-step-id={`${portal}-chat`}
     >
       {/* Chat header */}
@@ -183,7 +240,7 @@ export function PortalLayout({
 
   if (isDesktop) {
     return (
-      <div className="min-h-0 flex-1">
+      <div className="min-h-0 flex-1 overflow-hidden rounded-lg border bg-card">
         <Group
           key={chatSide}
           orientation="horizontal"
@@ -195,7 +252,7 @@ export function PortalLayout({
                 defaultSize="28%"
                 minSize="20%"
                 maxSize="50%"
-                className="overflow-hidden rounded-t-lg"
+                className="overflow-hidden"
               >
                 {chatContent}
               </Panel>
@@ -203,7 +260,7 @@ export function PortalLayout({
               <Panel
                 defaultSize="72%"
                 minSize="40%"
-                className="overflow-hidden rounded-t-lg"
+                className="overflow-hidden"
               >
                 <div className="h-full">{children}</div>
               </Panel>
@@ -213,7 +270,7 @@ export function PortalLayout({
               <Panel
                 defaultSize="72%"
                 minSize="40%"
-                className="overflow-hidden rounded-t-lg"
+                className="overflow-hidden"
               >
                 <div className="h-full">{children}</div>
               </Panel>
@@ -222,7 +279,7 @@ export function PortalLayout({
                 defaultSize="28%"
                 minSize="20%"
                 maxSize="50%"
-                className="overflow-hidden rounded-t-lg"
+                className="overflow-hidden"
               >
                 {chatContent}
               </Panel>
@@ -235,10 +292,10 @@ export function PortalLayout({
 
   // Tablet: simple flex row, no resize
   return (
-    <div className="min-h-0 flex-1">
+    <div className="min-h-0 flex-1 overflow-hidden rounded-lg border bg-card">
       <div className="flex h-full w-full">
         <div className="min-w-0 flex-1">{children}</div>
-        <div className="w-80 shrink-0">{chatContent}</div>
+        <div className="w-80 shrink-0 border-l">{chatContent}</div>
       </div>
     </div>
   );

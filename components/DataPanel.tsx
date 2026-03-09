@@ -10,7 +10,7 @@ import {
 import { createPortal } from "react-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Table2, BarChart3, CalendarRange } from "lucide-react";
-import { useCopilotAction } from "@copilotkit/react-core";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { useYearFilter } from "@/lib/contexts/year-filter";
 import {
   Select,
@@ -59,7 +59,17 @@ export function DataPanel({
     setSlotNode(node);
   }, []);
 
-  // Phase 6: Allow AI to switch tabs
+  // AI-readable: current data panel state
+  useCopilotReadable({
+    description: "Data panel state including active tab and year range filter",
+    value: {
+      activeTab,
+      yearRange: { from: yearRange.from, to: yearRange.to },
+      availableYears: yearOptions,
+    },
+  });
+
+  // AI action: switch tabs
   useCopilotAction({
     name: "switch_data_tab",
     description:
@@ -79,8 +89,34 @@ export function DataPanel({
     },
   });
 
+  // AI action: set year range filter
+  useCopilotAction({
+    name: "set_year_range",
+    description:
+      "Set the year range filter for all data queries (maps, tables, charts)",
+    parameters: [
+      {
+        name: "from",
+        type: "number",
+        description: "Start year (e.g. 2020)",
+        required: true,
+      },
+      {
+        name: "to",
+        type: "number",
+        description: "End year (e.g. 2024)",
+        required: true,
+      },
+    ],
+    handler: ({ from, to }) => {
+      setFrom(from);
+      setTo(to);
+      return `Year range set to ${from}–${to}`;
+    },
+  });
+
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-lg border bg-card">
+    <div className="flex h-full flex-col overflow-hidden bg-card">
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}

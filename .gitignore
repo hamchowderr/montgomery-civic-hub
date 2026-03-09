@@ -49,3 +49,4 @@ screenshots/
 *.tgz
 
 .vercel
+.env*.local

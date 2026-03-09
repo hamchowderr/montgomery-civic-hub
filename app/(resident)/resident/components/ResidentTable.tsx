@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTableData } from "@/lib/hooks/use-table-data";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 
 export function ResidentTable() {
   const {
@@ -23,8 +24,35 @@ export function ResidentTable() {
     filterPlaceholder,
   } = useTableData("resident");
 
+  useCopilotReadable({
+    description: "Resident table dataset state",
+    value: {
+      selectedDataset,
+      availableDatasets: datasets.map((d) => ({ key: d.key, label: d.label })),
+    },
+  });
+
+  useCopilotAction({
+    name: "select_table_dataset",
+    description: "Switch the table to display a different dataset",
+    parameters: [
+      {
+        name: "datasetKey",
+        type: "string",
+        description: "The dataset key to select",
+        required: true,
+      },
+    ],
+    handler: ({ datasetKey }) => {
+      setSelectedDataset(datasetKey);
+      const label =
+        datasets.find((d) => d.key === datasetKey)?.label ?? datasetKey;
+      return `Table switched to ${label}`;
+    },
+  });
+
   return (
-    <Card>
+    <Card className="border-0 shadow-none rounded-none">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-base">
           {datasets.find((d) => d.key === selectedDataset)?.label ?? "Data"}

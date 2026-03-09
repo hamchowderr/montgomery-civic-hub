@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { CopilotKit } from "@copilotkit/react-core";
+import { YearFilterProvider } from "@/lib/contexts/year-filter";
 
 // Mock maplibre-gl to avoid canvas issues in jsdom
 vi.mock("maplibre-gl", () => ({
@@ -276,6 +277,14 @@ describe("ChatWidget", () => {
 
 // ── DataPanel with CopilotKit ──────────────────────────────────────────────────
 
+function DataPanelWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <CopilotWrapper>
+      <YearFilterProvider>{children}</YearFilterProvider>
+    </CopilotWrapper>
+  );
+}
+
 describe("DataPanel (CopilotKit integration)", () => {
   const mapContent = <div data-testid="map">Map Content</div>;
   const tableContent = <div data-testid="table">Table Content</div>;
@@ -291,7 +300,7 @@ describe("DataPanel (CopilotKit integration)", () => {
         tableContent={tableContent}
         chartContent={chartContent}
       />,
-      { wrapper: CopilotWrapper },
+      { wrapper: DataPanelWrapper },
     );
 
     const tabs = screen.getAllByRole("tab");
@@ -309,7 +318,7 @@ describe("DataPanel (CopilotKit integration)", () => {
         chartContent={chartContent}
         defaultTab="table"
       />,
-      { wrapper: CopilotWrapper },
+      { wrapper: DataPanelWrapper },
     );
 
     // The table tab should be the active/selected one
@@ -327,7 +336,7 @@ describe("DataPanel (CopilotKit integration)", () => {
         tableContent={tableContent}
         chartContent={chartContent}
       />,
-      { wrapper: CopilotWrapper },
+      { wrapper: DataPanelWrapper },
     );
 
     // Map and table are force-mounted to preserve state (MapLibre, scroll position)
@@ -353,7 +362,7 @@ describe("DataPanel (CopilotKit integration)", () => {
           tableContent={tableContent}
           chartContent={chartContent}
         />,
-        { wrapper: CopilotWrapper },
+        { wrapper: DataPanelWrapper },
       );
 
       expect(
