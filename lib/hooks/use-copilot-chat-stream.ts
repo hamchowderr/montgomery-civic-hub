@@ -7,12 +7,22 @@ import {
   useCallback,
   type FormEvent,
 } from "react";
-import { useCopilotChat } from "@copilotkit/react-core";
-import { TextMessage, Role } from "@copilotkit/runtime-client-gql";
+// useCopilotChat has a bug in v1.53.0 where visibleMessages is always undefined
+// (it destructures a key that doesn't exist on the internal return).
+// useCopilotChatInternal returns the actual AG-UI `messages` array correctly.
+import { useCopilotChatInternal } from "@copilotkit/react-core";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+}
+
+interface AGUIMessage {
+  id: string;
+  role: string;
+  content?: string;
+  type?: string;
+  name?: string;
 }
 
 /**
@@ -24,71 +34,44 @@ export function useCopilotChatStream(_portal: string, welcomeMessage: string) {
   const [toolStatus, setToolStatus] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const chatReturn = useCopilotChat();
   const {
-    visibleMessages,
-    appendMessage,
+    messages: agMessages,
+    sendMessage,
     isLoading: loading,
     isAvailable,
-  } = chatReturn;
+  } = useCopilotChatInternal();
 
-  // DEBUG: log the raw return from useCopilotChat to see all keys and visibleMessages
-  useEffect(() => {
-    const keys = Object.keys(chatReturn);
-    console.log("[CopilotChat] hook keys:", keys.join(", "));
-    console.log("[CopilotChat] visibleMessages:", visibleMessages);
-    console.log("[CopilotChat] isAvailable:", isAvailable);
-    console.log("[CopilotChat] isLoading:", loading);
-    // Check if there's a "messages" key (AG-UI format) we should use instead
-    if ("messages" in chatReturn) {
-      console.log(
-        "[CopilotChat] messages (AG-UI):",
-        (chatReturn as any).messages,
-      );
-    }
-  }, [visibleMessages, loading, isAvailable]);
+  const rawMessages = (agMessages ?? []) as AGUIMessage[];
 
-  // Map CopilotKit messages to our simple Message format
+  // Map AG-UI messages to our simple Message format
   const mappedMessages: Message[] = [
     { role: "assistant", content: welcomeMessage },
-    ...(visibleMessages ?? [])
+    ...rawMessages
       .filter(
-        (m): m is TextMessage =>
-          typeof m.isTextMessage === "function" &&
-          m.isTextMessage() &&
-          (m.role === Role.User || m.role === Role.Assistant) &&
-          !!m.content?.trim(),
+        (m) =>
+          (m.role === "user" || m.role === "assistant") && !!m.content?.trim(),
       )
       .map((m) => ({
-        role: (m.role === Role.User ? "user" : "assistant") as
-          | "user"
-          | "assistant",
+        role: m.role as "user" | "assistant",
         content: m.content ?? "",
       })),
   ];
 
-  // Extract tool status from in-progress action execution messages
+  // Extract tool status from in-progress action/tool messages
   useEffect(() => {
     if (!loading) {
       setToolStatus(null);
       return;
     }
 
-    const msgs = visibleMessages ?? [];
-    const lastMsg = msgs[msgs.length - 1];
-    if (
-      lastMsg &&
-      typeof lastMsg.isActionExecutionMessage === "function" &&
-      lastMsg.isActionExecutionMessage()
-    ) {
-      setToolStatus(
-        `Using ${(lastMsg as { name?: string }).name ?? "tool"}...`,
-      );
+    const lastMsg = rawMessages[rawMessages.length - 1];
+    if (lastMsg && lastMsg.role === "tool") {
+      setToolStatus(`Using ${lastMsg.name ?? "tool"}...`);
       return;
     }
 
     setToolStatus(null);
-  }, [loading, visibleMessages]);
+  }, [loading, rawMessages]);
 
   // Auto-scroll
   useEffect(() => {
@@ -106,18 +89,16 @@ export function useCopilotChatStream(_portal: string, welcomeMessage: string) {
       setInput("");
 
       try {
-        await appendMessage(
-          new TextMessage({
-            id: crypto.randomUUID(),
-            role: Role.User,
-            content: trimmed,
-          }),
-        );
+        await sendMessage({
+          id: crypto.randomUUID(),
+          role: "user",
+          content: trimmed,
+        });
       } catch (err) {
-        console.error("[CopilotChat] appendMessage failed:", err);
+        console.error("[CopilotChat] sendMessage failed:", err);
       }
     },
-    [input, loading, appendMessage],
+    [input, loading, sendMessage],
   );
 
   return {

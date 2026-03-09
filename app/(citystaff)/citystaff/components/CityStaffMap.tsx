@@ -286,8 +286,8 @@ export function CityStaffMap() {
     ) ?? [];
 
   return (
-    <div data-tour-step-id="citystaff-map">
-      <div className="relative">
+    <div data-tour-step-id="citystaff-map" className="h-full">
+      <div className="relative h-full">
         <Map
           viewport={viewport}
           onViewportChange={setViewport}
