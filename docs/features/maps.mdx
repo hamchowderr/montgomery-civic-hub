@@ -1,0 +1,27 @@
+---
+title: "Interactive Maps"
+description: "MapLibre GL visualizations with live city data"
+---
+
+## Overview
+
+Each portal includes an interactive map powered by MapLibre GL, displaying relevant city data as point layers with automatic dark/light theme sync.
+
+## Features
+
+- **40+ datasets** — Crime incidents, permits, infrastructure, demographics mapped geographically
+- **Council district overlay** — Toggleable 9-district boundary layer sourced from ArcGIS
+- **Theme sync** — Map style automatically switches between light and dark based on system/user preference
+- **Point layers** — Reusable `PointCircleLayer` component for consistent circle-based data visualization
+- **Status legend** — Semantic color coding (green/blue/amber/red/gray) with matching MapLibre expressions
+
+## Data Loading
+
+Map data is fetched client-side via `lib/arcgis-client.ts`, which queries Montgomery's ArcGIS FeatureServer directly from the browser. This approach:
+- Bypasses cloud IP restrictions
+- Reduces server load
+- Enables real-time data without caching delays
+
+## Year Filtering
+
+Maps respond to the global year range filter, allowing users to visualize how geographic patterns change over time (2018–present).
