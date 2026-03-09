@@ -277,6 +277,14 @@ describe("ChatWidget", () => {
 
 // ── DataPanel with CopilotKit ──────────────────────────────────────────────────
 
+function DataPanelWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <CopilotWrapper>
+      <YearFilterProvider>{children}</YearFilterProvider>
+    </CopilotWrapper>
+  );
+}
+
 describe("DataPanel (CopilotKit integration)", () => {
   const mapContent = <div data-testid="map">Map Content</div>;
   const tableContent = <div data-testid="table">Table Content</div>;
@@ -292,7 +300,7 @@ describe("DataPanel (CopilotKit integration)", () => {
         tableContent={tableContent}
         chartContent={chartContent}
       />,
-      { wrapper: CopilotWrapper },
+      { wrapper: DataPanelWrapper },
     );
 
     const tabs = screen.getAllByRole("tab");
@@ -310,7 +318,7 @@ describe("DataPanel (CopilotKit integration)", () => {
         chartContent={chartContent}
         defaultTab="table"
       />,
-      { wrapper: CopilotWrapper },
+      { wrapper: DataPanelWrapper },
     );
 
     // The table tab should be the active/selected one
@@ -328,7 +336,7 @@ describe("DataPanel (CopilotKit integration)", () => {
         tableContent={tableContent}
         chartContent={chartContent}
       />,
-      { wrapper: CopilotWrapper },
+      { wrapper: DataPanelWrapper },
     );
 
     // Map and table are force-mounted to preserve state (MapLibre, scroll position)
@@ -354,7 +362,7 @@ describe("DataPanel (CopilotKit integration)", () => {
           tableContent={tableContent}
           chartContent={chartContent}
         />,
-        { wrapper: CopilotWrapper },
+        { wrapper: DataPanelWrapper },
       );
 
       expect(

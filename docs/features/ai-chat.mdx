@@ -1,0 +1,70 @@
+---
+title: "AI Chat"
+sidebarTitle: "AI Chat"
+description: "How the AI assistant works — Claude-powered with real-time city data queries and web search."
+icon: "message-bot"
+---
+
+## How It Works
+
+Every portal includes an AI chat assistant powered by Anthropic's Claude. When you ask a question, the AI:
+
+1. **Analyzes your question** to determine the best data source
+2. **Queries Montgomery's ArcGIS datasets** for structured city data (permits, 311 requests, violations, etc.)
+3. **Searches the web** via Bright Data for additional context (news, council meetings, city announcements)
+4. **Synthesizes a response** with data citations and practical next steps
+
+The AI uses real data — not pre-written answers. Every response is generated fresh based on current city datasets.
+
+## Two Data Tools
+
+| Tool | What It Queries | Best For |
+|---|---|---|
+| **ArcGIS Query** | Montgomery's 40+ city datasets (permits, violations, 311 requests, boundaries, facilities) | Structured data — counts, locations, status, trends |
+| **Web Search** | Live web results via Bright Data | News, council decisions, how-to guides, current events |
+
+The AI automatically chooses the right tool — or combines both when appropriate. For example, asking "what's happening with road construction on Eastern Blvd?" triggers both an ArcGIS query for paving project data and a web search for recent news.
+
+## Dashboard Control Actions
+
+The AI can control the dashboard UI on your behalf. These actions happen automatically when relevant:
+
+| Action | What It Does |
+|---|---|
+| **Switch data tab** | Changes between Map, Table, and Chart views |
+| **Set year range** | Adjusts the global year filter |
+| **Toggle map layers** | Shows or hides specific data layers on the map |
+| **Select table dataset** | Changes which dataset the table displays |
+| **Move chat panel** | Repositions chat to left or right side (desktop) |
+| **Toggle chat panel** | Opens or closes the chat panel (mobile) |
+| **Toggle council districts** | Shows or hides the 9-district boundary overlay |
+
+<Tip>
+You don't need to use any of these manually — the AI will activate them when your question warrants it. But you can also control everything yourself using the dashboard tabs and buttons.
+</Tip>
+
+## Tips for Better Questions
+
+- **Be specific about location** — "District 5" or "Eastern Blvd" gets more targeted results than "Montgomery"
+- **Mention time periods** — "in 2024" or "this quarter" helps the AI filter data appropriately
+- **Ask follow-ups** — The AI remembers context within your session
+- **Request formats** — Ask for "a table," "a summary," or "an executive briefing" to get structured output
+- **Combine topics** — "Cross-reference 311 complaints with code violations in District 3" works
+
+## Portal-Specific Behavior
+
+Each portal's AI has a different personality and focus:
+
+| Portal | AI Style | Typical Response Length |
+|---|---|---|
+| Resident | Friendly, plain language, practical next steps | 2-3 sentences |
+| Business | Professional, data-forward, opportunity-minded | 3-5 sentences with metrics |
+| City Staff | Analytical, report-oriented, executive-ready | Structured with data points |
+| Researcher | Thorough, methodological, interdisciplinary | Detailed with caveats |
+
+## Limitations
+
+- **Not official advice** — AI responses are informational, not legal or official government decisions
+- **Data freshness** — ArcGIS data reflects the most recent city upload (usually same-day for active datasets)
+- **No personal data** — The AI cannot access private records or account information
+- **Session-based** — Chat history is maintained during your session but may not persist across visits

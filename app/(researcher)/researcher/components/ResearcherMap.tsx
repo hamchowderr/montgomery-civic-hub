@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import {
   Map,
   MapClusterLayer,
@@ -209,7 +210,39 @@ export function ResearcherMap() {
   } | null>(null);
 
   const { geojson, isLoading, layers } = useMapData("researcher");
-  const { visibleLayers, toggle, isVisible } = useLayerVisibility(layers);
+  const { visibleLayers, toggle, setLayerVisible, isVisible } =
+    useLayerVisibility(layers);
+
+  useCopilotReadable({
+    description: "Researcher map layer visibility state",
+    value: {
+      availableLayers: layers.map((l) => ({ id: l.id, label: l.label })),
+      visibleLayers: Array.from(visibleLayers),
+    },
+  });
+
+  useCopilotAction({
+    name: "set_map_layer_visibility",
+    description: "Show or hide a specific map data layer on the researcher map",
+    parameters: [
+      {
+        name: "layerId",
+        type: "string",
+        description: "The layer ID to show or hide",
+        required: true,
+      },
+      {
+        name: "visible",
+        type: "boolean",
+        description: "Whether to show (true) or hide (false) the layer",
+        required: true,
+      },
+    ],
+    handler: ({ layerId, visible }) => {
+      setLayerVisible(layerId, visible);
+      return `Layer "${layerId}" is now ${visible ? "visible" : "hidden"}`;
+    },
+  });
 
   // Filter to visible Point features only
   const visibleFeatures =
@@ -245,7 +278,7 @@ export function ResearcherMap() {
   const isEmpty = clusterData.features.length === 0 && !isLoading;
 
   return (
-    <div data-tour-step-id="researcher-map" className="h-full">
+    <div data-tour-step-id="researcher-map" className="h-full min-h-[300px]">
       <div className="relative h-full">
         <Map
           viewport={viewport}

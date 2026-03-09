@@ -1,0 +1,91 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "maple",
+  "name": "Montgomery Civic Hub",
+  "colors": {
+    "primary": "#C25A30",
+    "light": "#D4754F",
+    "dark": "#1E3054"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Launch App",
+      "href": "https://montgomery-civic-hub.vercel.app"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guide",
+        "groups": [
+          {
+            "group": "Welcome",
+            "pages": ["introduction", "getting-started"]
+          },
+          {
+            "group": "Portals",
+            "pages": [
+              "portals/resident",
+              "portals/business",
+              "portals/city-staff",
+              "portals/researcher"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/ai-chat",
+              "features/interactive-map",
+              "features/data-tables",
+              "features/charts",
+              "features/year-filter",
+              "features/council-districts",
+              "features/dark-mode",
+              "features/onboarding-tour"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Data & Reference",
+        "groups": [
+          {
+            "group": "Data",
+            "pages": ["data/datasets", "data/glossary"]
+          },
+          {
+            "group": "Help",
+            "pages": ["faq", "privacy"]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "links": [
+      {
+        "header": "Platform",
+        "items": [
+          {
+            "label": "Launch App",
+            "href": "https://montgomery-civic-hub.vercel.app"
+          },
+          {
+            "label": "Privacy Policy",
+            "href": "https://montgomery-civic-hub.vercel.app/privacy"
+          },
+          {
+            "label": "Terms of Service",
+            "href": "https://montgomery-civic-hub.vercel.app/terms"
+          }
+        ]
+      }
+    ]
+  }
+}

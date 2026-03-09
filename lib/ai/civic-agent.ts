@@ -458,7 +458,7 @@ export class CivicAgent extends AbstractAgent {
     subscriber.complete();
   }
 
-  /** Stream a complete text as a TEXT_MESSAGE sequence with real async delays */
+  /** Stream a complete text as a TEXT_MESSAGE sequence with async delays */
   private async streamTextMessage(
     subscriber: Subscriber<BaseEvent>,
     text: string,
@@ -472,14 +472,15 @@ export class CivicAgent extends AbstractAgent {
       role: "assistant",
     } as BaseEvent);
 
-    // Stream in chunks with async delays for real streaming UX
-    const chunkSize = 50;
+    // Stream in small chunks with async delays for real streaming effect
+    const chunkSize = 20;
     for (let i = 0; i < text.length; i += chunkSize) {
       subscriber.next({
         type: EventType.TEXT_MESSAGE_CONTENT,
         messageId,
         delta: text.slice(i, i + chunkSize),
       } as BaseEvent);
+      // Yield to event loop so CopilotKit can flush each chunk to the client
       await new Promise((resolve) => setTimeout(resolve, 12));
     }
 

@@ -1,0 +1,44 @@
+---
+title: "Data Tables"
+sidebarTitle: "Tables"
+description: "Sort, filter, and browse Montgomery's datasets in interactive tables."
+icon: "table"
+---
+
+## Overview
+
+The Table tab in each portal provides a sortable, filterable view of Montgomery's datasets powered by TanStack React Table.
+
+## Features
+
+### Dataset Switching
+
+Each portal offers multiple datasets in its table view. Use the dataset selector dropdown to switch between available datasets. The AI can also switch datasets for you.
+
+### Sorting
+
+Click any column header to sort the data:
+- **First click** — Sort ascending
+- **Second click** — Sort descending
+- **Third click** — Remove sort
+
+### Filtering
+
+Tables respond to the global year filter. Adjust the year range to narrow results to a specific time period.
+
+### Pagination
+
+Large datasets are paginated for performance. Navigate between pages using the controls at the bottom of the table.
+
+## Portal-Specific Datasets
+
+| Portal | Available Table Datasets |
+|---|---|
+| **Resident** | 311 requests, health facilities, recycling locations, community centers, libraries |
+| **Business** | Business licenses, construction permits |
+| **City Staff** | Paving projects, code violations, 311 requests |
+| **Researcher** | 311 requests, business licenses, code violations |
+
+## Year Filter Integration
+
+Tables integrate with the [Year Filter](/features/year-filter). When you change the year range, the table automatically re-queries with the new date constraints.

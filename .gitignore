@@ -50,6 +50,7 @@ screenshots/
 *.tgz
 
 .vercel
+.env*.local
 
 # clerk configuration (can include secrets)
 /.clerk/

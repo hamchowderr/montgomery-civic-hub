@@ -1,0 +1,94 @@
+---
+title: "Dataset Catalog"
+sidebarTitle: "Datasets"
+description: "Complete catalog of 40+ datasets available in the Montgomery Civic Hub, organized by category."
+icon: "database"
+---
+
+All data comes from Montgomery, Alabama's public ArcGIS FeatureServer. No API keys or accounts required — this is open public data.
+
+## Live Operational Data
+
+Actively updated datasets reflecting current city activity.
+
+| Dataset | What's Tracked | Update Frequency |
+|---|---|---|
+| **311 Service Requests** | Citizen-reported issues — potholes, streetlights, trash, drainage | Real-time as filed |
+| **Business Licenses** | Active registrations, license types, DBA names, locations, NAICS codes | As issued/renewed |
+| **Construction Permits** | Building, electrical, mechanical, plumbing permits — status, cost, type | As issued |
+| **Code Violations** | Property code violations — nuisance, demolition, lien status | As recorded |
+| **Paving Projects** | Street resurfacing — status, contractor, mileage, completion date | As projects progress |
+| **Nuisance Reports** | Nuisance property complaints and demolition orders | As cases are filed |
+| **Garbage Collection Schedule** | Trash pickup zones and schedules | Seasonal updates |
+| **Curbside Trash** | Curbside pickup routes and service areas | Seasonal updates |
+
+## Facility & Infrastructure Data
+
+Physical locations that change infrequently.
+
+| Dataset | What's Tracked |
+|---|---|
+| **Police Facilities** | Police stations and substations |
+| **Fire Stations** | Fire department locations |
+| **Community Centers** | Public community center locations |
+| **Libraries** | Public library branches |
+| **Education Facilities** | Schools and educational institutions |
+| **Daycare Centers** | Licensed daycare facilities |
+| **Health Care Facilities** | Hospitals, clinics, health centers |
+| **City Parks** | Public parks and recreation areas |
+| **Recycling Locations** | Drop-off recycling sites |
+| **Tornado Sirens** | Emergency siren locations |
+| **City-Owned Properties** | Municipal property inventory |
+| **Entertainment Districts** | Designated entertainment zone boundaries |
+
+## Boundary & Planning Layers
+
+Geographic boundaries used as map overlays and spatial analysis.
+
+| Dataset | What's Tracked |
+|---|---|
+| **Council Districts** | 9 city council district boundaries |
+| **Neighborhoods** | Named neighborhood boundaries |
+| **Zoning** | Land use zoning classifications |
+| **Flood Hazard Areas** | FEMA flood zone boundaries |
+| **City Limit** | Montgomery city boundary |
+| **Parcels** | Individual land parcels |
+| **Historic Areas** | Designated historic districts |
+| **Zip Codes** | Postal code boundaries |
+
+## Census & Demographics (2020)
+
+Three levels of geographic granularity for demographic analysis.
+
+| Dataset | Granularity |
+|---|---|
+| **Census Tracts** | Largest — ~4,000 people each |
+| **Census Block Groups** | Medium — ~600-3,000 people each |
+| **Census Blocks** | Smallest — individual blocks |
+
+## Infrastructure Assessment
+
+| Dataset | What's Tracked |
+|---|---|
+| **Pavement Assessment 2025** | Road condition ratings and pavement quality scores |
+
+## Portal-to-Dataset Mapping
+
+Each portal surfaces different datasets in its stats, maps, tables, and charts:
+
+| Portal | Primary Datasets |
+|---|---|
+| **Resident** | 311 requests, health facilities, recycling locations, garbage schedule, community centers, libraries |
+| **Business** | Business licenses, construction permits, entertainment districts, zoning |
+| **City Staff** | Paving projects, code violations, 311 requests, pavement assessment, city-owned properties |
+| **Researcher** | 311 requests, business licenses, code violations, census data, all boundary layers |
+
+## Caching Strategy
+
+Data is cached at multiple levels for performance:
+
+| Layer | Duration | Scope |
+|---|---|---|
+| **Browser in-memory** | 5 minutes | Client-side map/table/chart queries |
+| **Convex database** | 15 minutes | AI chat ArcGIS tool calls |
+| **Web search cache** | 1 hour | Bright Data web search results |

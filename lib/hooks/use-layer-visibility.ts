@@ -22,10 +22,19 @@ export function useLayerVisibility(layers: MapLayer[]) {
     });
   }, []);
 
+  const setLayerVisible = useCallback((layerId: string, visible: boolean) => {
+    setVisibleLayers((prev) => {
+      const next = new Set(prev);
+      if (visible) next.add(layerId);
+      else next.delete(layerId);
+      return next;
+    });
+  }, []);
+
   const isVisible = useCallback(
     (layerId: string) => visibleLayers.has(layerId),
     [visibleLayers],
   );
 
-  return { visibleLayers, toggle, isVisible };
+  return { visibleLayers, toggle, setLayerVisible, isVisible };
 }

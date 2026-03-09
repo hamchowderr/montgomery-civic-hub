@@ -64,21 +64,20 @@ export function useCopilotChatStream(_portal: string, welcomeMessage: string) {
       return;
     }
 
-    // Show tool status from the most recent tool result or in-progress tool call
-    const lastMsg = rawMessages[rawMessages.length - 1];
-    if (lastMsg && lastMsg.role === "tool") {
-      // Extract a meaningful status from tool result content
-      const content =
-        typeof lastMsg.content === "string"
-          ? lastMsg.content
-          : JSON.stringify(lastMsg.content ?? "");
-      const toolName = lastMsg.name ?? "tool";
-      if (content.includes("features")) {
-        setToolStatus(`Queried ${toolName} — processing results...`);
-      } else {
-        setToolStatus(`Using ${toolName}...`);
+    // Find the most recent tool message — its content contains the status text
+    // (e.g., "Searching received_311_service_request...")
+    for (let i = rawMessages.length - 1; i >= 0; i--) {
+      const msg = rawMessages[i];
+      if (msg.role === "tool") {
+        // Use the content from TOOL_CALL_RESULT if available, else construct generic
+        const status = msg.content?.trim()
+          ? msg.content
+          : `Using ${msg.name ?? "tool"}...`;
+        setToolStatus(status);
+        return;
       }
-      return;
+      // Stop searching once we hit a non-tool message after the last user message
+      if (msg.role === "user" || msg.role === "assistant") break;
     }
 
     setToolStatus(null);

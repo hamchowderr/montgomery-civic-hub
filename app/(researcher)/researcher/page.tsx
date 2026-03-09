@@ -36,7 +36,7 @@ function ResearcherContent() {
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               Researcher Portal
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="hidden text-sm text-muted-foreground sm:block">
               Crime Trends, Demographics &amp; Public Safety Analysis
             </p>
           </div>

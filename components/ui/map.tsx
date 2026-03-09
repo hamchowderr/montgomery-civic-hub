@@ -263,7 +263,16 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     map.on("move", handleMove);
     setMapInstance(map);
 
+    // ResizeObserver keeps MapLibre in sync with container size changes
+    // (resizable panels, tab visibility, window resize). Without this,
+    // MapLibre renders with stale dimensions → white space when panning.
+    const ro = new ResizeObserver(() => {
+      map.resize();
+    });
+    ro.observe(containerRef.current);
+
     return () => {
+      ro.disconnect();
       clearStyleTimeout();
       map.off("load", loadHandler);
       map.off("styledata", styleDataHandler);
@@ -332,7 +341,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     <MapContext.Provider value={contextValue}>
       <div
         ref={containerRef}
-        className={cn("relative w-full h-full", className)}
+        className={cn("relative isolate w-full h-full", className)}
       >
         {!isLoaded && <DefaultLoader />}
         {/* SSR-safe: children render only when map is loaded on client */}

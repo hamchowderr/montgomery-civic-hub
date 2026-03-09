@@ -10,7 +10,7 @@ import {
 import { createPortal } from "react-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Table2, BarChart3, CalendarRange } from "lucide-react";
-import { useCopilotAction } from "@copilotkit/react-core";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { useYearFilter } from "@/lib/contexts/year-filter";
 import {
   Select,
@@ -21,8 +21,14 @@ import {
 } from "@/components/ui/select";
 
 // ── Layer filter slot context ─────────────────────────────────────────────────
+// Allows map components to portal their layer filter into the DataPanel header.
+
 const LayerFilterSlotContext = createContext<HTMLDivElement | null>(null);
 
+/**
+ * Renders children into the DataPanel header slot (next to the tab switcher).
+ * Must be used inside a DataPanel > mapContent tree.
+ */
 export function LayerFilterPortal({ children }: { children: ReactNode }) {
   const slot = useContext(LayerFilterSlotContext);
   if (!slot) return null;
@@ -53,6 +59,17 @@ export function DataPanel({
     setSlotNode(node);
   }, []);
 
+  // AI-readable: current data panel state
+  useCopilotReadable({
+    description: "Data panel state including active tab and year range filter",
+    value: {
+      activeTab,
+      yearRange: { from: yearRange.from, to: yearRange.to },
+      availableYears: yearOptions,
+    },
+  });
+
+  // AI action: switch tabs
   useCopilotAction({
     name: "switch_data_tab",
     description:
@@ -72,52 +89,75 @@ export function DataPanel({
     },
   });
 
+  // AI action: set year range filter
+  useCopilotAction({
+    name: "set_year_range",
+    description:
+      "Set the year range filter for all data queries (maps, tables, charts)",
+    parameters: [
+      {
+        name: "from",
+        type: "number",
+        description: "Start year (e.g. 2020)",
+        required: true,
+      },
+      {
+        name: "to",
+        type: "number",
+        description: "End year (e.g. 2024)",
+        required: true,
+      },
+    ],
+    handler: ({ from, to }) => {
+      setFrom(from);
+      setTo(to);
+      return `Year range set to ${from}–${to}`;
+    },
+  });
+
   return (
-    <div className="@container/data flex h-full flex-col">
+    <div className="flex h-full flex-col overflow-hidden bg-card">
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className="flex w-full flex-1 flex-col"
       >
-        {/* Header — compact on narrow, full on wide */}
-        <div className="flex items-center justify-between border-b px-2 py-1.5 @[500px]/data:px-4 @[500px]/data:py-2">
-          {/* Tabs — always visible, icon-only on narrow */}
-          <TabsList className="gap-0.5 @[400px]/data:gap-1">
+        <div className="border-b px-3 py-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+          <TabsList className="gap-1">
             <TabsTrigger
               value="map"
               data-tour-step-id={`${portalId}-map-view`}
-              className="gap-1 px-2 @[400px]/data:gap-2 @[400px]/data:px-4"
+              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <MapPin className="size-4" />
-              <span className="sr-only @[400px]/data:not-sr-only">Map</span>
+              <span className="hidden sm:inline">Map</span>
             </TabsTrigger>
             <TabsTrigger
               value="table"
               data-tour-step-id={`${portalId}-table-view`}
-              className="gap-1 px-2 @[400px]/data:gap-2 @[400px]/data:px-4"
+              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <Table2 className="size-4" />
-              <span className="sr-only @[400px]/data:not-sr-only">Table</span>
+              <span className="hidden sm:inline">Table</span>
             </TabsTrigger>
             <TabsTrigger
               value="chart"
               data-tour-step-id={`${portalId}-chart-view`}
-              className="gap-1 px-2 @[400px]/data:gap-2 @[400px]/data:px-4"
+              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <BarChart3 className="size-4" />
-              <span className="sr-only @[400px]/data:not-sr-only">Chart</span>
+              <span className="hidden sm:inline">Chart</span>
             </TabsTrigger>
           </TabsList>
-
-          {/* Filters — hidden on narrow, AI handles them instead */}
-          <div className="hidden @[520px]/data:flex items-center gap-2 @[600px]/data:gap-4">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Year filter */}
+            <div className="flex items-center gap-2">
               <CalendarRange className="size-3.5 text-muted-foreground" />
               <Select
                 value={String(yearRange.from)}
                 onValueChange={(v) => setFrom(Number(v))}
               >
-                <SelectTrigger className="h-7 w-[72px] text-xs">
+                <SelectTrigger className="h-7 w-[80px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -137,7 +177,7 @@ export function DataPanel({
                 value={String(yearRange.to)}
                 onValueChange={(v) => setTo(Number(v))}
               >
-                <SelectTrigger className="h-7 w-[72px] text-xs">
+                <SelectTrigger className="h-7 w-[80px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -153,14 +193,15 @@ export function DataPanel({
                 </SelectContent>
               </Select>
             </div>
-            {/* Layer filter slot — only when there's room */}
+            {/* Slot where map layer filter portals into */}
             <div
               ref={slotRef}
-              className="hidden @[700px]/data:flex items-center gap-4 [&>*+*]:border-l [&>*+*]:border-border [&>*+*]:pl-4"
+              className="flex items-center gap-4 [&>*+*]:border-l [&>*+*]:border-border [&>*+*]:pl-4"
             />
           </div>
         </div>
 
+        {/* forceMount all tabs to preserve state across switches (avoids MapLibre re-init, table scroll reset, etc.) */}
         <TabsContent
           value="map"
           forceMount

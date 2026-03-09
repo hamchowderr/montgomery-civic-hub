@@ -21,6 +21,22 @@ Each portal includes:
 - **Charts** — Recharts visualizations of portal-specific datasets
 - **Year Filter** — Global date range filter across all data views
 
+### AI-Controlled Interactivity
+
+The AI agent can control all interactive UI elements through CopilotKit actions:
+
+| Action                     | What the AI can do                                        |
+| -------------------------- | --------------------------------------------------------- |
+| `switch_data_tab`          | Switch between Map, Table, and Chart views                |
+| `set_year_range`           | Adjust the global year filter across all data views       |
+| `set_map_layer_visibility` | Show/hide individual data layers on the map               |
+| `select_table_dataset`     | Switch which dataset the data table displays              |
+| `set_chat_position`        | Move the chat panel to left or right side (desktop)       |
+| `toggle_chat_panel`        | Open/close the mobile chat sheet                          |
+| `toggle_council_districts` | Show/hide the 9-district council boundary overlay on maps |
+
+The AI is also aware of all current UI state (active tab, visible layers, selected dataset, year range, layout mode, district overlay status) via CopilotKit readables.
+
 ![Chat Demo](screenshots/fresh-chat-demo.png)
 
 ## Tech Stack
