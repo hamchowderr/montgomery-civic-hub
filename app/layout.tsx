@@ -13,6 +13,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://montgomery-civichub.otakusolutions.io"),
   title: "Montgomery Civic Hub",
   description: "A civic engagement platform for Montgomery County",
 };

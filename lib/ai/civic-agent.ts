@@ -288,7 +288,7 @@ export class CivicAgent extends AbstractAgent {
           stepName: `iteration-${stepCount}`,
         } as BaseEvent);
 
-        this.streamTextMessage(subscriber, textContent, threadId);
+        await this.streamTextMessage(subscriber, textContent, threadId);
         await this.persistAssistantMessage(threadId, textContent);
 
         subscriber.next({
@@ -458,12 +458,12 @@ export class CivicAgent extends AbstractAgent {
     subscriber.complete();
   }
 
-  /** Stream a complete text as a TEXT_MESSAGE sequence */
-  private streamTextMessage(
+  /** Stream a complete text as a TEXT_MESSAGE sequence with real async delays */
+  private async streamTextMessage(
     subscriber: Subscriber<BaseEvent>,
     text: string,
     _threadId: string,
-  ): void {
+  ): Promise<void> {
     const messageId = `msg-${Date.now()}`;
 
     subscriber.next({
@@ -472,7 +472,7 @@ export class CivicAgent extends AbstractAgent {
       role: "assistant",
     } as BaseEvent);
 
-    // Stream in chunks for smoother client rendering
+    // Stream in chunks with async delays for real streaming UX
     const chunkSize = 50;
     for (let i = 0; i < text.length; i += chunkSize) {
       subscriber.next({
@@ -480,6 +480,7 @@ export class CivicAgent extends AbstractAgent {
         messageId,
         delta: text.slice(i, i + chunkSize),
       } as BaseEvent);
+      await new Promise((resolve) => setTimeout(resolve, 12));
     }
 
     subscriber.next({

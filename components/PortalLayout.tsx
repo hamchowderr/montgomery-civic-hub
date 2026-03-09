@@ -1,26 +1,26 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import { Group, Panel, Separator } from "react-resizable-panels";
+import { useState, useRef, useCallback, type ReactNode } from "react";
 import { useCopilotChatStream } from "@/lib/hooks/use-copilot-chat-stream";
 import { ChatMessage } from "@/components/ChatMessage";
+import { ChatWidget } from "@/components/ChatWidget";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Send,
+  Sparkles,
+  GripVertical,
+  PanelLeft,
+  PanelRight,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Send,
-  Sparkles,
-  PanelLeft,
-  PanelRight,
-  GripVertical,
-} from "lucide-react";
 
 interface PortalLayoutProps {
   portal: string;
@@ -30,16 +30,6 @@ interface PortalLayoutProps {
   children: ReactNode;
 }
 
-function Handle() {
-  return (
-    <Separator className="relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2">
-      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-        <GripVertical className="h-2.5 w-2.5" />
-      </div>
-    </Separator>
-  );
-}
-
 export function PortalLayout({
   portal,
   chatTitle,
@@ -47,7 +37,12 @@ export function PortalLayout({
   chatPlaceholder,
   children,
 }: PortalLayoutProps) {
+  const [chatOpen, setChatOpen] = useState(false);
   const [chatSide, setChatSide] = useState<"left" | "right">("right");
+  const [sidebarWidth, setSidebarWidth] = useState<number | null>(null);
+  const dragging = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const {
     messages,
     input,
@@ -58,26 +53,55 @@ export function PortalLayout({
     scrollRef,
   } = useCopilotChatStream(portal, welcomeMessage);
 
+  /* ── Drag-to-resize handle ─────────────────────────────── */
+  const onPointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      e.preventDefault();
+      dragging.current = true;
+      const startX = e.clientX;
+      const startW = sidebarWidth ?? 320;
+
+      const onMove = (ev: PointerEvent) => {
+        if (!dragging.current) return;
+        const delta =
+          chatSide === "right" ? startX - ev.clientX : ev.clientX - startX;
+        const container = containerRef.current;
+        if (!container) return;
+        const maxW = container.offsetWidth * 0.5;
+        const newW = Math.max(240, Math.min(maxW, startW + delta));
+        setSidebarWidth(newW);
+      };
+
+      const onUp = () => {
+        dragging.current = false;
+        document.removeEventListener("pointermove", onMove);
+        document.removeEventListener("pointerup", onUp);
+      };
+
+      document.addEventListener("pointermove", onMove);
+      document.addEventListener("pointerup", onUp);
+    },
+    [sidebarWidth, chatSide],
+  );
+
   const chatContent = (
     <div
-      className="flex h-full flex-col border bg-card"
+      className="flex h-full flex-col overflow-hidden"
       data-tour-step-id={`${portal}-chat`}
     >
       {/* Chat header */}
-      <div className="flex items-center justify-between border-b px-4 py-3">
-        <div className="flex items-center gap-2">
-          <div className="flex size-6 items-center justify-center rounded bg-accent/10">
-            <Sparkles className="size-3.5 text-accent" />
-          </div>
-          <h3 className="text-sm font-semibold">{chatTitle}</h3>
+      <div className="flex items-center gap-2 border-b px-4 py-3">
+        <div className="flex size-6 items-center justify-center rounded bg-accent/10">
+          <Sparkles className="size-3.5 text-accent" />
         </div>
-        <TooltipProvider>
+        <h3 className="flex-1 text-sm font-semibold">{chatTitle}</h3>
+        <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-7"
+                className="hidden size-7 @[700px]/portal:inline-flex"
                 onClick={() =>
                   setChatSide((s) => (s === "right" ? "left" : "right"))
                 }
@@ -137,52 +161,43 @@ export function PortalLayout({
   );
 
   return (
-    <div className="min-h-0 flex-1">
-      <Group
-        key={chatSide}
-        orientation="horizontal"
-        style={{ display: "flex", height: "100%", width: "100%" }}
+    <div ref={containerRef} className="@container/portal min-h-0 flex-1">
+      <div
+        className={`flex h-full gap-3 ${chatSide === "left" ? "flex-row-reverse" : ""}`}
       >
-        {chatSide === "left" ? (
-          <>
-            <Panel
-              defaultSize="28%"
-              minSize="20%"
-              maxSize="50%"
-              className="overflow-hidden rounded-t-lg"
-            >
-              {chatContent}
-            </Panel>
-            <Handle />
-            <Panel
-              defaultSize="72%"
-              minSize="40%"
-              className="overflow-hidden rounded-t-lg"
-            >
-              <div className="h-full">{children}</div>
-            </Panel>
-          </>
-        ) : (
-          <>
-            <Panel
-              defaultSize="72%"
-              minSize="40%"
-              className="overflow-hidden rounded-t-lg"
-            >
-              <div className="h-full">{children}</div>
-            </Panel>
-            <Handle />
-            <Panel
-              defaultSize="28%"
-              minSize="20%"
-              maxSize="50%"
-              className="overflow-hidden rounded-t-lg"
-            >
-              {chatContent}
-            </Panel>
-          </>
-        )}
-      </Group>
+        {/* Data panel */}
+        <div className="min-w-0 flex-1 overflow-hidden rounded-lg border bg-card">
+          {children}
+        </div>
+
+        {/* Resize handle — only when sidebar is shown */}
+        <div
+          onPointerDown={onPointerDown}
+          className="
+            hidden @[700px]/portal:flex
+            w-1 cursor-col-resize items-center justify-center
+            rounded-full bg-border/40 hover:bg-accent/30 active:bg-accent/50
+            select-none touch-none
+          "
+        >
+          <GripVertical className="size-3 text-muted-foreground" />
+        </div>
+
+        {/* Chat sidebar — shown when container is wide enough */}
+        <aside
+          className="hidden @[700px]/portal:flex shrink-0 flex-col overflow-hidden rounded-lg border bg-card"
+          style={{ width: sidebarWidth ?? "clamp(280px, 28%, 420px)" }}
+        >
+          {chatContent}
+        </aside>
+      </div>
+
+      {/* Floating chat widget — visible only when sidebar is hidden (narrow) */}
+      <div className="@[700px]/portal:hidden">
+        <ChatWidget open={chatOpen} onToggle={() => setChatOpen((o) => !o)}>
+          {chatContent}
+        </ChatWidget>
+      </div>
     </div>
   );
 }

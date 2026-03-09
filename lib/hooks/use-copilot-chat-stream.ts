@@ -64,9 +64,20 @@ export function useCopilotChatStream(_portal: string, welcomeMessage: string) {
       return;
     }
 
+    // Show tool status from the most recent tool result or in-progress tool call
     const lastMsg = rawMessages[rawMessages.length - 1];
     if (lastMsg && lastMsg.role === "tool") {
-      setToolStatus(`Using ${lastMsg.name ?? "tool"}...`);
+      // Extract a meaningful status from tool result content
+      const content =
+        typeof lastMsg.content === "string"
+          ? lastMsg.content
+          : JSON.stringify(lastMsg.content ?? "");
+      const toolName = lastMsg.name ?? "tool";
+      if (content.includes("features")) {
+        setToolStatus(`Queried ${toolName} — processing results...`);
+      } else {
+        setToolStatus(`Using ${toolName}...`);
+      }
       return;
     }
 

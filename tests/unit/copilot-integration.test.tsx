@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { CopilotKit } from "@copilotkit/react-core";
+import { YearFilterProvider } from "@/lib/contexts/year-filter";
 
 // Mock maplibre-gl to avoid canvas issues in jsdom
 vi.mock("maplibre-gl", () => ({
@@ -19,7 +20,7 @@ function CopilotWrapper({
 }) {
   return (
     <CopilotKit runtimeUrl="/api/copilotkit" agent={agent}>
-      {children}
+      <YearFilterProvider>{children}</YearFilterProvider>
     </CopilotKit>
   );
 }

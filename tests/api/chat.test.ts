@@ -30,7 +30,7 @@ describe("POST /api/chat/[portal]", () => {
       body: JSON.stringify({ message: "Hello" }),
     });
     const response = await POST(request as any, {
-      params: { portal: "invalid" },
+      params: Promise.resolve({ portal: "invalid" }),
     });
     expect(response.status).toBe(400);
   });
@@ -42,7 +42,7 @@ describe("POST /api/chat/[portal]", () => {
       body: JSON.stringify({}),
     });
     const response = await POST(request as any, {
-      params: { portal: "resident" },
+      params: Promise.resolve({ portal: "resident" }),
     });
     expect(response.status).toBe(400);
   });
@@ -54,7 +54,7 @@ describe("POST /api/chat/[portal]", () => {
       body: JSON.stringify({ message: "What are the crime stats?" }),
     });
     const response = await POST(request as any, {
-      params: { portal: "resident" },
+      params: Promise.resolve({ portal: "resident" }),
     });
     expect(response.status).toBe(200);
 

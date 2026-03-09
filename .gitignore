@@ -25,6 +25,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env.production
 
 # vercel
 .vercel
@@ -49,3 +50,6 @@ screenshots/
 *.tgz
 
 .vercel
+
+# clerk configuration (can include secrets)
+/.clerk/

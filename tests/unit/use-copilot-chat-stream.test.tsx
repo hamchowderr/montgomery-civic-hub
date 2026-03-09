@@ -3,18 +3,19 @@ import { renderHook, act } from "@testing-library/react";
 import { CopilotKit } from "@copilotkit/react-core";
 import type { ReactNode } from "react";
 
-// Mock the CopilotKit chat hook
-const mockAppendMessage = vi.fn();
-const mockVisibleMessages: any[] = [];
+// Mock the CopilotKit chat hook (the actual code uses useCopilotChatInternal)
+const mockSendMessage = vi.fn();
+const mockMessages: any[] = [];
 
 vi.mock("@copilotkit/react-core", async (importOriginal) => {
   const actual = (await importOriginal()) as any;
   return {
     ...actual,
-    useCopilotChat: vi.fn(() => ({
-      visibleMessages: mockVisibleMessages,
-      appendMessage: mockAppendMessage,
+    useCopilotChatInternal: vi.fn(() => ({
+      messages: mockMessages,
+      sendMessage: mockSendMessage,
       isLoading: false,
+      isAvailable: true,
     })),
   };
 });
@@ -32,7 +33,7 @@ function Wrapper({ children }: { children: ReactNode }) {
 describe("useCopilotChatStream", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockVisibleMessages.length = 0;
+    mockMessages.length = 0;
   });
 
   it("returns the expected interface shape", () => {
@@ -130,9 +131,9 @@ describe("useCopilotChatStream", () => {
       } as any);
     });
 
-    expect(mockAppendMessage).toHaveBeenCalledTimes(1);
-    const appendedMsg = mockAppendMessage.mock.calls[0][0];
-    expect(appendedMsg.content).toBe("Test message");
+    expect(mockSendMessage).toHaveBeenCalledTimes(1);
+    const sentMsg = mockSendMessage.mock.calls[0][0];
+    expect(sentMsg.content).toBe("Test message");
   });
 
   it("handleSubmit does nothing for empty/whitespace input", async () => {
@@ -148,7 +149,7 @@ describe("useCopilotChatStream", () => {
       } as any);
     });
 
-    expect(mockAppendMessage).not.toHaveBeenCalled();
+    expect(mockSendMessage).not.toHaveBeenCalled();
 
     // Whitespace-only input
     act(() => {
@@ -161,17 +162,20 @@ describe("useCopilotChatStream", () => {
       } as any);
     });
 
-    expect(mockAppendMessage).not.toHaveBeenCalled();
+    expect(mockSendMessage).not.toHaveBeenCalled();
   });
 
-  it("handles undefined visibleMessages gracefully", async () => {
-    // Re-mock useCopilotChat to return undefined visibleMessages
+  it("handles undefined messages gracefully", async () => {
+    // Re-mock useCopilotChatInternal to return undefined messages
     const mod = await import("@copilotkit/react-core");
-    const spy = vi.spyOn(mod, "useCopilotChat").mockReturnValueOnce({
-      visibleMessages: undefined as any,
-      appendMessage: mockAppendMessage,
-      isLoading: false,
-    } as any);
+    const spy = vi
+      .spyOn(mod, "useCopilotChatInternal" as any)
+      .mockReturnValueOnce({
+        messages: undefined,
+        sendMessage: mockSendMessage,
+        isLoading: false,
+        isAvailable: true,
+      });
 
     const { result } = renderHook(
       () => useCopilotChatStream("resident", "Welcome!"),
