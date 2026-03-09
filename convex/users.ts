@@ -69,12 +69,23 @@ export const setUserRole = mutation({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
 
-    const user = await ctx.db
+    let user = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
       .unique();
 
-    if (!user) throw new Error("User not found");
+    // Create user if webhook hasn't fired yet (common in local dev)
+    if (!user) {
+      const userId = await ctx.db.insert("users", {
+        clerkId: identity.subject,
+        email: identity.email ?? "",
+        name: identity.name,
+        imageUrl: identity.pictureUrl,
+        role: args.role,
+        createdAt: Date.now(),
+      });
+      return;
+    }
 
     await ctx.db.patch(user._id, { role: args.role });
   },
