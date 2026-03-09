@@ -16,9 +16,21 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
+import {
+  X,
+  Minus,
+  Plus,
+  Locate,
+  Maximize,
+  Loader2,
+  Layers,
+  ChevronRight,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { LayerFilterPortal } from "@/components/DataPanel";
 
 // Check document class for theme (works with next-themes, etc.)
 function getDocumentTheme(): Theme | null {
@@ -38,7 +50,7 @@ function getSystemTheme(): Theme {
 
 function useResolvedTheme(themeProp?: "light" | "dark"): "light" | "dark" {
   const [detectedTheme, setDetectedTheme] = useState<"light" | "dark">(
-    () => getDocumentTheme() ?? getSystemTheme()
+    () => getDocumentTheme() ?? getSystemTheme(),
   );
 
   useEffect(() => {
@@ -173,7 +185,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     onViewportChange,
     ...props
   },
-  ref
+  ref,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<MapLibreGL.Map | null>(null);
@@ -194,7 +206,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       dark: styles?.dark ?? defaultStyles.dark,
       light: styles?.light ?? defaultStyles.light,
     }),
-    [styles]
+    [styles],
   );
 
   // Expose the map instance to the parent component
@@ -313,7 +325,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       map: mapInstance,
       isLoaded: isLoaded && isStyleLoaded,
     }),
-    [mapInstance, isLoaded, isStyleLoaded]
+    [mapInstance, isLoaded, isStyleLoaded],
   );
 
   return (
@@ -503,7 +515,7 @@ function MarkerContent({ children, className }: MarkerContentProps) {
     <div className={cn("relative cursor-pointer", className)}>
       {children || <DefaultMarkerIcon />}
     </div>,
-    marker.getElement()
+    marker.getElement(),
   );
 }
 
@@ -576,7 +588,7 @@ function MarkerPopup({
     <div
       className={cn(
         "relative rounded-md border bg-popover p-3 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
-        className
+        className,
       )}
     >
       {closeButton && (
@@ -592,7 +604,7 @@ function MarkerPopup({
       )}
       {children}
     </div>,
-    container
+    container,
   );
 }
 
@@ -662,12 +674,12 @@ function MarkerTooltip({
     <div
       className={cn(
         "rounded-md bg-foreground px-2 py-1 text-xs text-background shadow-md animate-in fade-in-0 zoom-in-95",
-        className
+        className,
       )}
     >
       {children}
     </div>,
-    container
+    container,
   );
 }
 
@@ -696,7 +708,7 @@ function MarkerLabel({
         "absolute left-1/2 -translate-x-1/2 whitespace-nowrap",
         "text-[10px] font-medium text-foreground",
         positionClasses[position],
-        className
+        className,
       )}
     >
       {children}
@@ -754,7 +766,7 @@ function ControlButton({
       type="button"
       className={cn(
         "flex items-center justify-center size-8 hover:bg-accent dark:hover:bg-accent/40 transition-colors",
-        disabled && "opacity-50 pointer-events-none cursor-not-allowed"
+        disabled && "opacity-50 pointer-events-none cursor-not-allowed",
       )}
       disabled={disabled}
     >
@@ -807,7 +819,7 @@ function MapControls({
         (error) => {
           console.error("Error getting location:", error);
           setWaitingForLocation(false);
-        }
+        },
       );
     }
   }, [map, onLocate]);
@@ -827,7 +839,7 @@ function MapControls({
       className={cn(
         "absolute z-10 flex flex-col gap-1.5",
         positionClasses[position],
-        className
+        className,
       )}
     >
       {showZoom && (
@@ -1002,7 +1014,7 @@ function MapPopup({
     <div
       className={cn(
         "relative rounded-md border bg-popover p-3 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
-        className
+        className,
       )}
     >
       {closeButton && (
@@ -1018,7 +1030,7 @@ function MapPopup({
       )}
       {children}
     </div>,
-    container
+    container,
   );
 }
 
@@ -1164,7 +1176,7 @@ function MapRoute({
 }
 
 type MapClusterLayerProps<
-  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties
+  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
 > = {
   /** GeoJSON FeatureCollection data or URL to fetch GeoJSON from */
   data: string | GeoJSON.FeatureCollection<GeoJSON.Point, P>;
@@ -1181,18 +1193,18 @@ type MapClusterLayerProps<
   /** Callback when an unclustered point is clicked */
   onPointClick?: (
     feature: GeoJSON.Feature<GeoJSON.Point, P>,
-    coordinates: [number, number]
+    coordinates: [number, number],
   ) => void;
   /** Callback when a cluster is clicked. If not provided, zooms into the cluster */
   onClusterClick?: (
     clusterId: number,
     coordinates: [number, number],
-    pointCount: number
+    pointCount: number,
   ) => void;
 };
 
 function MapClusterLayer<
-  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties
+  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
 >({
   data,
   clusterMaxZoom = 14,
@@ -1369,7 +1381,7 @@ function MapClusterLayer<
     const handleClusterClick = async (
       e: MapLibreGL.MapMouseEvent & {
         features?: MapLibreGL.MapGeoJSONFeature[];
-      }
+      },
     ) => {
       const features = map.queryRenderedFeatures(e.point, {
         layers: [clusterLayerId],
@@ -1381,7 +1393,7 @@ function MapClusterLayer<
       const pointCount = feature.properties?.point_count as number;
       const coordinates = (feature.geometry as GeoJSON.Point).coordinates as [
         number,
-        number
+        number,
       ];
 
       if (onClusterClick) {
@@ -1401,7 +1413,7 @@ function MapClusterLayer<
     const handlePointClick = (
       e: MapLibreGL.MapMouseEvent & {
         features?: MapLibreGL.MapGeoJSONFeature[];
-      }
+      },
     ) => {
       if (!onPointClick || !e.features?.length) return;
 
@@ -1417,7 +1429,7 @@ function MapClusterLayer<
 
       onPointClick(
         feature as unknown as GeoJSON.Feature<GeoJSON.Point, P>,
-        coordinates
+        coordinates,
       );
     };
 
@@ -1465,6 +1477,648 @@ function MapClusterLayer<
   return null;
 }
 
+type MapPolygonLayerProps = {
+  /** Optional unique identifier for the polygon layer */
+  id?: string;
+  /** GeoJSON FeatureCollection of Polygon/MultiPolygon features */
+  data: GeoJSON.FeatureCollection;
+  /** Fill color as CSS color value (default: "#a855f7") */
+  fillColor?: string;
+  /** Fill opacity from 0 to 1 (default: 0.25) */
+  fillOpacity?: number;
+  /** Outline color as CSS color value (default: same as fillColor) */
+  outlineColor?: string;
+  /** Outline width in pixels (default: 2) */
+  outlineWidth?: number;
+  /** Outline opacity from 0 to 1 (default: 0.8) */
+  outlineOpacity?: number;
+  /** Whether the layer is interactive - shows pointer cursor on hover (default: true) */
+  interactive?: boolean;
+  /** Callback when a polygon feature is clicked */
+  onClick?: (feature: GeoJSON.Feature) => void;
+};
+
+function MapPolygonLayer({
+  id: propId,
+  data,
+  fillColor = "#a855f7",
+  fillOpacity = 0.25,
+  outlineColor,
+  outlineWidth = 2,
+  outlineOpacity = 0.8,
+  interactive = true,
+  onClick,
+}: MapPolygonLayerProps) {
+  const { map, isLoaded } = useMap();
+  const autoId = useId();
+  const id = propId ?? autoId;
+  const sourceId = `polygon-source-${id}`;
+  const fillLayerId = `polygon-fill-${id}`;
+  const outlineLayerId = `polygon-outline-${id}`;
+
+  const resolvedOutlineColor = outlineColor ?? fillColor;
+
+  // Add source and layers on mount
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    map.addSource(sourceId, {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: [],
+      },
+    });
+
+    map.addLayer({
+      id: fillLayerId,
+      type: "fill",
+      source: sourceId,
+      paint: {
+        "fill-color": fillColor,
+        "fill-opacity": fillOpacity,
+      },
+    });
+
+    map.addLayer({
+      id: outlineLayerId,
+      type: "line",
+      source: sourceId,
+      paint: {
+        "line-color": resolvedOutlineColor,
+        "line-width": outlineWidth,
+        "line-opacity": outlineOpacity,
+      },
+    });
+
+    return () => {
+      try {
+        if (map.getLayer(outlineLayerId)) map.removeLayer(outlineLayerId);
+        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+        // ignore
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, map]);
+
+  // Update source data when data prop changes
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
+    if (source) {
+      source.setData(data);
+    }
+  }, [isLoaded, map, data, sourceId]);
+
+  // Update paint properties when style props change
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    if (map.getLayer(fillLayerId)) {
+      map.setPaintProperty(fillLayerId, "fill-color", fillColor);
+      map.setPaintProperty(fillLayerId, "fill-opacity", fillOpacity);
+    }
+    if (map.getLayer(outlineLayerId)) {
+      map.setPaintProperty(outlineLayerId, "line-color", resolvedOutlineColor);
+      map.setPaintProperty(outlineLayerId, "line-width", outlineWidth);
+      map.setPaintProperty(outlineLayerId, "line-opacity", outlineOpacity);
+    }
+  }, [
+    isLoaded,
+    map,
+    fillLayerId,
+    outlineLayerId,
+    fillColor,
+    fillOpacity,
+    resolvedOutlineColor,
+    outlineWidth,
+    outlineOpacity,
+  ]);
+
+  // Handle click and hover events
+  useEffect(() => {
+    if (!isLoaded || !map || !interactive) return;
+
+    const handleClick = (
+      e: MapLibreGL.MapMouseEvent & {
+        features?: MapLibreGL.MapGeoJSONFeature[];
+      },
+    ) => {
+      if (!onClick) return;
+
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [fillLayerId],
+      });
+      if (features.length) {
+        onClick(features[0] as unknown as GeoJSON.Feature);
+      }
+    };
+    const handleMouseEnter = () => {
+      map.getCanvas().style.cursor = "pointer";
+    };
+    const handleMouseLeave = () => {
+      map.getCanvas().style.cursor = "";
+    };
+
+    map.on("click", fillLayerId, handleClick);
+    map.on("mouseenter", fillLayerId, handleMouseEnter);
+    map.on("mouseleave", fillLayerId, handleMouseLeave);
+
+    return () => {
+      map.off("click", fillLayerId, handleClick);
+      map.off("mouseenter", fillLayerId, handleMouseEnter);
+      map.off("mouseleave", fillLayerId, handleMouseLeave);
+    };
+  }, [isLoaded, map, fillLayerId, onClick, interactive]);
+
+  return null;
+}
+
+type MapLineLayerProps = {
+  /** Optional unique identifier for the line layer */
+  id?: string;
+  /** GeoJSON FeatureCollection of LineString/MultiLineString features */
+  data: GeoJSON.FeatureCollection;
+  /** Line color as CSS color value (default: "#f59e0b") */
+  color?: string;
+  /** Line width in pixels (default: 3) */
+  width?: number;
+  /** Line opacity from 0 to 1 (default: 0.8) */
+  opacity?: number;
+  /** Whether the layer is interactive - shows pointer cursor on hover (default: true) */
+  interactive?: boolean;
+  /** Callback when a line feature is clicked */
+  onClick?: (feature: GeoJSON.Feature) => void;
+};
+
+function MapLineLayer({
+  id: propId,
+  data,
+  color = "#f59e0b",
+  width = 3,
+  opacity = 0.8,
+  interactive = true,
+  onClick,
+}: MapLineLayerProps) {
+  const { map, isLoaded } = useMap();
+  const autoId = useId();
+  const id = propId ?? autoId;
+  const sourceId = `line-source-${id}`;
+  const layerId = `line-layer-${id}`;
+
+  // Add source and layer on mount
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    map.addSource(sourceId, {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: [],
+      },
+    });
+
+    map.addLayer({
+      id: layerId,
+      type: "line",
+      source: sourceId,
+      layout: { "line-join": "round", "line-cap": "round" },
+      paint: {
+        "line-color": color,
+        "line-width": width,
+        "line-opacity": opacity,
+      },
+    });
+
+    return () => {
+      try {
+        if (map.getLayer(layerId)) map.removeLayer(layerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+        // ignore
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, map]);
+
+  // Update source data when data prop changes
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
+    if (source) {
+      source.setData(data);
+    }
+  }, [isLoaded, map, data, sourceId]);
+
+  // Update paint properties when style props change
+  useEffect(() => {
+    if (!isLoaded || !map || !map.getLayer(layerId)) return;
+
+    map.setPaintProperty(layerId, "line-color", color);
+    map.setPaintProperty(layerId, "line-width", width);
+    map.setPaintProperty(layerId, "line-opacity", opacity);
+  }, [isLoaded, map, layerId, color, width, opacity]);
+
+  // Handle click and hover events
+  useEffect(() => {
+    if (!isLoaded || !map || !interactive) return;
+
+    const handleClick = (
+      e: MapLibreGL.MapMouseEvent & {
+        features?: MapLibreGL.MapGeoJSONFeature[];
+      },
+    ) => {
+      if (!onClick) return;
+
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [layerId],
+      });
+      if (features.length) {
+        onClick(features[0] as unknown as GeoJSON.Feature);
+      }
+    };
+    const handleMouseEnter = () => {
+      map.getCanvas().style.cursor = "pointer";
+    };
+    const handleMouseLeave = () => {
+      map.getCanvas().style.cursor = "";
+    };
+
+    map.on("click", layerId, handleClick);
+    map.on("mouseenter", layerId, handleMouseEnter);
+    map.on("mouseleave", layerId, handleMouseLeave);
+
+    return () => {
+      map.off("click", layerId, handleClick);
+      map.off("mouseenter", layerId, handleMouseEnter);
+      map.off("mouseleave", layerId, handleMouseLeave);
+    };
+  }, [isLoaded, map, layerId, onClick, interactive]);
+
+  return null;
+}
+
+// ── Layer category definitions per portal ─────────────────────────────────────
+
+interface LayerCategory {
+  label: string;
+  layerIds: string[];
+}
+
+const PORTAL_CATEGORIES: Record<string, LayerCategory[]> = {
+  resident: [
+    {
+      label: "Reports",
+      layerIds: ["311-requests", "code-violations", "nuisance"],
+    },
+    {
+      label: "Services",
+      layerIds: [
+        "health-care",
+        "police",
+        "fire-stations",
+        "community-centers",
+        "libraries",
+        "education",
+        "daycare",
+        "recycling",
+        "tornado-sirens",
+      ],
+    },
+    { label: "Properties", layerIds: ["city-properties", "parks"] },
+    {
+      label: "Zones",
+      layerIds: ["garbage-schedule", "curbside-trash", "flood-zones"],
+    },
+  ],
+  business: [
+    {
+      label: "Permits & Licenses",
+      layerIds: ["permits", "business-licenses"],
+    },
+    { label: "Properties", layerIds: ["city-properties"] },
+    {
+      label: "Districts & Zones",
+      layerIds: ["entertainment-districts", "zoning", "flood-zones"],
+    },
+  ],
+  citystaff: [
+    {
+      label: "Reports",
+      layerIds: ["311-requests", "code-violations", "nuisance"],
+    },
+    { label: "Infrastructure", layerIds: ["paving", "pavement"] },
+    {
+      label: "Facilities",
+      layerIds: [
+        "police",
+        "fire-stations",
+        "city-properties",
+        "tornado-sirens",
+      ],
+    },
+  ],
+  researcher: [
+    {
+      label: "Data Points",
+      layerIds: [
+        "311-requests",
+        "code-violations",
+        "nuisance",
+        "business-licenses",
+        "permits",
+        "city-properties",
+      ],
+    },
+    { label: "Boundaries", layerIds: ["neighborhoods", "census-tracts"] },
+  ],
+};
+
+// ── Legend item type (matches StatusLegend) ────────────────────────────────────
+
+interface LegendItem {
+  color: string;
+  label: string;
+}
+
+// ── MapLayerFilter ────────────────────────────────────────────────────────────
+
+type MapLayerFilterProps = {
+  /** Array of layer definitions to show in the filter */
+  layers: { id: string; label: string; color: string; type: string }[];
+  /** Set of currently visible layer IDs */
+  visibleLayers: Set<string>;
+  /** Callback when a layer is toggled */
+  onToggle: (layerId: string) => void;
+  /** Portal name for grouping layers into categories */
+  portal?: string;
+  /** Optional status legend items to display at the bottom */
+  legendItems?: LegendItem[];
+  /** Additional CSS classes for the filter container */
+  className?: string;
+};
+
+function LayerCategoryGroup({
+  category,
+  layers,
+  visibleLayers,
+  onToggle,
+}: {
+  category: LayerCategory;
+  layers: { id: string; label: string; color: string; type: string }[];
+  visibleLayers: Set<string>;
+  onToggle: (layerId: string) => void;
+}) {
+  const [expanded, setExpanded] = useState(true);
+  const categoryLayers = layers.filter((l) => category.layerIds.includes(l.id));
+  if (categoryLayers.length === 0) return null;
+
+  const visibleCount = categoryLayers.filter((l) =>
+    visibleLayers.has(l.id),
+  ).length;
+  const allVisible = visibleCount === categoryLayers.length;
+
+  const toggleAll = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // If all visible, hide all. Otherwise show all.
+    for (const layer of categoryLayers) {
+      const isVis = visibleLayers.has(layer.id);
+      if (allVisible && isVis) onToggle(layer.id);
+      if (!allVisible && !isVis) onToggle(layer.id);
+    }
+  };
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center gap-1 w-full px-1 py-0.5 rounded hover:bg-muted/50 transition-colors group"
+      >
+        <ChevronRight
+          className={cn(
+            "h-3 w-3 shrink-0 text-muted-foreground transition-transform duration-200",
+            expanded && "rotate-90",
+          )}
+        />
+        <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">
+          {category.label}
+        </span>
+        <span className="text-[0.6rem] text-muted-foreground/60 ml-auto mr-1 tabular-nums">
+          {visibleCount}/{categoryLayers.length}
+        </span>
+        <button
+          type="button"
+          onClick={toggleAll}
+          className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded hover:bg-muted"
+          title={allVisible ? "Hide all" : "Show all"}
+        >
+          {allVisible ? (
+            <EyeOff className="h-2.5 w-2.5 text-muted-foreground" />
+          ) : (
+            <Eye className="h-2.5 w-2.5 text-muted-foreground" />
+          )}
+        </button>
+      </button>
+      {expanded && (
+        <div className="flex flex-col gap-px pl-3 mt-px">
+          {categoryLayers.map((layer) => {
+            const isVisible = visibleLayers.has(layer.id);
+            return (
+              <button
+                key={layer.id}
+                type="button"
+                onClick={() => onToggle(layer.id)}
+                className="flex items-center gap-1.5 w-full px-1.5 py-[3px] rounded hover:bg-muted/50 transition-colors"
+              >
+                <span
+                  className="h-2 w-2 rounded-full shrink-0 transition-opacity"
+                  style={{
+                    backgroundColor: layer.color,
+                    opacity: isVisible ? 1 : 0.25,
+                  }}
+                />
+                <span
+                  className={cn(
+                    "text-[0.7rem] leading-tight transition-colors",
+                    !isVisible && "text-muted-foreground/50 line-through",
+                  )}
+                >
+                  {layer.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MapLayerFilterContent({
+  layers,
+  visibleLayers,
+  onToggle,
+  portal,
+  legendItems,
+  className,
+}: Omit<MapLayerFilterProps, "position">) {
+  const [open, setOpen] = useState(false);
+  const categories = portal ? PORTAL_CATEGORIES[portal] : undefined;
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const totalVisible = layers.filter((l) => visibleLayers.has(l.id)).length;
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  return (
+    <div ref={panelRef} className={cn("relative", className)}>
+      {/* Toggle button */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={cn(
+          "flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs hover:bg-muted/50 transition-colors",
+          open && "bg-muted/50",
+        )}
+      >
+        <Layers className="h-3 w-3 text-muted-foreground" />
+        <span className="font-medium">Layers</span>
+        <span className="text-[0.65rem] text-muted-foreground tabular-nums">
+          {totalVisible}/{layers.length}
+        </span>
+        <ChevronRight
+          className={cn(
+            "h-3 w-3 text-muted-foreground transition-transform duration-200",
+            open && "rotate-90",
+          )}
+        />
+      </button>
+
+      {/* Dropdown panel */}
+      {open && (
+        <div className="absolute right-0 top-full mt-1 z-50 rounded-lg border bg-popover/95 backdrop-blur shadow-lg w-56 max-h-[380px] flex flex-col">
+          {/* Scrollable body */}
+          <div className="overflow-y-auto flex-1 p-1.5 space-y-1">
+            {categories ? (
+              categories.map((cat) => (
+                <LayerCategoryGroup
+                  key={cat.label}
+                  category={cat}
+                  layers={layers}
+                  visibleLayers={visibleLayers}
+                  onToggle={onToggle}
+                />
+              ))
+            ) : (
+              /* Fallback: flat list for unknown portals */
+              <div className="flex flex-col gap-px">
+                {layers.map((layer) => {
+                  const isVisible = visibleLayers.has(layer.id);
+                  return (
+                    <button
+                      key={layer.id}
+                      type="button"
+                      onClick={() => onToggle(layer.id)}
+                      className="flex items-center gap-1.5 w-full px-1.5 py-[3px] rounded hover:bg-muted/50 transition-colors"
+                    >
+                      <span
+                        className="h-2 w-2 rounded-full shrink-0 transition-opacity"
+                        style={{
+                          backgroundColor: layer.color,
+                          opacity: isVisible ? 1 : 0.25,
+                        }}
+                      />
+                      <span
+                        className={cn(
+                          "text-[0.7rem] leading-tight transition-colors",
+                          !isVisible && "text-muted-foreground/50 line-through",
+                        )}
+                      >
+                        {layer.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Status legend section */}
+          {legendItems && legendItems.length > 0 && (
+            <div className="border-t px-2.5 py-1.5">
+              <div className="text-[0.6rem] font-semibold uppercase tracking-widest text-muted-foreground mb-1">
+                Status
+              </div>
+              <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                {legendItems.map((item) => (
+                  <div key={item.label} className="flex items-center gap-1">
+                    <span
+                      className="h-2 w-2 rounded-full shrink-0"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-[0.65rem] text-muted-foreground">
+                      {item.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MapLayerFilter(props: MapLayerFilterProps) {
+  const { map } = useMap();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    function onFullscreenChange() {
+      const container = map?.getContainer();
+      setIsFullscreen(
+        !!document.fullscreenElement &&
+          document.fullscreenElement === container,
+      );
+    }
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, [map]);
+
+  // In fullscreen: render inline on the map (absolute positioned)
+  if (isFullscreen) {
+    return (
+      <div className="absolute z-10 top-3 left-3">
+        <MapLayerFilterContent {...props} />
+      </div>
+    );
+  }
+
+  // Normal mode: portal into DataPanel header
+  return (
+    <LayerFilterPortal>
+      <MapLayerFilterContent {...props} />
+    </LayerFilterPortal>
+  );
+}
+
 export {
   Map,
   useMap,
@@ -1477,6 +2131,9 @@ export {
   MapControls,
   MapRoute,
   MapClusterLayer,
+  MapPolygonLayer,
+  MapLineLayer,
+  MapLayerFilter,
 };
 
 export type { MapRef, MapViewport };

@@ -34,4 +34,36 @@ export default defineSchema({
     portals: v.array(v.string()),
     fields: v.any(),
   }).index("by_name", ["name"]),
+
+  portal_stats_cache: defineTable({
+    portal: v.string(),
+    stats: v.array(
+      v.object({
+        title: v.string(),
+        value: v.string(),
+        delta: v.optional(v.string()),
+      }),
+    ),
+    fetchedAt: v.number(),
+  }).index("by_portal", ["portal"]),
+
+  map_features_cache: defineTable({
+    portal: v.string(),
+    geojson: v.any(),
+    layers: v.array(
+      v.object({
+        id: v.string(),
+        label: v.string(),
+        color: v.string(),
+        type: v.string(),
+      }),
+    ),
+    fetchedAt: v.number(),
+  }).index("by_portal", ["portal"]),
+
+  chart_data_cache: defineTable({
+    chartId: v.string(),
+    data: v.any(),
+    fetchedAt: v.number(),
+  }).index("by_chartId", ["chartId"]),
 });

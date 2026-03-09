@@ -12,18 +12,26 @@ export const tours: Tour[] = [
         side: "bottom",
       },
       {
-        id: "resident-stats",
-        title: "Live City Stats",
+        id: "resident-map-view",
+        title: "Map View",
         content:
-          "These cards show real-time data pulled directly from City of Montgomery ArcGIS datasets.",
+          "See service requests and safety data plotted on an interactive map of Montgomery.",
         side: "bottom",
+        clickTarget: true,
       },
       {
-        id: "resident-map",
-        title: "Neighborhood Safety Map",
-        content:
-          "Crime incidents and city service locations plotted live from ArcGIS. Clusters expand as you zoom in.",
-        side: "left",
+        id: "resident-table-view",
+        title: "Table View",
+        content: "Browse data in a sortable table for quick lookups.",
+        side: "bottom",
+        clickTarget: true,
+      },
+      {
+        id: "resident-chart-view",
+        title: "Chart View",
+        content: "Visualize trends and patterns with interactive charts.",
+        side: "bottom",
+        clickTarget: true,
       },
       {
         id: "resident-chat-input",
@@ -53,18 +61,28 @@ export const tours: Tour[] = [
         side: "bottom",
       },
       {
-        id: "business-stats",
-        title: "Permit & License Dashboard",
+        id: "business-map-view",
+        title: "Map View",
         content:
-          "Active permits, business licenses, and recent filings sourced from Montgomery ArcGIS in real time.",
+          "View permits and business licenses plotted across Montgomery neighborhoods.",
         side: "bottom",
+        clickTarget: true,
       },
       {
-        id: "business-map",
-        title: "Economic Opportunity Map",
+        id: "business-table-view",
+        title: "Table View",
         content:
-          "Permit density by zone and license locations identify active development corridors.",
-        side: "left",
+          "Browse permit and license records in a sortable, searchable table.",
+        side: "bottom",
+        clickTarget: true,
+      },
+      {
+        id: "business-chart-view",
+        title: "Chart View",
+        content:
+          "Track permit trends and economic patterns with interactive charts.",
+        side: "bottom",
+        clickTarget: true,
       },
       {
         id: "business-chat-input",
@@ -94,24 +112,28 @@ export const tours: Tour[] = [
         side: "bottom",
       },
       {
-        id: "citystaff-stats",
-        title: "Operations Overview",
+        id: "citystaff-map-view",
+        title: "Map View",
         content:
-          "Active construction orders, project counts, and department summaries from live city datasets.",
+          "See infrastructure projects and work orders plotted on the city map.",
         side: "bottom",
+        clickTarget: true,
       },
       {
-        id: "citystaff-chart",
-        title: "Budget by Department",
+        id: "citystaff-table-view",
+        title: "Table View",
         content:
-          "Master Operating Expenditures visualized by department, refreshed every 15 minutes.",
-        side: "left",
+          "Browse project records and budget line items in a sortable table.",
+        side: "bottom",
+        clickTarget: true,
       },
       {
-        id: "citystaff-map",
-        title: "Infrastructure Map",
-        content: "Streets, parcels, zoning polygons, and active work orders.",
-        side: "left",
+        id: "citystaff-chart-view",
+        title: "Chart View",
+        content:
+          "Monitor budget allocation and project timelines with interactive charts.",
+        side: "bottom",
+        clickTarget: true,
       },
       {
         id: "citystaff-chat-input",
@@ -134,24 +156,28 @@ export const tours: Tour[] = [
         side: "bottom",
       },
       {
-        id: "researcher-stats",
-        title: "Dataset Overview",
+        id: "researcher-map-view",
+        title: "Map View",
         content:
-          "Crime statistics from 2018 to present, 911 call volume, and census demographics from official ArcGIS sources.",
+          "Explore crime hotspots and 911 call density on an interactive heat map.",
         side: "bottom",
+        clickTarget: true,
       },
       {
-        id: "researcher-chart",
-        title: "Crime Trend Explorer",
+        id: "researcher-table-view",
+        title: "Table View",
         content:
-          "Time-series chart of crime incidents from 2018 to present, filterable by type.",
-        side: "left",
+          "Browse and filter raw datasets in a sortable table with CSV export.",
+        side: "bottom",
+        clickTarget: true,
       },
       {
-        id: "researcher-map",
-        title: "911 Call Heatmap",
-        content: "Monthly emergency call volume clustered by geography.",
-        side: "left",
+        id: "researcher-chart-view",
+        title: "Chart View",
+        content:
+          "Visualize longitudinal crime trends and demographic patterns.",
+        side: "bottom",
+        clickTarget: true,
       },
       {
         id: "researcher-chat-input",

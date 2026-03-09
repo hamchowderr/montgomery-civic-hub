@@ -1,6 +1,6 @@
 "use client";
 
-import { useChatStream } from "@/lib/hooks/use-chat-stream";
+import { useCopilotChatStream } from "@/lib/hooks/use-copilot-chat-stream";
 import { ChatMessage } from "@/components/ChatMessage";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -18,7 +18,7 @@ export function ResearcherChat() {
     toolStatus,
     handleSubmit,
     scrollRef,
-  } = useChatStream(
+  } = useCopilotChatStream(
     "researcher",
     "Welcome, researcher! I can help you explore crime statistics, 911 call data, demographic trends, and available public datasets for Montgomery. What would you like to analyze?",
   );
@@ -30,7 +30,7 @@ export function ResearcherChat() {
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-2 overflow-hidden p-4 pt-0">
         <ScrollArea className="flex-1 pr-2" ref={scrollRef}>
-          <div className="space-y-3 py-2">
+          <div className="flex flex-col gap-3 py-2">
             {messages.map((msg, i) => (
               <ChatMessage key={i} role={msg.role} content={msg.content} />
             ))}
@@ -60,7 +60,7 @@ export function ResearcherChat() {
             className="flex-1"
           />
           <Button type="submit" size="icon" disabled={loading || !input.trim()}>
-            <Send className="h-4 w-4" />
+            <Send className="size-4" />
           </Button>
         </form>
       </CardContent>

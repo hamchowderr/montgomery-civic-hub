@@ -3,14 +3,14 @@ import type { Tool } from "@anthropic-ai/sdk/resources/messages";
 export const arcgisQueryTool: Tool = {
   name: "arcgis_query",
   description:
-    "Query City of Montgomery ArcGIS FeatureServer datasets. Returns GIS feature data including geometry and attributes for crime data, permits, licenses, 911 calls, expenditures, and more.",
+    "Query City of Montgomery ArcGIS FeatureServer datasets. Returns GIS feature data including attributes. Use exact dataset names from the catalog in your system prompt.",
   input_schema: {
     type: "object" as const,
     properties: {
       dataset: {
         type: "string",
         description:
-          "Name of the dataset to query (e.g., 'Crime Statistics', 'Building Permits', '911 Call Map')",
+          "Exact dataset name: Received_311_Service_Request, Business_License, Construction_Permits, Code_Violations, Paving_Project, Nuisance, City_Owned_Properities, Police_Facilities, Fire_Stations, Community_Centers, Libraries, Education_Facilities, Daycare_Centers, Tornado_Sirens, Health_Care_Facility, Entertainment_Districts, or boundary layers (Council_Districts, Neighborhoods, Census_Boundaries, Zoning, Flood_Hazard_Areas, City_Parks, Parcels, Historic_Areas, Zip_Code, City_Limit)",
       },
       where: {
         type: "string",

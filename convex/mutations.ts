@@ -70,3 +70,7 @@ export const insertDatasetRegistry = mutation({
     await ctx.db.insert("dataset_registry", args);
   },
 });
+
+// Removed: upsertPortalStats, upsertMapFeatures, upsertChartData
+// These cache mutations are no longer needed — portal stats, map features,
+// and chart data are now fetched client-side.

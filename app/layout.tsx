@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { ConvexClientProvider } from "@/components/ConvexProvider";
+import { TourWrapper } from "@/components/TourWrapper";
+import { Toaster } from "sonner";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Montgomery Civic Hub",
@@ -18,9 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${dmSans.className} ${dmSans.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <ConvexClientProvider>
+            <TourWrapper>{children}</TourWrapper>
+            <Toaster richColors closeButton />
+          </ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>

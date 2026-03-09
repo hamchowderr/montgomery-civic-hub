@@ -9,6 +9,12 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./tests/setup.ts"],
     exclude: ["tests/e2e/**", "node_modules/**"],
+    css: false,
+    server: {
+      deps: {
+        inline: [/katex/, /@copilotkit/, /@copilotkitnext/],
+      },
+    },
   },
   resolve: {
     alias: {

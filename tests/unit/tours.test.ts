@@ -7,14 +7,14 @@ describe("tour definitions", () => {
   });
 
   it.each([
-    ["resident-tour"],
-    ["business-tour"],
-    ["citystaff-tour"],
-    ["researcher-tour"],
-  ])("tour %s has exactly 5 steps", (tourId) => {
+    ["resident-tour", 6],
+    ["business-tour", 6],
+    ["citystaff-tour", 5],
+    ["researcher-tour", 5],
+  ])("tour %s has exactly %i steps", (tourId, stepCount) => {
     const tour = tours.find((t) => t.id === tourId);
     expect(tour).toBeDefined();
-    expect(tour!.steps).toHaveLength(5);
+    expect(tour!.steps).toHaveLength(stepCount);
   });
 
   it("every step has a non-empty id string", () => {
@@ -35,9 +35,9 @@ describe("tour definitions", () => {
     }
   });
 
-  it("all 20 step ids are unique across the full array", () => {
+  it("all 22 step ids are unique across the full array", () => {
     const allIds = tours.flatMap((t) => t.steps.map((s) => s.id));
-    expect(allIds).toHaveLength(20);
-    expect(new Set(allIds).size).toBe(20);
+    expect(allIds).toHaveLength(22);
+    expect(new Set(allIds).size).toBe(22);
   });
 });

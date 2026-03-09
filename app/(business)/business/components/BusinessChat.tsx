@@ -1,6 +1,6 @@
 "use client";
 
-import { useChatStream } from "@/lib/hooks/use-chat-stream";
+import { useCopilotChatStream } from "@/lib/hooks/use-copilot-chat-stream";
 import { ChatMessage } from "@/components/ChatMessage";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -18,7 +18,7 @@ export function BusinessChat() {
     toolStatus,
     handleSubmit,
     scrollRef,
-  } = useChatStream(
+  } = useCopilotChatStream(
     "business",
     "Hello! I can help with business permits, licensing requirements, zoning information, and economic development resources. What do you need?",
   );
@@ -34,7 +34,7 @@ export function BusinessChat() {
           ref={scrollRef}
           data-tour-step-id="business-chat-example"
         >
-          <div className="space-y-3 py-2">
+          <div className="flex flex-col gap-3 py-2">
             {messages.map((msg, i) => (
               <ChatMessage key={i} role={msg.role} content={msg.content} />
             ))}
@@ -64,7 +64,7 @@ export function BusinessChat() {
             className="flex-1"
           />
           <Button type="submit" size="icon" disabled={loading || !input.trim()}>
-            <Send className="h-4 w-4" />
+            <Send className="size-4" />
           </Button>
         </form>
       </CardContent>

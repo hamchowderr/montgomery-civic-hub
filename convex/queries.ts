@@ -48,3 +48,15 @@ export const getDatasetRegistry = query({
     return await ctx.db.query("dataset_registry").collect();
   },
 });
+
+// Removed: getPortalStats, getMapFeatures, getChartData
+// These cache queries are no longer needed — portal stats, map features,
+// and chart data are now fetched client-side.
+
+export const getDatasetCount = query({
+  args: {},
+  handler: async (ctx) => {
+    const all = await ctx.db.query("dataset_registry").collect();
+    return all.length;
+  },
+});

@@ -1,18 +1,17 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
-// Mock the AI client module
+// Mock the AI client module — chatStream returns a ReadableStream of strings
 vi.mock("@/lib/ai/client", () => ({
-  chat: vi.fn().mockResolvedValue({
-    content:
-      "Based on recent data, Montgomery has seen improvements in public safety.",
-    toolCalls: [
-      {
-        name: "arcgis_query",
-        input: { dataset: "Crime Statistics" },
-        result: {},
+  chatStream: vi.fn().mockReturnValue(
+    new ReadableStream({
+      start(controller) {
+        controller.enqueue(
+          "Based on recent data, Montgomery has seen improvements in public safety.",
+        );
+        controller.close();
       },
-    ],
-  }),
+    }),
+  ),
 }));
 
 // Mock the arcgis module
@@ -48,7 +47,7 @@ describe("POST /api/chat/[portal]", () => {
     expect(response.status).toBe(400);
   });
 
-  it("returns 200 with message for valid request", async () => {
+  it("returns 200 with streamed text for valid request", async () => {
     const request = new Request("http://localhost:3000/api/chat/resident", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -59,8 +58,10 @@ describe("POST /api/chat/[portal]", () => {
     });
     expect(response.status).toBe(200);
 
-    const data = await response.json();
-    expect(data).toHaveProperty("message");
-    expect(typeof data.message).toBe("string");
+    const text = await response.text();
+    expect(text).toContain("Montgomery");
+    expect(response.headers.get("Content-Type")).toBe(
+      "text/plain; charset=utf-8",
+    );
   });
 });

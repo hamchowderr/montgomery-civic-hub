@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { User, Sparkles } from "lucide-react";
 
 interface ToolCall {
   name: string;
@@ -19,14 +20,24 @@ export function ChatMessage({ role, content, toolCalls }: ChatMessageProps) {
 
   return (
     <div
-      className={cn("flex w-full", isUser ? "justify-end" : "justify-start")}
+      className={cn(
+        "flex w-full gap-2.5",
+        isUser ? "justify-end" : "justify-start",
+      )}
     >
+      {/* Avatar for assistant */}
+      {!isUser && (
+        <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded bg-accent/10">
+          <Sparkles className="size-3 text-accent" />
+        </div>
+      )}
+
       <div
         className={cn(
-          "max-w-[80%] rounded-lg px-4 py-2 text-sm",
+          "max-w-[80%] rounded-lg px-3.5 py-2.5 text-sm leading-relaxed",
           isUser
             ? "bg-primary text-primary-foreground"
-            : "bg-card text-card-foreground border",
+            : "bg-muted text-foreground",
         )}
       >
         <p className="whitespace-pre-wrap">{content}</p>
@@ -47,6 +58,13 @@ export function ChatMessage({ role, content, toolCalls }: ChatMessageProps) {
           </div>
         )}
       </div>
+
+      {/* Avatar for user */}
+      {isUser && (
+        <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded bg-primary/10">
+          <User className="size-3 text-primary" />
+        </div>
+      )}
     </div>
   );
 }
