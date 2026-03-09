@@ -218,6 +218,35 @@
 }
 
 /* ═══════════════════════════════════════════════════════
+   CopilotKit mobile chat fixes
+   ═══════════════════════════════════════════════════════ */
+
+/* Ensure CopilotKit chat container fills available space and scrolls */
+.copilotKitChat {
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Messages area must scroll, not grow infinitely */
+.copilotKitChat .copilotKitMessages {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Keep input visible and prevent it from being pushed off-screen */
+.copilotKitChat .copilotKitInputContainer {
+  flex-shrink: 0;
+}
+
+/* On mobile, reduce input min-height to save space */
+@media (max-width: 767px) {
+  .copilotKitChat .copilotKitInputContainer {
+    min-height: 60px;
+    padding-bottom: 8px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
    Chat widget scrollbar refinement
    ═══════════════════════════════════════════════════════ */
 

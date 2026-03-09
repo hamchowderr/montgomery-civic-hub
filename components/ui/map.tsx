@@ -2020,7 +2020,7 @@ function MapLayerFilterContent({
 
       {/* Dropdown panel */}
       {open && (
-        <div className="absolute right-0 top-full mt-1 z-50 rounded-lg border bg-popover/95 backdrop-blur shadow-lg w-56 max-h-[380px] flex flex-col">
+        <div className="absolute right-0 sm:right-0 left-0 sm:left-auto top-full mt-1 z-50 rounded-lg border bg-popover/95 backdrop-blur shadow-lg w-[calc(100vw-2rem)] sm:w-56 max-h-[380px] flex flex-col">
           {/* Scrollable body */}
           <div className="overflow-y-auto flex-1 p-1.5 space-y-1">
             {categories ? (

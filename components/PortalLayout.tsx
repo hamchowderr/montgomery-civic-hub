@@ -22,6 +22,7 @@ import {
   PanelRight,
   GripVertical,
   MessageCircle,
+  X,
 } from "lucide-react";
 
 interface PortalLayoutProps {
@@ -131,41 +132,53 @@ export function PortalLayout({
 
   const chatContent = (
     <div
-      className="flex h-full flex-col overflow-hidden bg-card"
+      className="flex h-full max-h-full flex-col overflow-hidden bg-card"
       data-tour-step-id={`${portal}-chat`}
     >
       {/* Chat header with side toggle */}
-      <div className="flex items-center justify-between border-b px-4 py-3">
+      <div className="flex shrink-0 items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex size-6 items-center justify-center rounded bg-accent/10">
             <Sparkles className="size-3.5 text-accent" />
           </div>
           <h3 className="text-sm font-semibold">{chatTitle}</h3>
         </div>
-        <div className="hidden lg:block">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-7"
-                  onClick={() =>
-                    setChatSide((s) => (s === "right" ? "left" : "right"))
-                  }
-                >
-                  {chatSide === "right" ? (
-                    <PanelLeft className="size-3.5" />
-                  ) : (
-                    <PanelRight className="size-3.5" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                Move chat to {chatSide === "right" ? "left" : "right"}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="flex items-center gap-2">
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              onClick={() => setChatOpen(false)}
+            >
+              <X className="size-3.5" />
+            </Button>
+          )}
+          <div className="hidden lg:block">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-7"
+                    onClick={() =>
+                      setChatSide((s) => (s === "right" ? "left" : "right"))
+                    }
+                  >
+                    {chatSide === "right" ? (
+                      <PanelLeft className="size-3.5" />
+                    ) : (
+                      <PanelRight className="size-3.5" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  Move chat to {chatSide === "right" ? "left" : "right"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </div>
 
@@ -177,7 +190,7 @@ export function PortalLayout({
           placeholder: chatPlaceholder,
         }}
         onStopGeneration={handleStopGeneration}
-        className="flex-1 [&_.copilotKitHeader]:hidden"
+        className="min-h-0 flex-1 [&_.copilotKitHeader]:hidden [&_.copilotKitMessages]:overscroll-contain"
       />
     </div>
   );
@@ -198,7 +211,10 @@ export function PortalLayout({
 
         {/* Bottom sheet with chat */}
         <Sheet open={chatOpen} onOpenChange={setChatOpen}>
-          <SheetContent side="bottom" className="h-[90vh] p-0">
+          <SheetContent
+            side="bottom"
+            className="h-[85dvh] max-h-[85dvh] p-0 [&>button.absolute]:hidden"
+          >
             <SheetTitle className="sr-only">{chatTitle}</SheetTitle>
             {chatContent}
           </SheetContent>
