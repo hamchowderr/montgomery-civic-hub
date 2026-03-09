@@ -64,10 +64,20 @@ export function useCopilotChatStream(_portal: string, welcomeMessage: string) {
       return;
     }
 
-    const lastMsg = rawMessages[rawMessages.length - 1];
-    if (lastMsg && lastMsg.role === "tool") {
-      setToolStatus(`Using ${lastMsg.name ?? "tool"}...`);
-      return;
+    // Find the most recent tool message — its content contains the status text
+    // (e.g., "Searching received_311_service_request...")
+    for (let i = rawMessages.length - 1; i >= 0; i--) {
+      const msg = rawMessages[i];
+      if (msg.role === "tool") {
+        // Use the content from TOOL_CALL_RESULT if available, else construct generic
+        const status = msg.content?.trim()
+          ? msg.content
+          : `Using ${msg.name ?? "tool"}...`;
+        setToolStatus(status);
+        return;
+      }
+      // Stop searching once we hit a non-tool message after the last user message
+      if (msg.role === "user" || msg.role === "assistant") break;
     }
 
     setToolStatus(null);

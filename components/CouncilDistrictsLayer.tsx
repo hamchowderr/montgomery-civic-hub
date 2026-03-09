@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { useMap, MapPopup } from "@/components/ui/map";
 import { LayerFilterPortal } from "@/components/DataPanel";
 import { ARCGIS_URLS, queryFeaturesAsGeoJSON } from "@/lib/arcgis-client";
@@ -199,6 +200,39 @@ export function CouncilDistrictsLayer() {
       map.off("mouseleave", fillLayerId, handleMouseLeave);
     };
   }, [map, isLoaded, dataLoaded, fillLayerId]);
+
+  // AI-readable: council districts state
+  useCopilotReadable({
+    description:
+      "Council districts overlay visibility and selected district info",
+    value: {
+      visible,
+      dataLoaded,
+      selectedDistrict: selectedDistrict
+        ? { name: selectedDistrict.name, district: selectedDistrict.district }
+        : null,
+    },
+  });
+
+  // AI action: toggle council districts overlay
+  useCopilotAction({
+    name: "toggle_council_districts",
+    description:
+      "Show or hide the council districts overlay on the map. Districts show colored boundaries for all 9 Montgomery council districts.",
+    parameters: [
+      {
+        name: "visible",
+        type: "boolean",
+        description: "Whether to show (true) or hide (false) council districts",
+        required: true,
+      },
+    ],
+    handler: ({ visible: show }) => {
+      setVisible(show);
+      if (!show) setSelectedDistrict(null);
+      return show ? "Council districts shown" : "Council districts hidden";
+    },
+  });
 
   const [isFullscreen, setIsFullscreen] = useState(false);
 
