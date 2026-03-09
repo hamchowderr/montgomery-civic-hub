@@ -245,8 +245,8 @@ export function ResearcherMap() {
   const isEmpty = clusterData.features.length === 0 && !isLoading;
 
   return (
-    <div data-tour-step-id="researcher-map">
-      <div className="relative">
+    <div data-tour-step-id="researcher-map" className="h-full">
+      <div className="relative h-full">
         <Map
           viewport={viewport}
           onViewportChange={setViewport}

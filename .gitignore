@@ -47,3 +47,5 @@ screenshots/
 
 # tarball artifacts
 *.tgz
+
+.vercel
