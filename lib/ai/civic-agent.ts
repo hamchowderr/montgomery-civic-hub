@@ -275,7 +275,8 @@ export class CivicAgent extends AbstractAgent {
         stepName: `iteration-${stepCount}`,
       } as BaseEvent);
 
-      const response = await this.anthropic.messages.create({
+      // Use streaming API for real token-by-token output
+      const stream = this.anthropic.messages.stream({
         model: MODEL,
         max_tokens: getMaxTokens(this.portal),
         system: systemPrompt,
@@ -283,27 +284,66 @@ export class CivicAgent extends AbstractAgent {
         messages: currentMessages,
       });
 
+      // Stream text deltas to the client as they arrive
+      const messageId = `msg-${Date.now()}-${stepCount}`;
+      let textStarted = false;
+      let streamedText = "";
+
+      for await (const event of stream) {
+        if (
+          event.type === "content_block_delta" &&
+          event.delta.type === "text_delta"
+        ) {
+          if (!textStarted) {
+            subscriber.next({
+              type: EventType.TEXT_MESSAGE_START,
+              messageId,
+              role: "assistant",
+            } as BaseEvent);
+            textStarted = true;
+          }
+          streamedText += event.delta.text;
+          subscriber.next({
+            type: EventType.TEXT_MESSAGE_CONTENT,
+            messageId,
+            delta: event.delta.text,
+          } as BaseEvent);
+        }
+      }
+
+      // Get the final message to check for tool use
+      const response = await stream.finalMessage();
+
       const toolUseBlocks = response.content.filter(
         (block): block is ToolUseBlock => block.type === "tool_use",
       );
 
       if (toolUseBlocks.length === 0 || response.stop_reason === "end_turn") {
-        // No more tool calls — extract and stream final text
-        const textContent = response.content
-          .filter(
-            (block): block is Extract<ContentBlock, { type: "text" }> =>
-              block.type === "text",
-          )
-          .map((block) => block.text)
-          .join("\n");
+        // No more tool calls — finalize the streamed text
+        if (textStarted) {
+          subscriber.next({
+            type: EventType.TEXT_MESSAGE_END,
+            messageId,
+          } as BaseEvent);
+        } else {
+          // Edge case: no text was streamed (shouldn't happen, but handle gracefully)
+          const textContent = response.content
+            .filter(
+              (block): block is Extract<ContentBlock, { type: "text" }> =>
+                block.type === "text",
+            )
+            .map((block) => block.text)
+            .join("\n");
+          await this.streamTextMessage(subscriber, textContent, threadId);
+          streamedText = textContent;
+        }
 
         subscriber.next({
           type: EventType.STEP_FINISHED,
           stepName: `iteration-${stepCount}`,
         } as BaseEvent);
 
-        await this.streamTextMessage(subscriber, textContent, threadId);
-        await this.persistAssistantMessage(threadId, textContent);
+        await this.persistAssistantMessage(threadId, streamedText);
 
         subscriber.next({
           type: EventType.RUN_FINISHED,
@@ -312,6 +352,14 @@ export class CivicAgent extends AbstractAgent {
         } as BaseEvent);
         subscriber.complete();
         return;
+      }
+
+      // Tool calls found — close any in-progress text message
+      if (textStarted) {
+        subscriber.next({
+          type: EventType.TEXT_MESSAGE_END,
+          messageId,
+        } as BaseEvent);
       }
 
       // Handle tool calls

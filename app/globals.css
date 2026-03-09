@@ -1,3 +1,5 @@
+@import "@copilotkit/react-ui/styles.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -153,6 +155,32 @@
   .portal-accent-researcher {
     --portal-hue: var(--portal-researcher);
   }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CopilotKit theme overrides — map to civic CSS variables
+   ═══════════════════════════════════════════════════════ */
+
+:root .copilotKitChat {
+  --copilot-kit-primary-color: hsl(var(--accent));
+  --copilot-kit-contrast-color: hsl(var(--accent-foreground));
+  --copilot-kit-background-color: hsl(var(--card));
+  --copilot-kit-input-background-color: hsl(var(--background));
+  --copilot-kit-secondary-color: hsl(var(--muted));
+  --copilot-kit-secondary-contrast-color: hsl(var(--foreground));
+  --copilot-kit-separator-color: hsl(var(--border));
+  --copilot-kit-muted-color: hsl(var(--muted-foreground));
+}
+
+.dark .copilotKitChat {
+  --copilot-kit-primary-color: hsl(var(--accent));
+  --copilot-kit-contrast-color: hsl(var(--accent-foreground));
+  --copilot-kit-background-color: hsl(var(--card));
+  --copilot-kit-input-background-color: hsl(var(--background));
+  --copilot-kit-secondary-color: hsl(var(--muted));
+  --copilot-kit-secondary-contrast-color: hsl(var(--foreground));
+  --copilot-kit-separator-color: hsl(var(--border));
+  --copilot-kit-muted-color: hsl(var(--muted-foreground));
 }
 
 /* ═══════════════════════════════════════════════════════

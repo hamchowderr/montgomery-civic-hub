@@ -4,13 +4,48 @@ import { firstValueFrom, toArray } from "rxjs";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
-// Mock Anthropic SDK
-const mockCreate = vi.fn();
+// Mock Anthropic SDK — agent uses messages.stream() which returns an async
+// iterable of events + a finalMessage() method.
 const mockStream = vi.fn();
+
+/** Build a mock stream object from a response shape */
+function createMockStream(response: {
+  content: Array<
+    | { type: "text"; text: string }
+    | { type: "tool_use"; id: string; name: string; input: unknown }
+  >;
+  stop_reason: string;
+}) {
+  // Generate content_block_delta events for text blocks
+  const events: Array<{ type: string; delta: { type: string; text?: string } }> = [];
+  for (const block of response.content) {
+    if (block.type === "text") {
+      events.push({
+        type: "content_block_delta",
+        delta: { type: "text_delta", text: block.text },
+      });
+    }
+  }
+
+  return {
+    [Symbol.asyncIterator]: () => {
+      let index = 0;
+      return {
+        next: async () => {
+          if (index < events.length) {
+            return { value: events[index++], done: false };
+          }
+          return { value: undefined, done: true };
+        },
+      };
+    },
+    finalMessage: async () => response,
+  };
+}
+
 vi.mock("@anthropic-ai/sdk", () => ({
   default: vi.fn().mockImplementation(() => ({
     messages: {
-      create: mockCreate,
       stream: mockStream,
     },
   })),
@@ -150,10 +185,10 @@ describe("CivicAgent", () => {
   });
 
   it("clone() preserves custom properties and can execute run()", async () => {
-    mockCreate.mockResolvedValueOnce({
+    mockStream.mockReturnValueOnce(createMockStream({
       content: [{ type: "text", text: "Hello from clone" }],
       stop_reason: "end_turn",
-    });
+    }));
 
     const agent = new CivicAgent("resident");
     const cloned = agent.clone();
@@ -166,7 +201,12 @@ describe("CivicAgent", () => {
   });
 
   it("emits RUN_ERROR on exception", async () => {
-    mockCreate.mockRejectedValueOnce(new Error("API is down"));
+    mockStream.mockReturnValueOnce({
+      [Symbol.asyncIterator]: () => ({
+        next: async () => { throw new Error("API is down"); },
+      }),
+      finalMessage: async () => { throw new Error("API is down"); },
+    });
 
     const { events } = await runAgent("resident", "Hello");
     const errorEvent = events.find(
@@ -304,7 +344,7 @@ describe("CivicAgent data retrieval across portals", () => {
       mockQueryFeatureServer.mockResolvedValueOnce(scenario.mockData);
 
       // First Claude call: decides to use arcgis_query tool
-      mockCreate.mockResolvedValueOnce({
+      mockStream.mockReturnValueOnce(createMockStream({
         content: [
           {
             type: "tool_use",
@@ -314,10 +354,10 @@ describe("CivicAgent data retrieval across portals", () => {
           },
         ],
         stop_reason: "tool_use",
-      });
+      }));
 
       // Second Claude call: responds with data-informed answer
-      mockCreate.mockResolvedValueOnce({
+      mockStream.mockReturnValueOnce(createMockStream({
         content: [
           {
             type: "text",
@@ -325,7 +365,7 @@ describe("CivicAgent data retrieval across portals", () => {
           },
         ],
         stop_reason: "end_turn",
-      });
+      }));
 
       const { events, types } = await runAgent(
         scenario.portal,
@@ -345,7 +385,7 @@ describe("CivicAgent data retrieval across portals", () => {
       );
 
       // 3. Verify tool results were passed back to Claude in the second call
-      const secondCallArgs = mockCreate.mock.calls[1]?.[0];
+      const secondCallArgs = mockStream.mock.calls[1]?.[0];
       expect(secondCallArgs).toBeDefined();
 
       const toolResultMessage = secondCallArgs.messages.find(
@@ -405,8 +445,8 @@ describe("Tool result sanitization", () => {
       ],
     });
 
-    mockCreate
-      .mockResolvedValueOnce({
+    mockStream
+      .mockReturnValueOnce(createMockStream({
         content: [
           {
             type: "tool_use",
@@ -416,16 +456,16 @@ describe("Tool result sanitization", () => {
           },
         ],
         stop_reason: "tool_use",
-      })
-      .mockResolvedValueOnce({
+      }))
+      .mockReturnValueOnce(createMockStream({
         content: [{ type: "text", text: "Found 2 facilities." }],
         stop_reason: "end_turn",
-      });
+      }));
 
     await runAgent("resident", "Where are police stations?");
 
     // Check the tool result passed back to Claude
-    const secondCallMessages = mockCreate.mock.calls[1]?.[0]?.messages;
+    const secondCallMessages = mockStream.mock.calls[1]?.[0]?.messages;
     const toolResultMsg = secondCallMessages?.find(
       (m: any) => m.role === "user" && Array.isArray(m.content),
     );
@@ -450,8 +490,8 @@ describe("Tool result sanitization", () => {
       status: 404,
     }) as any;
 
-    mockCreate
-      .mockResolvedValueOnce({
+    mockStream
+      .mockReturnValueOnce(createMockStream({
         content: [
           {
             type: "tool_use",
@@ -461,17 +501,17 @@ describe("Tool result sanitization", () => {
           },
         ],
         stop_reason: "tool_use",
-      })
-      .mockResolvedValueOnce({
+      }))
+      .mockReturnValueOnce(createMockStream({
         content: [
           { type: "text", text: "That dataset is not available." },
         ],
         stop_reason: "end_turn",
-      });
+      }));
 
     await runAgent("resident", "Query nonexistent data");
 
-    const secondCallMessages = mockCreate.mock.calls[1]?.[0]?.messages;
+    const secondCallMessages = mockStream.mock.calls[1]?.[0]?.messages;
     const toolResultMsg = secondCallMessages?.find(
       (m: any) => m.role === "user" && Array.isArray(m.content),
     );
@@ -522,7 +562,7 @@ describe("Multi-tool and multi-iteration data retrieval", () => {
       .mockResolvedValueOnce(pavingData);
 
     // Claude iteration 1: query 311 requests
-    mockCreate.mockResolvedValueOnce({
+    mockStream.mockReturnValueOnce(createMockStream({
       content: [
         {
           type: "tool_use",
@@ -535,10 +575,10 @@ describe("Multi-tool and multi-iteration data retrieval", () => {
         },
       ],
       stop_reason: "tool_use",
-    });
+    }));
 
     // Claude iteration 2: query paving projects
-    mockCreate.mockResolvedValueOnce({
+    mockStream.mockReturnValueOnce(createMockStream({
       content: [
         {
           type: "tool_use",
@@ -548,10 +588,10 @@ describe("Multi-tool and multi-iteration data retrieval", () => {
         },
       ],
       stop_reason: "tool_use",
-    });
+    }));
 
     // Claude iteration 3: final combined response
-    mockCreate.mockResolvedValueOnce({
+    mockStream.mockReturnValueOnce(createMockStream({
       content: [
         {
           type: "text",
@@ -559,7 +599,7 @@ describe("Multi-tool and multi-iteration data retrieval", () => {
         },
       ],
       stop_reason: "end_turn",
-    });
+    }));
 
     const { events, types } = await runAgent(
       "citystaff",
@@ -586,7 +626,7 @@ describe("Multi-tool and multi-iteration data retrieval", () => {
     );
 
     // Verify the 311 data was passed back in the second Claude call
-    const secondCallMessages = mockCreate.mock.calls[1]?.[0]?.messages;
+    const secondCallMessages = mockStream.mock.calls[1]?.[0]?.messages;
     const toolResult311 = secondCallMessages?.find(
       (m: any) =>
         m.role === "user" &&
@@ -604,7 +644,7 @@ describe("Multi-tool and multi-iteration data retrieval", () => {
     expect(result311Content).toContain("5001");
 
     // Verify paving data was passed back in the third Claude call
-    const thirdCallMessages = mockCreate.mock.calls[2]?.[0]?.messages;
+    const thirdCallMessages = mockStream.mock.calls[2]?.[0]?.messages;
     const toolResultPaving = thirdCallMessages?.find(
       (m: any) =>
         m.role === "user" &&
@@ -654,15 +694,15 @@ describe("System prompt and tool registration", () => {
         features: [{ attributes: { id: 1 } }],
       });
 
-      mockCreate.mockResolvedValueOnce({
+      mockStream.mockReturnValueOnce(createMockStream({
         content: [{ type: "text", text: "Response" }],
         stop_reason: "end_turn",
-      });
+      }));
 
       await runAgent(portal, "Test message");
 
       // Verify both tools were passed to Claude
-      const callArgs = mockCreate.mock.calls[0]?.[0];
+      const callArgs = mockStream.mock.calls[0]?.[0];
       expect(callArgs.tools).toHaveLength(2);
       expect(callArgs.tools[0].name).toBe("arcgis_query");
       expect(callArgs.tools[1].name).toBe("brightdata_search");
@@ -681,14 +721,14 @@ describe("System prompt and tool registration", () => {
         features: [{ attributes: { id: 1 } }],
       });
 
-      mockCreate.mockResolvedValueOnce({
+      mockStream.mockReturnValueOnce(createMockStream({
         content: [{ type: "text", text: "Response" }],
         stop_reason: "end_turn",
-      });
+      }));
 
       await runAgent(portal, "Hello");
 
-      const callArgs = mockCreate.mock.calls[0]?.[0];
+      const callArgs = mockStream.mock.calls[0]?.[0];
       expect(callArgs.system).toContain(portal);
       expect(callArgs.system).toContain("arcgis_query");
       expect(callArgs.system).toContain("brightdata_search");
@@ -705,8 +745,8 @@ describe("getToolStatusText (via tool call events)", () => {
   });
 
   it("returns dataset-specific status for arcgis_query", async () => {
-    mockCreate
-      .mockResolvedValueOnce({
+    mockStream
+      .mockReturnValueOnce(createMockStream({
         content: [
           {
             type: "tool_use",
@@ -716,11 +756,11 @@ describe("getToolStatusText (via tool call events)", () => {
           },
         ],
         stop_reason: "tool_use",
-      })
-      .mockResolvedValueOnce({
+      }))
+      .mockReturnValueOnce(createMockStream({
         content: [{ type: "text", text: "Done" }],
         stop_reason: "end_turn",
-      });
+      }));
 
     const { events } = await runAgent("resident", "Show 311 requests");
     const resultEvent = events.find(
