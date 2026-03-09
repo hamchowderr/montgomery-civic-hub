@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
-import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import {
+  useCopilotAction,
+  useCopilotReadable,
+  useCopilotChat,
+} from "@copilotkit/react-core";
 import { CopilotChat } from "@copilotkit/react-ui";
 import { Button } from "@/components/ui/button";
 import {
@@ -119,6 +123,12 @@ export function PortalLayout({
     },
   });
 
+  const { stopGeneration } = useCopilotChat();
+
+  const handleStopGeneration = useCallback(() => {
+    stopGeneration?.();
+  }, [stopGeneration]);
+
   const chatContent = (
     <div
       className="flex h-full flex-col overflow-hidden bg-card"
@@ -166,6 +176,7 @@ export function PortalLayout({
           title: chatTitle,
           placeholder: chatPlaceholder,
         }}
+        onStopGeneration={handleStopGeneration}
         className="flex-1 [&_.copilotKitHeader]:hidden"
       />
     </div>

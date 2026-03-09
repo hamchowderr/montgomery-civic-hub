@@ -26,10 +26,10 @@ const MAX_ITERATIONS = 5;
 const MAX_TOOL_RESULT_CHARS = 50_000;
 
 const MAX_TOKENS: Record<string, number> = {
-  resident: 4096,
-  business: 4096,
-  citystaff: 8192,
-  researcher: 8192,
+  resident: 2048,
+  business: 2048,
+  citystaff: 4096,
+  researcher: 4096,
 };
 
 // ── Helpers (reused from existing client.ts) ────────────────────────────────
@@ -289,26 +289,37 @@ export class CivicAgent extends AbstractAgent {
       let textStarted = false;
       let streamedText = "";
 
-      for await (const event of stream) {
-        if (
-          event.type === "content_block_delta" &&
-          event.delta.type === "text_delta"
-        ) {
-          if (!textStarted) {
+      try {
+        for await (const event of stream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            if (!textStarted) {
+              subscriber.next({
+                type: EventType.TEXT_MESSAGE_START,
+                messageId,
+                role: "assistant",
+              } as BaseEvent);
+              textStarted = true;
+            }
+            streamedText += event.delta.text;
             subscriber.next({
-              type: EventType.TEXT_MESSAGE_START,
+              type: EventType.TEXT_MESSAGE_CONTENT,
               messageId,
-              role: "assistant",
+              delta: event.delta.text,
             } as BaseEvent);
-            textStarted = true;
           }
-          streamedText += event.delta.text;
+        }
+      } catch (streamError) {
+        // Ensure TEXT_MESSAGE_END is sent if we started a message
+        if (textStarted) {
           subscriber.next({
-            type: EventType.TEXT_MESSAGE_CONTENT,
+            type: EventType.TEXT_MESSAGE_END,
             messageId,
-            delta: event.delta.text,
           } as BaseEvent);
         }
+        throw streamError;
       }
 
       // Get the final message to check for tool use
@@ -318,7 +329,7 @@ export class CivicAgent extends AbstractAgent {
         (block): block is ToolUseBlock => block.type === "tool_use",
       );
 
-      if (toolUseBlocks.length === 0 || response.stop_reason === "end_turn") {
+      if (toolUseBlocks.length === 0) {
         // No more tool calls — finalize the streamed text
         if (textStarted) {
           subscriber.next({
@@ -425,12 +436,12 @@ export class CivicAgent extends AbstractAgent {
           toolCallId,
         } as BaseEvent);
 
-        // TOOL_CALL_RESULT — use a unique messageId for the result
+        // TOOL_CALL_RESULT — send actual result content for CopilotKit to display
         subscriber.next({
           type: EventType.TOOL_CALL_RESULT,
           toolCallId,
           messageId: `tool-result-${toolCallId}`,
-          content: statusText,
+          content: isError ? `Error: ${sanitized}` : statusText,
           role: "tool",
         } as BaseEvent);
 
@@ -467,43 +478,53 @@ export class CivicAgent extends AbstractAgent {
     currentMessages.push({
       role: "user",
       content:
-        "You have used all available tool calls. Please respond now with the information you have gathered so far. Do not request any more tool calls.",
+        "You have used all available tool calls. Please provide a concise summary based on the data you have gathered. Do not request any more tool calls.",
     });
 
     let fullText = "";
-    const messageId = `msg-${Date.now()}`;
+    {
+      const messageId = `msg-${Date.now()}`;
+      subscriber.next({
+        type: EventType.TEXT_MESSAGE_START,
+        messageId,
+        role: "assistant",
+      } as BaseEvent);
 
-    subscriber.next({
-      type: EventType.TEXT_MESSAGE_START,
-      messageId,
-      role: "assistant",
-    } as BaseEvent);
+      try {
+        const stream = this.anthropic.messages.stream({
+          model: MODEL,
+          max_tokens: getMaxTokens(this.portal),
+          system: systemPrompt,
+          messages: currentMessages,
+        });
 
-    const stream = this.anthropic.messages.stream({
-      model: MODEL,
-      max_tokens: getMaxTokens(this.portal),
-      system: systemPrompt,
-      messages: currentMessages,
-    });
-
-    for await (const event of stream) {
-      if (
-        event.type === "content_block_delta" &&
-        event.delta.type === "text_delta"
-      ) {
-        fullText += event.delta.text;
+        for await (const event of stream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            fullText += event.delta.text;
+            subscriber.next({
+              type: EventType.TEXT_MESSAGE_CONTENT,
+              messageId,
+              delta: event.delta.text,
+            } as BaseEvent);
+          }
+        }
+      } catch (streamError) {
+        // Still close the message on error
         subscriber.next({
-          type: EventType.TEXT_MESSAGE_CONTENT,
+          type: EventType.TEXT_MESSAGE_END,
           messageId,
-          delta: event.delta.text,
         } as BaseEvent);
+        throw streamError;
       }
-    }
 
-    subscriber.next({
-      type: EventType.TEXT_MESSAGE_END,
-      messageId,
-    } as BaseEvent);
+      subscriber.next({
+        type: EventType.TEXT_MESSAGE_END,
+        messageId,
+      } as BaseEvent);
+    }
 
     subscriber.next({
       type: EventType.STEP_FINISHED,

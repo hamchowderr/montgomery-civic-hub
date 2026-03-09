@@ -7,7 +7,7 @@ export default async function SignUpPage() {
   if (userId) redirect("/portal-redirect");
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-dvh items-center justify-center overflow-y-auto bg-background px-4 py-8">
       <SignUp
         routing="path"
         path="/sign-up"
@@ -15,7 +15,7 @@ export default async function SignUpPage() {
         forceRedirectUrl="/portal-redirect"
         appearance={{
           elements: {
-            rootBox: "mx-auto",
+            rootBox: "mx-auto w-full max-w-md",
             card: "shadow-lg",
           },
         }}

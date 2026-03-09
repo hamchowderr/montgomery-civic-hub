@@ -184,6 +184,40 @@
 }
 
 /* ═══════════════════════════════════════════════════════
+   CopilotKit text size & readability overrides
+   ═══════════════════════════════════════════════════════ */
+
+.copilotKitChat .copilotKitMessage {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.copilotKitChat .copilotKitMarkdown p,
+.copilotKitChat .copilotKitMarkdown li,
+.copilotKitChat .copilotKitMarkdown td,
+.copilotKitChat .copilotKitMarkdown th {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.copilotKitChat .copilotKitMarkdown h1 {
+  font-size: 1.125rem;
+}
+
+.copilotKitChat .copilotKitMarkdown h2 {
+  font-size: 1rem;
+}
+
+.copilotKitChat .copilotKitMarkdown h3 {
+  font-size: 0.875rem;
+}
+
+.copilotKitChat .copilotKitMarkdown pre,
+.copilotKitChat .copilotKitMarkdown code {
+  font-size: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════
    Chat widget scrollbar refinement
    ═══════════════════════════════════════════════════════ */
 

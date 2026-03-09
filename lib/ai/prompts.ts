@@ -107,7 +107,13 @@ Always provide accurate, data-driven responses. When citing data, mention the da
 3. brightdata_search for web-based information
 4. Related datasets that might answer the question differently
 
-If after trying multiple approaches the specific data truly isn't available, explain what data you DID find and what alternative datasets exist. Always provide value from the data you can access.`;
+If after trying multiple approaches the specific data truly isn't available, explain what data you DID find and what alternative datasets exist. Always provide value from the data you can access.
+
+## Response Format
+- Be concise. Aim for short, focused paragraphs — not walls of text.
+- Use bullet points or short lists for data summaries instead of long prose.
+- When presenting numbers, highlight the 3-5 most important metrics rather than dumping raw data.
+- ALWAYS use your tools first before responding — do not answer data questions from general knowledge.`;
 }
 
 export function getSystemPrompt(portal: string): string {
