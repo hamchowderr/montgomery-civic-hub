@@ -1,0 +1,84 @@
+---
+title: "Glossary"
+sidebarTitle: "Glossary"
+description: "Definitions of terms used in the Montgomery Civic Hub."
+icon: "book"
+---
+
+<AccordionGroup>
+  <Accordion title="311 Service Request">
+    A citizen-reported issue submitted through Montgomery's 311 system. Covers potholes, broken streetlights, trash collection issues, drainage problems, sidewalk repairs, and more. Each request tracks department, type, status, district, and dates.
+  </Accordion>
+
+  <Accordion title="ArcGIS">
+    A geographic information system (GIS) platform by Esri. Montgomery publishes its city data through ArcGIS FeatureServers, which the Civic Hub queries for map, table, and chart data.
+  </Accordion>
+
+  <Accordion title="Census Block">
+    The smallest geographic unit used by the U.S. Census Bureau. Typically corresponds to a city block bounded by streets. Montgomery has thousands of census blocks.
+  </Accordion>
+
+  <Accordion title="Census Block Group">
+    A group of census blocks, typically containing 600-3,000 people. Used for more detailed demographic analysis than census tracts.
+  </Accordion>
+
+  <Accordion title="Census Tract">
+    A geographic region defined for the purpose of taking a census, typically containing about 4,000 people. Used as the primary unit for demographic analysis.
+  </Accordion>
+
+  <Accordion title="Code Violation">
+    A citation issued when a property fails to meet city code standards. Common types include nuisance violations (overgrown lots, junk vehicles), demolition orders for unsafe structures, and sign violations.
+  </Accordion>
+
+  <Accordion title="Council District">
+    One of Montgomery's 9 political subdivisions, each represented by an elected city council member. Districts are used throughout the Civic Hub for geographic filtering.
+  </Accordion>
+
+  <Accordion title="DBA (Doing Business As)">
+    The trade name a business operates under, which may differ from the legal entity name. Shown in the Business License dataset.
+  </Accordion>
+
+  <Accordion title="Entertainment District">
+    A designated zone in Montgomery where businesses may operate with special entertainment-related permissions. Boundaries are defined by city ordinance.
+  </Accordion>
+
+  <Accordion title="FeatureServer">
+    An ArcGIS service endpoint that provides geographic data (features) with attributes. Montgomery's FeatureServer is the primary data source for the Civic Hub.
+  </Accordion>
+
+  <Accordion title="Flood Hazard Area">
+    Zones designated by FEMA as having elevated flood risk. Montgomery's flood hazard areas are mapped along the Alabama River and its tributaries.
+  </Accordion>
+
+  <Accordion title="GeoJSON">
+    A format for encoding geographic data structures (points, lines, polygons) using JSON. Used internally by the Civic Hub's map components.
+  </Accordion>
+
+  <Accordion title="NAICS Code">
+    North American Industry Classification System code. A standardized numeric code that classifies businesses by industry type. Found in the Business License dataset.
+  </Accordion>
+
+  <Accordion title="Nuisance">
+    A property condition that violates city codes and affects the surrounding community — overgrown vegetation, abandoned vehicles, unsafe structures, illegal dumping. Tracked in both the Code Violations and Nuisance datasets.
+  </Accordion>
+
+  <Accordion title="Parcel">
+    An individual plot of land as defined in the city's property records. Each parcel has a unique ID and is associated with ownership, zoning, and assessment data.
+  </Accordion>
+
+  <Accordion title="Pavement Assessment">
+    A systematic evaluation of road surface conditions. Montgomery's 2025 assessment rates roads by condition score, helping prioritize resurfacing projects.
+  </Accordion>
+
+  <Accordion title="Portal">
+    One of the four audience-specific dashboards in the Civic Hub: Resident, Business, City Staff, and Researcher. Each has tailored AI behavior and datasets.
+  </Accordion>
+
+  <Accordion title="WHERE Clause">
+    A SQL-like filter used in ArcGIS queries to select specific records. Example: `Status='Open' AND District=3` returns only open records in District 3. The year filter generates these automatically.
+  </Accordion>
+
+  <Accordion title="Zoning">
+    Land use classifications assigned by the city that determine what can be built on a parcel — residential, commercial, industrial, mixed-use, etc.
+  </Accordion>
+</AccordionGroup>
