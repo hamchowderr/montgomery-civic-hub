@@ -1,0 +1,43 @@
+---
+title: "Montgomery Civic Hub"
+description: "AI-powered civic intelligence dashboard for Montgomery, AL"
+---
+
+## Overview
+
+Montgomery Civic Hub is a four-portal civic intelligence dashboard that gives residents, businesses, city staff, and researchers AI-powered access to real-time city data through conversational chat, interactive maps, data tables, and charts.
+
+<CardGroup cols={2}>
+  <Card title="Architecture" icon="sitemap" href="/architecture">
+    System design and technical architecture
+  </Card>
+  <Card title="Portals" icon="grid-2" href="/portals">
+    Four specialized portals for different audiences
+  </Card>
+  <Card title="AI Chat" icon="message-bot" href="/features/ai-chat">
+    Conversational AI powered by Claude
+  </Card>
+  <Card title="Data Sources" icon="database" href="/technical/data-sources">
+    Live ArcGIS and web data integration
+  </Card>
+</CardGroup>
+
+## Key Features
+
+- **Four specialized portals** — Resident, Business, City Staff, and Researcher views
+- **AI-powered chat** — Natural language queries answered with real city data
+- **Interactive maps** — MapLibre GL visualizations with council district overlays
+- **Live data** — Direct queries to Montgomery's ArcGIS FeatureServer (40+ datasets)
+- **Year filtering** — Explore historical trends from 2018 to present
+- **Guided tours** — Onboarding walkthroughs for each portal
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Next.js 15, TypeScript, Tailwind CSS, shadcn/ui |
+| AI | Claude claude-sonnet-4-20250514 with tool use, CopilotKit + AG-UI protocol |
+| Data | ArcGIS FeatureServer (40+ datasets), Bright Data web scraping |
+| Backend | Convex (real-time sync, caching, chat persistence) |
+| Maps | MapLibre GL with dark/light theme sync |
+| Deployment | Vercel + Convex Cloud |

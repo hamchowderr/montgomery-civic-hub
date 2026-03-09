@@ -1,0 +1,76 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Montgomery Civic Hub",
+  "colors": {
+    "primary": "#1E40AF",
+    "light": "#3B82F6",
+    "dark": "#1E3A8A"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index",
+              "architecture",
+              "portals"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/ai-chat",
+              "features/maps",
+              "features/data-tables",
+              "features/charts"
+            ]
+          },
+          {
+            "group": "Technical",
+            "pages": [
+              "technical/data-sources",
+              "technical/ai-backend",
+              "technical/stack"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/hamchowderr/montgomery-civic-hub",
+          "icon": "github"
+        },
+        {
+          "anchor": "Live Demo",
+          "href": "https://montgomery-civic-hub.vercel.app",
+          "icon": "globe"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Demo",
+        "href": "https://montgomery-civic-hub.vercel.app"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/hamchowderr/montgomery-civic-hub"
+    }
+  }
+}
