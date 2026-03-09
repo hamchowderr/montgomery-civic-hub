@@ -20,7 +20,7 @@ function CopilotWrapper({
 }) {
   return (
     <CopilotKit runtimeUrl="/api/copilotkit" agent={agent}>
-      {children}
+      <YearFilterProvider>{children}</YearFilterProvider>
     </CopilotKit>
   );
 }

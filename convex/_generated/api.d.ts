@@ -12,6 +12,7 @@ import type * as actions from "../actions.js";
 import type * as datasetRegistry from "../datasetRegistry.js";
 import type * as mutations from "../mutations.js";
 import type * as queries from "../queries.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   datasetRegistry: typeof datasetRegistry;
   mutations: typeof mutations;
   queries: typeof queries;
+  users: typeof users;
 }>;
 
 /**

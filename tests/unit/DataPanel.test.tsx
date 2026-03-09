@@ -2,11 +2,12 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DataPanel } from "@/components/DataPanel";
 import { CopilotKit } from "@copilotkit/react-core";
+import { YearFilterProvider } from "@/lib/contexts/year-filter";
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <CopilotKit runtimeUrl="/api/copilotkit" agent="test">
-      {children}
+      <YearFilterProvider>{children}</YearFilterProvider>
     </CopilotKit>
   );
 }

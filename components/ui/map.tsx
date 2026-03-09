@@ -785,7 +785,7 @@ function ControlButton({
 }
 
 function MapControls({
-  position = "bottom-right",
+  position = "top-right",
   showZoom = true,
   showCompass = false,
   showLocate = false,

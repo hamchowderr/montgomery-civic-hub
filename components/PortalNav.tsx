@@ -1,16 +1,10 @@
 "use client";
 
+import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
+import { Briefcase, Building2, GraduationCap, Home, Moon, Sun } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import {
-  Sun,
-  Moon,
-  Home,
-  Briefcase,
-  Building2,
-  GraduationCap,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -43,7 +37,9 @@ const portals = [
 
 export function PortalNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { isSignedIn } = useAuth();
 
   return (
     <nav className="flex min-w-0 items-center justify-between border-b bg-card/80 px-4 py-2 backdrop-blur-sm">
@@ -83,17 +79,33 @@ export function PortalNav() {
         })}
       </div>
 
-      {/* Theme toggle */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        aria-label="Toggle theme"
-        className="ml-auto min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 text-muted-foreground hover:text-foreground"
-      >
-        <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      </Button>
+      {/* Right side: theme toggle + auth */}
+      <div className="ml-auto flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          aria-label="Toggle theme"
+          className="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 text-muted-foreground hover:text-foreground"
+        >
+          <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        </Button>
+
+        {isSignedIn ? (
+          <UserButton
+            appearance={{
+              elements: { avatarBox: "size-7" },
+            }}
+          />
+        ) : (
+          <SignInButton mode="redirect">
+            <Button variant="outline" size="sm">
+              Sign In
+            </Button>
+          </SignInButton>
+        )}
+      </div>
     </nav>
   );
 }
