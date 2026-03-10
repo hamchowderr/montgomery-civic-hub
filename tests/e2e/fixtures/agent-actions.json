@@ -1,0 +1,84 @@
+{
+  "fixtures": [
+    {
+      "match": { "toolCallId": "toolu_switch_chart" },
+      "response": { "content": "Done, I have switched to chart view for you." }
+    },
+    {
+      "match": { "userMessage": "show chart view" },
+      "response": {
+        "toolCalls": [
+          {
+            "id": "toolu_switch_chart",
+            "name": "switch_data_tab",
+            "arguments": "{\"tab\":\"chart\"}"
+          }
+        ]
+      }
+    },
+    {
+      "match": { "toolCallId": "toolu_switch_table" },
+      "response": { "content": "Done, I have switched to table view for you." }
+    },
+    {
+      "match": { "userMessage": "show table view" },
+      "response": {
+        "toolCalls": [
+          {
+            "id": "toolu_switch_table",
+            "name": "switch_data_tab",
+            "arguments": "{\"tab\":\"table\"}"
+          }
+        ]
+      }
+    },
+    {
+      "match": { "toolCallId": "toolu_switch_map" },
+      "response": { "content": "Done, I have switched to map view for you." }
+    },
+    {
+      "match": { "userMessage": "show map view" },
+      "response": {
+        "toolCalls": [
+          {
+            "id": "toolu_switch_map",
+            "name": "switch_data_tab",
+            "arguments": "{\"tab\":\"map\"}"
+          }
+        ]
+      }
+    },
+    {
+      "match": { "toolCallId": "toolu_year_range" },
+      "response": { "content": "Done, I have set the year range to 2020-2022 for you." }
+    },
+    {
+      "match": { "userMessage": "filter years 2020 to 2022" },
+      "response": {
+        "toolCalls": [
+          {
+            "id": "toolu_year_range",
+            "name": "set_year_range",
+            "arguments": "{\"from\":2020,\"to\":2022}"
+          }
+        ]
+      }
+    },
+    {
+      "match": { "toolCallId": "toolu_chat_left" },
+      "response": { "content": "Done, I have moved the chat to the left side for you." }
+    },
+    {
+      "match": { "userMessage": "move chat to left" },
+      "response": {
+        "toolCalls": [
+          {
+            "id": "toolu_chat_left",
+            "name": "set_chat_position",
+            "arguments": "{\"side\":\"left\"}"
+          }
+        ]
+      }
+    }
+  ]
+}

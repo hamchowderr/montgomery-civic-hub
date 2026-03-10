@@ -1,0 +1,10 @@
+{
+  "fixtures": [
+    {
+      "match": {},
+      "response": {
+        "content": "I understand. How can I help you with that?"
+      }
+    }
+  ]
+}

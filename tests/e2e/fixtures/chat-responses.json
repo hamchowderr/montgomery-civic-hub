@@ -1,0 +1,28 @@
+{
+  "fixtures": [
+    {
+      "match": { "userMessage": "neighborhood safety" },
+      "response": {
+        "content": "Montgomery has seen a 12 percent reduction in property crime since 2021 according to the Crime Statistics dataset."
+      }
+    },
+    {
+      "match": { "userMessage": "permits near downtown" },
+      "response": {
+        "content": "There are currently 47 active building permits in downtown Montgomery per the Building Permits dataset."
+      }
+    },
+    {
+      "match": { "userMessage": "department budget" },
+      "response": {
+        "content": "The Public Works department has the highest expenditure at 34 million dollars according to the Master Operating Expenditures dataset."
+      }
+    },
+    {
+      "match": { "userMessage": "crime trends" },
+      "response": {
+        "content": "Crime incidents have decreased 8 percent year over year from 2022 to 2023 per the Crime Statistics dataset covering 2018 to present."
+      }
+    }
+  ]
+}
