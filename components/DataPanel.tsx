@@ -1,17 +1,9 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-  type ReactNode,
-} from "react";
-import { createPortal } from "react-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Table2, BarChart3, CalendarRange } from "lucide-react";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { useYearFilter } from "@/lib/contexts/year-filter";
+import { BarChart3, CalendarRange, MapPin, Table2 } from "lucide-react";
+import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Select,
   SelectContent,
@@ -19,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useYearFilter } from "@/lib/contexts/year-filter";
 
 // ── Layer filter slot context ─────────────────────────────────────────────────
 // Allows map components to portal their layer filter into the DataPanel header.
@@ -72,8 +66,7 @@ export function DataPanel({
   // AI action: switch tabs
   useCopilotAction({
     name: "switch_data_tab",
-    description:
-      "Switch the data panel view between Map, Table, and Chart tabs",
+    description: "Switch the data panel view between Map, Table, and Chart tabs",
     parameters: [
       {
         name: "tab",
@@ -92,8 +85,7 @@ export function DataPanel({
   // AI action: set year range filter
   useCopilotAction({
     name: "set_year_range",
-    description:
-      "Set the year range filter for all data queries (maps, tables, charts)",
+    description: "Set the year range filter for all data queries (maps, tables, charts)",
     parameters: [
       {
         name: "from",
@@ -116,13 +108,9 @@ export function DataPanel({
   });
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-card">
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="flex w-full flex-1 flex-col"
-      >
-        <div className="border-b px-3 py-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+    <div className="@container flex h-full flex-col overflow-hidden bg-card">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex w-full flex-1 flex-col">
+        <div className="border-b px-3 py-2 flex flex-col gap-2 @[500px]:flex-row @[500px]:items-center @[500px]:justify-between @[500px]:px-fluid-sm">
           <TabsList className="gap-1">
             <TabsTrigger
               value="map"
@@ -130,7 +118,7 @@ export function DataPanel({
               className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <MapPin className="size-4" />
-              <span className="hidden sm:inline">Map</span>
+              <span className="hidden @[400px]:inline">Map</span>
             </TabsTrigger>
             <TabsTrigger
               value="table"
@@ -138,7 +126,7 @@ export function DataPanel({
               className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <Table2 className="size-4" />
-              <span className="hidden sm:inline">Table</span>
+              <span className="hidden @[400px]:inline">Table</span>
             </TabsTrigger>
             <TabsTrigger
               value="chart"
@@ -146,47 +134,33 @@ export function DataPanel({
               className="gap-1.5 px-3 sm:gap-2 sm:px-5"
             >
               <BarChart3 className="size-4" />
-              <span className="hidden sm:inline">Chart</span>
+              <span className="hidden @[400px]:inline">Chart</span>
             </TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Year filter */}
             <div className="flex items-center gap-2">
               <CalendarRange className="size-3.5 text-muted-foreground" />
-              <Select
-                value={String(yearRange.from)}
-                onValueChange={(v) => setFrom(Number(v))}
-              >
+              <Select value={String(yearRange.from)} onValueChange={(v) => setFrom(Number(v))}>
                 <SelectTrigger className="h-7 w-[80px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {yearOptions.map((y) => (
-                    <SelectItem
-                      key={y}
-                      value={String(y)}
-                      disabled={y > yearRange.to}
-                    >
+                    <SelectItem key={y} value={String(y)} disabled={y > yearRange.to}>
                       {y}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <span className="text-xs text-muted-foreground">to</span>
-              <Select
-                value={String(yearRange.to)}
-                onValueChange={(v) => setTo(Number(v))}
-              >
+              <Select value={String(yearRange.to)} onValueChange={(v) => setTo(Number(v))}>
                 <SelectTrigger className="h-7 w-[80px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {yearOptions.map((y) => (
-                    <SelectItem
-                      key={y}
-                      value={String(y)}
-                      disabled={y < yearRange.from}
-                    >
+                    <SelectItem key={y} value={String(y)} disabled={y < yearRange.from}>
                       {y}
                     </SelectItem>
                   ))}
@@ -202,11 +176,7 @@ export function DataPanel({
         </div>
 
         {/* forceMount all tabs to preserve state across switches (avoids MapLibre re-init, table scroll reset, etc.) */}
-        <TabsContent
-          value="map"
-          forceMount
-          className="flex-1 data-[state=inactive]:hidden"
-        >
+        <TabsContent value="map" forceMount className="flex-1 data-[state=inactive]:hidden">
           <LayerFilterSlotContext.Provider value={slotNode}>
             {mapContent}
           </LayerFilterSlotContext.Provider>

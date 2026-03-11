@@ -43,6 +43,26 @@
     --civic-accent-light: 16 70% 94%;
     --civic-navy: 220 45% 20%;
     --civic-navy-light: 220 35% 94%;
+
+    /* Fluid typography scale */
+    --text-fluid-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+    --text-fluid-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);
+    --text-fluid-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    --text-fluid-lg: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+    --text-fluid-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+    --text-fluid-2xl: clamp(1.5rem, 1.2rem + 1.25vw, 1.875rem);
+    --text-fluid-3xl: clamp(1.875rem, 1.5rem + 1.5vw, 2.75rem);
+    --text-fluid-hero: clamp(3rem, 2rem + 4vw, 5.5rem);
+    --text-fluid-hero-sub: clamp(1.25rem, 1rem + 1.5vw, 2.5rem);
+
+    /* Fluid spacing scale */
+    --space-fluid-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
+    --space-fluid-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+    --space-fluid-md: clamp(0.75rem, 0.5rem + 1vw, 1.5rem);
+    --space-fluid-lg: clamp(1rem, 0.75rem + 1.25vw, 2rem);
+    --space-fluid-xl: clamp(1.5rem, 1rem + 2vw, 3rem);
+    --space-fluid-2xl: clamp(2rem, 1.5rem + 2.5vw, 4rem);
+    --space-fluid-section: clamp(3rem, 2rem + 4vw, 6rem);
   }
 
   .dark {
@@ -107,21 +127,9 @@
   /* Subtle topographic contour pattern */
   .civic-topo {
     background-image:
-      radial-gradient(
-        ellipse at 20% 50%,
-        hsl(var(--civic-accent) / 0.04) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        ellipse at 80% 20%,
-        hsl(var(--portal-resident) / 0.03) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        ellipse at 60% 80%,
-        hsl(var(--portal-citystaff) / 0.03) 0%,
-        transparent 50%
-      );
+      radial-gradient(ellipse at 20% 50%, hsl(var(--civic-accent) / 0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, hsl(var(--portal-resident) / 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 80%, hsl(var(--portal-citystaff) / 0.03) 0%, transparent 50%);
   }
 
   /* Section divider — geometric civic line */
@@ -195,4 +203,74 @@
 
 .grain-overlay {
   animation: grain-shift 8s steps(6) infinite;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CopilotKit chat overrides — blend with civic theme
+   ═══════════════════════════════════════════════════════ */
+
+/* Map CopilotKit CSS vars to our theme tokens */
+.copilot-portal-chat {
+  --copilot-kit-primary-color: hsl(var(--accent));
+  --copilot-kit-contrast-color: hsl(var(--accent-foreground));
+  --copilot-kit-background-color: hsl(var(--card));
+  --copilot-kit-input-background-color: hsl(var(--card));
+  --copilot-kit-secondary-color: hsl(var(--muted));
+  --copilot-kit-secondary-contrast-color: hsl(var(--foreground));
+  --copilot-kit-separator-color: hsl(var(--border));
+  --copilot-kit-muted-color: hsl(var(--muted-foreground));
+}
+
+/* Hide the built-in header — we render our own portal header above */
+.copilot-portal-chat .copilotKitHeader {
+  display: none;
+}
+
+/* Remove default border/shadow — parent container handles it */
+/* Force the chat to fill exactly its parent and use flex layout so the
+   messages scroll while the input stays pinned at the bottom. */
+.copilot-portal-chat .copilotKitChat {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Messages area scrolls, input stays fixed at bottom */
+.copilot-portal-chat .copilotKitMessages {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Input area stays pinned — never grows or shrinks */
+.copilot-portal-chat .copilotKitInput {
+  flex-shrink: 0;
+}
+
+/* Match font to our body stack */
+.copilot-portal-chat .copilotKitMessages,
+.copilot-portal-chat .copilotKitInput {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.875rem;
+}
+
+/* Smooth message entrance */
+.copilot-portal-chat .copilotKitMessage {
+  animation: chatFadeIn 0.3s ease-out both;
+}
+
+@keyframes chatFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
