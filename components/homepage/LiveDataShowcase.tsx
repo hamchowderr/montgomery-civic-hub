@@ -1,43 +1,30 @@
 "use client";
 
-import { useRef, useEffect, useState, type ReactNode } from "react";
-import { motion, useInView, animate } from "motion/react";
+import { AlertTriangle, FileText, HardHat, MapPin, Phone, TreePine } from "lucide-react";
+import { animate, motion, useInView } from "motion/react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import {
-  Phone,
-  HardHat,
-  FileText,
-  AlertTriangle,
-  TreePine,
-  MapPin,
-} from "lucide-react";
-import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
+  BarChart,
   Cell,
   Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
-import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHomepageData } from "@/lib/hooks/use-homepage-data";
+import { cn } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════
    Shared Helpers
    ═══════════════════════════════════════════════════════ */
 
-function AnimatedCounter({
-  value,
-  suffix = "",
-}: {
-  value: number;
-  suffix?: string;
-}) {
+function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [display, setDisplay] = useState(0);
@@ -87,14 +74,7 @@ function FadeInWhenVisible({
 }
 
 function SectionAccent({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "mx-auto mb-6 h-[3px] w-12 rounded-full bg-accent",
-        className,
-      )}
-    />
-  );
+  return <div className={cn("mx-auto mb-6 h-[3px] w-12 rounded-full bg-accent", className)} />;
 }
 
 /** Pulsing green "Live" badge */
@@ -122,20 +102,14 @@ interface StatCardProps {
   delay?: number;
 }
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  loading,
-  delay = 0,
-}: StatCardProps) {
+function StatCard({ icon: Icon, label, value, loading, delay = 0 }: StatCardProps) {
   return (
     <FadeInWhenVisible delay={delay}>
       <Card className="group relative overflow-hidden border-border/50 transition-colors hover:border-accent/30">
         {/* Top accent line */}
         <div className="absolute left-0 top-0 h-[2px] w-full bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
-        <CardContent className="flex flex-col items-center gap-2 p-5 text-center">
+        <CardContent className="flex flex-col items-center gap-2 p-fluid-md text-center">
           <div className="mb-1 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
             <Icon className="h-5 w-5" />
           </div>
@@ -143,7 +117,7 @@ function StatCard({
           {loading ? (
             <Skeleton className="h-9 w-20" />
           ) : (
-            <div className="font-display text-3xl tracking-tight">
+            <div className="font-display text-fluid-2xl tracking-tight">
               {value !== null ? <AnimatedCounter value={value} /> : "---"}
             </div>
           )}
@@ -184,8 +158,7 @@ const DONUT_COLORS = [
    ═══════════════════════════════════════════════════════ */
 
 export function LiveDataShowcase() {
-  const { stats, requestTypes, permitStatus, loading, error } =
-    useHomepageData();
+  const { stats, requestTypes, permitStatus, loading, error } = useHomepageData();
 
   const statCards: Omit<StatCardProps, "loading">[] = [
     {
@@ -221,7 +194,7 @@ export function LiveDataShowcase() {
   ];
 
   return (
-    <section className="bg-background px-4 py-16">
+    <section className="bg-background px-fluid-md py-fluid-section">
       <div className="mx-auto max-w-6xl">
         {/* Section header */}
         <FadeInWhenVisible className="text-center">
@@ -230,21 +203,17 @@ export function LiveDataShowcase() {
           </span>
         </FadeInWhenVisible>
         <FadeInWhenVisible className="mt-4 text-center" delay={0.08}>
-          <h2 className="font-display text-3xl tracking-tight sm:text-4xl lg:text-[2.75rem]">
+          <h2 className="font-display text-fluid-3xl tracking-tight">
             Real-time Montgomery in numbers.
           </h2>
         </FadeInWhenVisible>
         <FadeInWhenVisible className="mx-auto mt-5 text-center" delay={0.12}>
           <SectionAccent />
         </FadeInWhenVisible>
-        <FadeInWhenVisible
-          className="mx-auto mb-10 max-w-2xl text-center"
-          delay={0.16}
-        >
-          <p className="text-[1.05rem] leading-relaxed text-muted-foreground">
-            Pulled directly from Montgomery&apos;s ArcGIS servers. These numbers
-            update as the city&apos;s data changes — no static reports, no
-            waiting for quarterly updates.
+        <FadeInWhenVisible className="mx-auto mb-10 max-w-2xl text-center" delay={0.16}>
+          <p className="text-fluid-base leading-relaxed text-muted-foreground">
+            Pulled directly from Montgomery&apos;s ArcGIS servers. These numbers update as the
+            city&apos;s data changes — no static reports, no waiting for quarterly updates.
           </p>
         </FadeInWhenVisible>
 
@@ -256,24 +225,17 @@ export function LiveDataShowcase() {
         )}
 
         {/* Stat cards grid */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid gap-fluid-md grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
           {statCards.map((card, i) => (
-            <StatCard
-              key={card.label}
-              {...card}
-              loading={loading}
-              delay={i * 0.06}
-            />
+            <StatCard key={card.label} {...card} loading={loading} delay={i * 0.06} />
           ))}
         </div>
 
         {/* Charts row */}
         <div
           className={cn(
-            "mt-8 grid gap-6",
-            !loading && permitStatus.length > 0
-              ? "md:grid-cols-2"
-              : "md:grid-cols-1",
+            "mt-8 grid gap-fluid-md",
+            !loading && permitStatus.length > 0 ? "md:grid-cols-2" : "md:grid-cols-1",
           )}
         >
           {/* Top 5 Request Types — Horizontal Bar Chart */}
@@ -286,9 +248,7 @@ export function LiveDataShowcase() {
                   </CardTitle>
                   <LiveBadge />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  2025 311 requests by category
-                </p>
+                <p className="text-xs text-muted-foreground">2025 311 requests by category</p>
               </CardHeader>
               <CardContent className="pt-2">
                 {loading ? (
@@ -298,7 +258,7 @@ export function LiveDataShowcase() {
                     ))}
                   </div>
                 ) : requestTypes.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={240}>
+                  <ResponsiveContainer width="100%" height={240} minWidth={1}>
                     <BarChart
                       data={requestTypes}
                       layout="vertical"
@@ -323,10 +283,7 @@ export function LiveDataShowcase() {
                           borderRadius: "8px",
                           fontSize: "12px",
                         }}
-                        formatter={(value: number) => [
-                          value.toLocaleString(),
-                          "Requests",
-                        ]}
+                        formatter={(value: number) => [value.toLocaleString(), "Requests"]}
                       />
                       <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={20}>
                         {requestTypes.map((_, index) => (
@@ -368,7 +325,7 @@ export function LiveDataShowcase() {
                       <Skeleton className="h-40 w-40 rounded-full" />
                     </div>
                   ) : (
-                    <ResponsiveContainer width="100%" height={240}>
+                    <ResponsiveContainer width="100%" height={240} minWidth={1}>
                       <PieChart>
                         <Pie
                           data={permitStatus}
@@ -395,19 +352,14 @@ export function LiveDataShowcase() {
                             borderRadius: "8px",
                             fontSize: "12px",
                           }}
-                          formatter={(value: number) => [
-                            value.toLocaleString(),
-                            "Permits",
-                          ]}
+                          formatter={(value: number) => [value.toLocaleString(), "Permits"]}
                         />
                         <Legend
                           verticalAlign="bottom"
                           iconType="circle"
                           iconSize={8}
                           formatter={(value: string) => (
-                            <span className="text-xs text-muted-foreground">
-                              {value}
-                            </span>
+                            <span className="text-xs text-muted-foreground">{value}</span>
                           )}
                         />
                       </PieChart>

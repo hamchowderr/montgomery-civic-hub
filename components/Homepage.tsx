@@ -1,31 +1,31 @@
 "use client";
 
-import { useRef, useEffect, useState, type ReactNode } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useInView,
-  useMotionValueEvent,
-  animate,
-} from "motion/react";
 import {
   ArrowRight,
-  ChevronDown,
-  MessageSquare,
-  Map,
   BarChart3,
+  ChevronDown,
   Landmark,
-  Users,
+  Map,
+  MessageSquare,
   Shield,
   TrendingUp,
+  Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import {
+  animate,
+  motion,
+  useInView,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+} from "motion/react";
+import Image from "next/image";
+import Link from "next/link";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Footer } from "@/components/Footer";
 import { LiveDataShowcase } from "@/components/homepage/LiveDataShowcase";
 import { PortalPreview } from "@/components/homepage/PortalPreview";
+import { cn } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════
    Data
@@ -90,13 +90,7 @@ const steps = [
    Shared Components
    ═══════════════════════════════════════════════════════ */
 
-function AnimatedCounter({
-  value,
-  suffix = "",
-}: {
-  value: number;
-  suffix?: string;
-}) {
+function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-10%" });
   const [display, setDisplay] = useState(0);
@@ -147,14 +141,7 @@ function FadeInWhenVisible({
 
 /** Terracotta accent bar used as section punctuation */
 function SectionAccent({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "mx-auto mb-6 h-[3px] w-12 rounded-full bg-accent",
-        className,
-      )}
-    />
-  );
+  return <div className={cn("mx-auto mb-6 h-[3px] w-12 rounded-full bg-accent", className)} />;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -235,7 +222,7 @@ function HeroSection() {
         </motion.div>
 
         {/* Title */}
-        <h1 className="mb-5 flex flex-col items-center text-5xl tracking-tight sm:text-7xl lg:text-[5.5rem]">
+        <h1 className="mb-5 flex flex-col items-center text-fluid-hero tracking-tight">
           <motion.span
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -256,7 +243,7 @@ function HeroSection() {
               delay: 0.65,
               ease: [0.25, 0.46, 0.45, 0.94],
             }}
-            className="mt-1 text-[0.45em] font-semibold uppercase tracking-[0.25em] text-white/40"
+            className="mt-1 text-fluid-hero-sub font-semibold uppercase tracking-[0.25em] text-white/40"
           >
             Civic Hub
           </motion.span>
@@ -267,7 +254,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.85 }}
-          className="mb-12 max-w-md text-[1.05rem] leading-relaxed text-white/40"
+          className="mb-12 max-w-md text-fluid-base leading-relaxed text-white/40"
         >
           Your gateway to city data, services, and insights for{" "}
           <span className="text-white/70">Montgomery, Alabama</span>.
@@ -320,15 +307,11 @@ function HeroSection() {
 
 function StatsSection() {
   return (
-    <section className="border-b bg-background px-4 py-14">
-      <div className="mx-auto grid max-w-4xl grid-cols-2 gap-10 sm:grid-cols-4">
+    <section className="border-b bg-background px-fluid-md py-fluid-section">
+      <div className="mx-auto grid max-w-4xl grid-cols-2 gap-fluid-lg sm:grid-cols-4">
         {stats.map((stat, i) => (
-          <FadeInWhenVisible
-            key={stat.label}
-            delay={i * 0.08}
-            className="text-center"
-          >
-            <div className="font-display text-4xl tracking-tight sm:text-5xl">
+          <FadeInWhenVisible key={stat.label} delay={i * 0.08} className="text-center">
+            <div className="font-display text-fluid-2xl tracking-tight">
               <AnimatedCounter value={stat.value} suffix={stat.suffix} />
             </div>
             <div className="mt-2 text-xs font-medium uppercase tracking-widest text-muted-foreground">
@@ -347,7 +330,7 @@ function StatsSection() {
 
 function WhyMontgomerySection() {
   return (
-    <section className="civic-topo px-4 py-16">
+    <section className="civic-topo px-fluid-md py-fluid-section">
       <div className="mx-auto max-w-6xl">
         <FadeInWhenVisible className="text-center">
           <span className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-accent">
@@ -355,39 +338,31 @@ function WhyMontgomerySection() {
           </span>
         </FadeInWhenVisible>
         <FadeInWhenVisible className="mt-4 text-center" delay={0.08}>
-          <h2 className="font-display text-3xl tracking-tight sm:text-4xl lg:text-[2.75rem]">
+          <h2 className="font-display text-fluid-3xl tracking-tight">
             A city where history meets innovation.
           </h2>
         </FadeInWhenVisible>
         <FadeInWhenVisible className="mx-auto mt-5 text-center" delay={0.12}>
           <SectionAccent />
         </FadeInWhenVisible>
-        <FadeInWhenVisible
-          className="mx-auto mb-10 max-w-2xl text-center"
-          delay={0.16}
-        >
-          <p className="text-[1.05rem] leading-relaxed text-muted-foreground">
-            Montgomery isn&apos;t just any city. From the first capital of the
-            Confederacy to the birthplace of the civil rights movement, this is
-            a place defined by transformation. Today, it faces new challenges —
-            and this platform puts the data behind them into everyone&apos;s
-            hands.
+        <FadeInWhenVisible className="mx-auto mb-10 max-w-2xl text-center" delay={0.16}>
+          <p className="text-fluid-base leading-relaxed text-muted-foreground">
+            Montgomery isn&apos;t just any city. From the first capital of the Confederacy to the
+            birthplace of the civil rights movement, this is a place defined by transformation.
+            Today, it faces new challenges — and this platform puts the data behind them into
+            everyone&apos;s hands.
           </p>
         </FadeInWhenVisible>
 
         <div className="grid gap-5 sm:grid-cols-2">
           {montgomeryHighlights.map((item, i) => (
             <FadeInWhenVisible key={item.title} delay={i * 0.08}>
-              <div className="group rounded-lg border bg-card p-8 transition-colors hover:border-accent/30">
+              <div className="group rounded-lg border bg-card p-fluid-md transition-colors hover:border-accent/30">
                 <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-md bg-accent/10 text-accent transition-colors group-hover:bg-accent/15">
                   <item.icon className="h-5 w-5" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold tracking-tight">
-                  {item.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {item.description}
-                </p>
+                <h3 className="mb-2 text-lg font-semibold tracking-tight">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
               </div>
             </FadeInWhenVisible>
           ))}
@@ -418,11 +393,7 @@ function HowItWorksSection() {
   const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative civic-topo"
-      style={{ height: "140vh" }}
-    >
+    <section ref={containerRef} className="relative civic-topo" style={{ height: "140vh" }}>
       <div className="sticky top-0 flex h-screen items-center overflow-hidden px-4">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 md:flex-row md:items-center md:gap-20">
           {/* Left — progress + labels */}
@@ -431,7 +402,7 @@ function HowItWorksSection() {
               <span className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-accent">
                 How It Works
               </span>
-              <h2 className="mt-3 font-display text-3xl tracking-tight sm:text-4xl">
+              <h2 className="mt-3 font-display text-fluid-3xl tracking-tight">
                 Three steps to
                 <br />
                 smarter civic access.
@@ -464,9 +435,7 @@ function HowItWorksSection() {
                     <h3
                       className={cn(
                         "font-semibold tracking-tight transition-colors duration-500",
-                        activeStep >= i
-                          ? "text-foreground"
-                          : "text-muted-foreground",
+                        activeStep >= i ? "text-foreground" : "text-muted-foreground",
                       )}
                     >
                       {step.title}
@@ -502,7 +471,7 @@ function HowItWorksSection() {
                     <step.icon className="h-7 w-7" />
                   </div>
                   <h3 className="mb-3 font-display text-2xl">{step.title}</h3>
-                  <p className="text-[1.05rem] leading-relaxed text-muted-foreground">
+                  <p className="text-fluid-base leading-relaxed text-muted-foreground">
                     {step.description}
                   </p>
                 </motion.div>
@@ -521,7 +490,7 @@ function HowItWorksSection() {
 
 function CTASection() {
   return (
-    <section className="relative overflow-hidden bg-civic-navy px-4 py-24 text-white">
+    <section className="relative overflow-hidden bg-civic-navy px-fluid-md py-fluid-section text-white">
       {/* Warm glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -right-32 top-0 h-72 w-72 rounded-full bg-civic-accent/[0.06] blur-[100px]" />
@@ -540,16 +509,16 @@ function CTASection() {
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
         <FadeInWhenVisible>
-          <h2 className="font-display text-3xl tracking-tight sm:text-5xl">
+          <h2 className="font-display text-fluid-3xl tracking-tight">
             Ready to explore
             <br />
             your city&apos;s data?
           </h2>
         </FadeInWhenVisible>
         <FadeInWhenVisible delay={0.08}>
-          <p className="mx-auto mt-6 max-w-lg text-[1.05rem] leading-relaxed text-white/40">
-            Join thousands of Montgomery residents, businesses, and researchers
-            using AI-powered civic insights.
+          <p className="mx-auto mt-6 max-w-lg text-fluid-base leading-relaxed text-white/40">
+            Join thousands of Montgomery residents, businesses, and researchers using AI-powered
+            civic insights.
           </p>
         </FadeInWhenVisible>
         <FadeInWhenVisible delay={0.16}>

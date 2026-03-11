@@ -2,6 +2,7 @@
 
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import { Briefcase, Building2, GraduationCap, Home, Moon, Sun } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -45,15 +46,25 @@ export function PortalNav() {
     <nav className="flex min-w-0 items-center justify-between border-b bg-card/80 px-4 py-2 backdrop-blur-sm">
       {/* Mobile home link */}
       <Link href="/" className="mr-2 flex items-center sm:hidden">
-        <div className="flex size-8 items-center justify-center rounded-md bg-accent">
-          <span className="text-xs font-bold text-accent-foreground">M</span>
-        </div>
+        <Image
+          src="/montgomery-seal.png"
+          alt="Montgomery Civic Hub"
+          width={32}
+          height={32}
+          sizes="32px"
+          className="rounded-md"
+        />
       </Link>
       {/* Logo / Home link */}
       <Link href="/" className="mr-4 hidden items-center gap-2 sm:flex">
-        <div className="flex size-7 items-center justify-center rounded-md bg-accent">
-          <span className="text-xs font-bold text-accent-foreground">MCH</span>
-        </div>
+        <Image
+          src="/montgomery-seal.png"
+          alt="Montgomery Civic Hub"
+          width={28}
+          height={28}
+          sizes="28px"
+          className="rounded-md"
+        />
       </Link>
 
       {/* Portal tabs */}
