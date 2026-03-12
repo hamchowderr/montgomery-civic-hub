@@ -13,7 +13,7 @@ import { Observable, type Subscriber } from "rxjs";
 import { api } from "@/convex/_generated/api";
 import { queryFeatureServer } from "@/lib/arcgis";
 import { getSystemPrompt } from "./prompts";
-import { allTools } from "./tools";
+import { allTools, SERVER_TOOL_NAMES } from "./tools";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -149,9 +149,6 @@ async function executeBrightdataSearch(input: {
 }
 
 // ── Frontend tool/context helpers ─────────────────────────────────────────
-
-/** Names of server-side tools the agent executes directly */
-const SERVER_TOOL_NAMES = new Set(allTools.map((t) => t.name));
 
 /** Convert AG-UI tool definitions (from useCopilotAction) to Anthropic format */
 function convertFrontendTools(aguiTools: AGUITool[]): Tool[] {
@@ -531,6 +528,7 @@ export class CivicAgent extends AbstractAgent {
           toolCallId,
         } as BaseEvent);
 
+        // TOOL_CALL_RESULT — use a unique messageId for the result
         subscriber.next({
           type: EventType.TOOL_CALL_RESULT,
           toolCallId,
