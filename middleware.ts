@@ -18,7 +18,18 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks/(.*)",
 ]);
 
+const PRODUCTION_DOMAIN = "montgomery-civichub.otakusolutions.io";
+
 export default clerkMiddleware(async (auth, req) => {
+  // Redirect Vercel deployment URLs to the custom domain
+  const host = req.headers.get("host") ?? "";
+  if (host.endsWith(".vercel.app") && process.env.VERCEL_ENV === "production") {
+    const url = new URL(req.url);
+    url.host = PRODUCTION_DOMAIN;
+    url.protocol = "https";
+    return NextResponse.redirect(url, 308);
+  }
+
   if (!isPublicRoute(req)) {
     const { userId } = await auth();
     if (!userId) {

@@ -1,4 +1,17 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "montgomery-civic-hub.vercel.app"
+        }
+      ],
+      "destination": "https://montgomery-civichub.otakusolutions.io/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/_mintlify/:path*",
