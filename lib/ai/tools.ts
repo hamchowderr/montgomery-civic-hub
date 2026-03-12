@@ -39,8 +39,7 @@ export const brightdataSearchTool: Tool = {
       },
       url: {
         type: "string",
-        description:
-          "Specific URL to scrape as markdown (used with scrape_as_markdown tool)",
+        description: "Specific URL to scrape as markdown (used with scrape_as_markdown tool)",
       },
       tool: {
         type: "string",
@@ -53,3 +52,5 @@ export const brightdataSearchTool: Tool = {
 };
 
 export const allTools: Tool[] = [arcgisQueryTool, brightdataSearchTool];
+
+export const SERVER_TOOL_NAMES = new Set(allTools.map((t) => t.name));

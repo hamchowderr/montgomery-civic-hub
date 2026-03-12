@@ -1,23 +1,18 @@
-import { Observable, Subscriber } from "rxjs";
-import {
-  AbstractAgent,
-  type RunAgentInput,
-  type BaseEvent,
-  EventType,
-} from "@ag-ui/client";
+import { AbstractAgent, type BaseEvent, EventType, type RunAgentInput } from "@ag-ui/client";
 import Anthropic from "@anthropic-ai/sdk";
 import type {
-  MessageParam,
   ContentBlock,
-  ToolUseBlock,
+  MessageParam,
+  Tool,
   ToolResultBlockParam,
+  ToolUseBlock,
 } from "@anthropic-ai/sdk/resources/messages";
-import { allTools } from "./tools";
-import { getSystemPrompt } from "./prompts";
-import { queryFeatureServer } from "@/lib/arcgis";
-import { DATASET_NAME_TO_URL } from "@/lib/arcgis-client";
 import { ConvexHttpClient } from "convex/browser";
+import { Observable, type Subscriber } from "rxjs";
 import { api } from "@/convex/_generated/api";
+import { queryFeatureServer } from "@/lib/arcgis";
+import { getSystemPrompt } from "./prompts";
+import { allTools, SERVER_TOOL_NAMES } from "./tools";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -26,10 +21,10 @@ const MAX_ITERATIONS = 5;
 const MAX_TOOL_RESULT_CHARS = 50_000;
 
 const MAX_TOKENS: Record<string, number> = {
-  resident: 2048,
-  business: 2048,
-  citystaff: 4096,
-  researcher: 4096,
+  resident: 4096,
+  business: 4096,
+  citystaff: 8192,
+  researcher: 8192,
 };
 
 // ── Helpers (reused from existing client.ts) ────────────────────────────────
@@ -43,12 +38,7 @@ function sanitizeToolResult(result: unknown): string {
 
   const stripped = JSON.parse(
     JSON.stringify(result, (key, value) => {
-      if (
-        key === "geometry" ||
-        key === "rings" ||
-        key === "paths" ||
-        key === "coordinates"
-      ) {
+      if (key === "geometry" || key === "rings" || key === "paths" || key === "coordinates") {
         return undefined;
       }
       return value;
@@ -57,17 +47,12 @@ function sanitizeToolResult(result: unknown): string {
 
   let serialized = JSON.stringify(stripped);
   if (serialized.length > MAX_TOOL_RESULT_CHARS) {
-    serialized =
-      serialized.slice(0, MAX_TOOL_RESULT_CHARS) +
-      "... [truncated — result too large]";
+    serialized = serialized.slice(0, MAX_TOOL_RESULT_CHARS) + "... [truncated — result too large]";
   }
   return serialized;
 }
 
-function getToolStatusText(
-  toolName: string,
-  input: Record<string, unknown>,
-): string {
+function getToolStatusText(toolName: string, input: Record<string, unknown>): string {
   if (toolName === "arcgis_query") {
     const dataset = (input.dataset as string) || "city data";
     return `Searching ${dataset.toLowerCase()}...`;
@@ -76,9 +61,7 @@ function getToolStatusText(
     const tool = input.tool as string;
     if (tool === "search_engine") {
       const query = (input.query as string) || "";
-      return query
-        ? `Searching the web for "${query}"...`
-        : "Searching the web...";
+      return query ? `Searching the web for "${query}"...` : "Searching the web...";
     }
     return "Reading webpage...";
   }
@@ -92,16 +75,7 @@ async function executeArcgisQuery(
   portal: string,
   convex: ConvexHttpClient | null,
 ): Promise<unknown> {
-  // 1. Primary: use the hardcoded DATASET_NAME_TO_URL mapping (instant, no network)
-  const directUrl = DATASET_NAME_TO_URL[input.dataset];
-  if (directUrl) {
-    return queryFeatureServer(directUrl, {
-      where: input.where,
-      limit: input.limit,
-    });
-  }
-
-  // 2. Check Convex dataset_registry for dynamically registered datasets
+  // Check Convex dataset_registry first
   if (convex) {
     try {
       const cached = await convex.query(api.datasetRegistry.getByName, {
@@ -118,37 +92,33 @@ async function executeArcgisQuery(
     }
   }
 
-  // 3. Last resort: ArcGIS Hub v3 API search (may fail from cloud IPs)
-  try {
-    const datasetRes = await fetch(
-      `https://opendata-citymgm.hub.arcgis.com/api/v3/datasets?filter[name]=${encodeURIComponent(input.dataset)}&page[size]=1`,
-    );
-    if (!datasetRes.ok) return { error: `Dataset "${input.dataset}" not found in local catalog or Hub API` };
-    const datasetData = await datasetRes.json();
-    const featureUrl = datasetData.data?.[0]?.attributes?.url;
-    if (!featureUrl) return { error: `Dataset "${input.dataset}" not found` };
+  // Fall back to ArcGIS Hub v3 API
+  const datasetRes = await fetch(
+    `https://opendata-citymgm.hub.arcgis.com/api/v3/datasets?filter[name]=${encodeURIComponent(input.dataset)}&page[size]=1`,
+  );
+  if (!datasetRes.ok) return { error: "Dataset not found" };
+  const datasetData = await datasetRes.json();
+  const featureUrl = datasetData.data?.[0]?.attributes?.url;
+  if (!featureUrl) return { error: `Dataset "${input.dataset}" not found` };
 
-    // Cache for future requests
-    if (convex) {
-      try {
-        await convex.mutation(api.mutations.insertDatasetRegistry, {
-          name: input.dataset,
-          featureServerUrl: featureUrl,
-          portals: [portal],
-          fields: {},
-        });
-      } catch {
-        // Non-critical
-      }
+  // Cache for future requests
+  if (convex) {
+    try {
+      await convex.mutation(api.mutations.insertDatasetRegistry, {
+        name: input.dataset,
+        featureServerUrl: featureUrl,
+        portals: [portal],
+        fields: {},
+      });
+    } catch {
+      // Non-critical
     }
-
-    return queryFeatureServer(featureUrl, {
-      where: input.where,
-      limit: input.limit,
-    });
-  } catch {
-    return { error: `Dataset "${input.dataset}" not found in local catalog and Hub API is unreachable` };
   }
+
+  return queryFeatureServer(featureUrl, {
+    where: input.where,
+    limit: input.limit,
+  });
 }
 
 async function executeBrightdataSearch(input: {
@@ -168,10 +138,7 @@ async function executeBrightdataSearch(input: {
       method: "tools/call",
       params: {
         name: input.tool,
-        arguments:
-          input.tool === "search_engine"
-            ? { query: input.query }
-            : { url: input.url },
+        arguments: input.tool === "search_engine" ? { query: input.query } : { url: input.url },
       },
     }),
   });
@@ -224,10 +191,7 @@ export class CivicAgent extends AbstractAgent {
     });
   }
 
-  private async executeRun(
-    input: RunAgentInput,
-    subscriber: Subscriber<BaseEvent>,
-  ): Promise<void> {
+  private async executeRun(input: RunAgentInput, subscriber: Subscriber<BaseEvent>): Promise<void> {
     const { threadId, runId } = input;
     const systemPrompt = getSystemPrompt(this.portal);
 
@@ -238,14 +202,27 @@ export class CivicAgent extends AbstractAgent {
       runId,
     } as BaseEvent);
 
+    // Build combined tools: server-side + CopilotKit frontend actions
+    const frontendActionNames = new Set<string>();
+    const combinedTools: Tool[] = [...allTools];
+    for (const tool of input.tools ?? []) {
+      if (!SERVER_TOOL_NAMES.has(tool.name)) {
+        frontendActionNames.add(tool.name);
+        combinedTools.push({
+          name: tool.name,
+          description: tool.description,
+          input_schema: tool.parameters ?? { type: "object" as const, properties: {} },
+        });
+      }
+    }
+
     // Convert CopilotKit messages to Anthropic format
     const inputMessages = input.messages ?? [];
     const anthropicMessages: MessageParam[] = inputMessages
       .filter((m) => m.role === "user" || m.role === "assistant")
       .map((m) => ({
         role: m.role as "user" | "assistant",
-        content:
-          typeof m.content === "string" ? m.content : JSON.stringify(m.content),
+        content: typeof m.content === "string" ? m.content : JSON.stringify(m.content),
       }));
 
     // Persist user message to Convex
@@ -256,8 +233,7 @@ export class CivicAgent extends AbstractAgent {
           portalId: this.portal,
           sessionId: threadId,
           role: "user",
-          content:
-            typeof lastUserMsg.content === "string" ? lastUserMsg.content : "",
+          content: typeof lastUserMsg.content === "string" ? lastUserMsg.content : "",
         });
       } catch {
         // Non-critical
@@ -275,86 +251,35 @@ export class CivicAgent extends AbstractAgent {
         stepName: `iteration-${stepCount}`,
       } as BaseEvent);
 
-      // Use streaming API for real token-by-token output
-      const stream = this.anthropic.messages.stream({
+      const response = await this.anthropic.messages.create({
         model: MODEL,
         max_tokens: getMaxTokens(this.portal),
         system: systemPrompt,
-        tools: allTools,
+        tools: combinedTools,
         messages: currentMessages,
+        stream: false,
       });
-
-      // Stream text deltas to the client as they arrive
-      const messageId = `msg-${Date.now()}-${stepCount}`;
-      let textStarted = false;
-      let streamedText = "";
-
-      try {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            if (!textStarted) {
-              subscriber.next({
-                type: EventType.TEXT_MESSAGE_START,
-                messageId,
-                role: "assistant",
-              } as BaseEvent);
-              textStarted = true;
-            }
-            streamedText += event.delta.text;
-            subscriber.next({
-              type: EventType.TEXT_MESSAGE_CONTENT,
-              messageId,
-              delta: event.delta.text,
-            } as BaseEvent);
-          }
-        }
-      } catch (streamError) {
-        // Ensure TEXT_MESSAGE_END is sent if we started a message
-        if (textStarted) {
-          subscriber.next({
-            type: EventType.TEXT_MESSAGE_END,
-            messageId,
-          } as BaseEvent);
-        }
-        throw streamError;
-      }
-
-      // Get the final message to check for tool use
-      const response = await stream.finalMessage();
 
       const toolUseBlocks = response.content.filter(
         (block): block is ToolUseBlock => block.type === "tool_use",
       );
 
-      if (toolUseBlocks.length === 0) {
-        // No more tool calls — finalize the streamed text
-        if (textStarted) {
-          subscriber.next({
-            type: EventType.TEXT_MESSAGE_END,
-            messageId,
-          } as BaseEvent);
-        } else {
-          // Edge case: no text was streamed (shouldn't happen, but handle gracefully)
-          const textContent = response.content
-            .filter(
-              (block): block is Extract<ContentBlock, { type: "text" }> =>
-                block.type === "text",
-            )
-            .map((block) => block.text)
-            .join("\n");
-          await this.streamTextMessage(subscriber, textContent, threadId);
-          streamedText = textContent;
-        }
+      if (toolUseBlocks.length === 0 || response.stop_reason === "end_turn") {
+        // No more tool calls — extract and stream final text
+        const textContent = response.content
+          .filter(
+            (block): block is Extract<ContentBlock, { type: "text" }> => block.type === "text",
+          )
+          .map((block) => block.text)
+          .join("\n");
 
         subscriber.next({
           type: EventType.STEP_FINISHED,
           stepName: `iteration-${stepCount}`,
         } as BaseEvent);
 
-        await this.persistAssistantMessage(threadId, streamedText);
+        await this.streamTextMessage(subscriber, textContent, threadId);
+        await this.persistAssistantMessage(threadId, textContent);
 
         subscriber.next({
           type: EventType.RUN_FINISHED,
@@ -363,14 +288,6 @@ export class CivicAgent extends AbstractAgent {
         } as BaseEvent);
         subscriber.complete();
         return;
-      }
-
-      // Tool calls found — close any in-progress text message
-      if (textStarted) {
-        subscriber.next({
-          type: EventType.TEXT_MESSAGE_END,
-          messageId,
-        } as BaseEvent);
       }
 
       // Handle tool calls
@@ -414,6 +331,9 @@ export class CivicAgent extends AbstractAgent {
             result = await executeBrightdataSearch(
               toolUse.input as { query?: string; url?: string; tool: string },
             );
+          } else if (frontendActionNames.has(toolUse.name)) {
+            // Frontend action — executed client-side by CopilotKit
+            result = { status: "executed" };
           } else {
             result = { error: `Unknown tool: ${toolUse.name}` };
             isError = true;
@@ -436,12 +356,12 @@ export class CivicAgent extends AbstractAgent {
           toolCallId,
         } as BaseEvent);
 
-        // TOOL_CALL_RESULT — send actual result content for CopilotKit to display
+        // TOOL_CALL_RESULT — use a unique messageId for the result
         subscriber.next({
           type: EventType.TOOL_CALL_RESULT,
           toolCallId,
           messageId: `tool-result-${toolCallId}`,
-          content: isError ? `Error: ${sanitized}` : statusText,
+          content: statusText,
           role: "tool",
         } as BaseEvent);
 
@@ -478,53 +398,40 @@ export class CivicAgent extends AbstractAgent {
     currentMessages.push({
       role: "user",
       content:
-        "You have used all available tool calls. Please provide a concise summary based on the data you have gathered. Do not request any more tool calls.",
+        "You have used all available tool calls. Please respond now with the information you have gathered so far. Do not request any more tool calls.",
     });
 
     let fullText = "";
-    {
-      const messageId = `msg-${Date.now()}`;
-      subscriber.next({
-        type: EventType.TEXT_MESSAGE_START,
-        messageId,
-        role: "assistant",
-      } as BaseEvent);
+    const messageId = `msg-${Date.now()}`;
 
-      try {
-        const stream = this.anthropic.messages.stream({
-          model: MODEL,
-          max_tokens: getMaxTokens(this.portal),
-          system: systemPrompt,
-          messages: currentMessages,
-        });
+    subscriber.next({
+      type: EventType.TEXT_MESSAGE_START,
+      messageId,
+      role: "assistant",
+    } as BaseEvent);
 
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            fullText += event.delta.text;
-            subscriber.next({
-              type: EventType.TEXT_MESSAGE_CONTENT,
-              messageId,
-              delta: event.delta.text,
-            } as BaseEvent);
-          }
-        }
-      } catch (streamError) {
-        // Still close the message on error
+    const stream = this.anthropic.messages.stream({
+      model: MODEL,
+      max_tokens: getMaxTokens(this.portal),
+      system: systemPrompt,
+      messages: currentMessages,
+    });
+
+    for await (const event of stream) {
+      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+        fullText += event.delta.text;
         subscriber.next({
-          type: EventType.TEXT_MESSAGE_END,
+          type: EventType.TEXT_MESSAGE_CONTENT,
           messageId,
+          delta: event.delta.text,
         } as BaseEvent);
-        throw streamError;
       }
-
-      subscriber.next({
-        type: EventType.TEXT_MESSAGE_END,
-        messageId,
-      } as BaseEvent);
     }
+
+    subscriber.next({
+      type: EventType.TEXT_MESSAGE_END,
+      messageId,
+    } as BaseEvent);
 
     subscriber.next({
       type: EventType.STEP_FINISHED,
@@ -574,10 +481,7 @@ export class CivicAgent extends AbstractAgent {
   }
 
   /** Persist the assistant response to Convex */
-  private async persistAssistantMessage(
-    sessionId: string,
-    content: string,
-  ): Promise<void> {
+  private async persistAssistantMessage(sessionId: string, content: string): Promise<void> {
     if (!this.convex || !content.trim()) return;
     try {
       await this.convex.mutation(api.mutations.insertMessage, {
