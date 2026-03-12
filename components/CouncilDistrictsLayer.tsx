@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { useMap, MapPopup } from "@/components/ui/map";
-import { LayerFilterPortal } from "@/components/DataPanel";
-import { ARCGIS_URLS, queryFeaturesAsGeoJSON } from "@/lib/arcgis-client";
-import { Button } from "@/components/ui/button";
 import { Layers, X } from "lucide-react";
 import type MapLibreGL from "maplibre-gl";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { LayerFilterPortal } from "@/components/DataPanel";
+import { Button } from "@/components/ui/button";
+import { MapPopup, useMap } from "@/components/ui/map";
+import { ARCGIS_URLS, queryFeaturesAsGeoJSON } from "@/lib/arcgis-client";
 
 // One color per district (9 districts)
 const DISTRICT_COLORS = [
@@ -40,9 +40,7 @@ export function CouncilDistrictsLayer() {
 
   const [visible, setVisible] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [selectedDistrict, setSelectedDistrict] = useState<DistrictInfo | null>(
-    null,
-  );
+  const [selectedDistrict, setSelectedDistrict] = useState<DistrictInfo | null>(null);
   const dataRef = useRef<GeoJSON.FeatureCollection | null>(null);
 
   // Fetch district polygons (lazy — only when toggled on)
@@ -64,12 +62,9 @@ export function CouncilDistrictsLayer() {
 
     if (!visible) {
       // Hide layers if they exist
-      if (map.getLayer(fillLayerId))
-        map.setLayoutProperty(fillLayerId, "visibility", "none");
-      if (map.getLayer(outlineLayerId))
-        map.setLayoutProperty(outlineLayerId, "visibility", "none");
-      if (map.getLayer(labelLayerId))
-        map.setLayoutProperty(labelLayerId, "visibility", "none");
+      if (map.getLayer(fillLayerId)) map.setLayoutProperty(fillLayerId, "visibility", "none");
+      if (map.getLayer(outlineLayerId)) map.setLayoutProperty(outlineLayerId, "visibility", "none");
+      if (map.getLayer(labelLayerId)) map.setLayoutProperty(labelLayerId, "visibility", "none");
       return;
     }
 
@@ -148,16 +143,7 @@ export function CouncilDistrictsLayer() {
       map.setLayoutProperty(labelLayerId, "visibility", "visible");
       setDataLoaded(true);
     });
-  }, [
-    map,
-    isLoaded,
-    visible,
-    loadData,
-    sourceId,
-    fillLayerId,
-    outlineLayerId,
-    labelLayerId,
-  ]);
+  }, [map, isLoaded, visible, loadData, sourceId, fillLayerId, outlineLayerId, labelLayerId]);
 
   // Click handler for district polygons
   useEffect(() => {
@@ -203,8 +189,7 @@ export function CouncilDistrictsLayer() {
 
   // AI-readable: council districts state
   useCopilotReadable({
-    description:
-      "Council districts overlay visibility and selected district info",
+    description: "Council districts overlay visibility and selected district info",
     value: {
       visible,
       dataLoaded,
@@ -239,14 +224,10 @@ export function CouncilDistrictsLayer() {
   useEffect(() => {
     function onFullscreenChange() {
       const container = map?.getContainer();
-      setIsFullscreen(
-        !!document.fullscreenElement &&
-          document.fullscreenElement === container,
-      );
+      setIsFullscreen(!!document.fullscreenElement && document.fullscreenElement === container);
     }
     document.addEventListener("fullscreenchange", onFullscreenChange);
-    return () =>
-      document.removeEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, [map]);
 
   const toggleButton = (
@@ -258,12 +239,11 @@ export function CouncilDistrictsLayer() {
         if (visible) setSelectedDistrict(null);
       }}
     >
-      {visible ? (
-        <X className="size-4 mr-1.5" />
-      ) : (
-        <Layers className="size-4 mr-1.5" />
-      )}
-      {visible ? "Hide Districts" : "Show Districts"}
+      {visible ? <X className="size-4 shrink-0" /> : <Layers className="size-4 shrink-0" />}
+      <span className="hidden @[400px]:inline">
+        {visible ? "Hide Districts" : "Show Districts"}
+      </span>
+      <span className="@[400px]:hidden">{visible ? "Hide" : "Districts"}</span>
     </Button>
   );
 
@@ -291,14 +271,10 @@ export function CouncilDistrictsLayer() {
             </p>
             <p className="text-sm font-medium">{selectedDistrict.name}</p>
             {selectedDistrict.phone && (
-              <p className="text-xs text-muted-foreground">
-                {selectedDistrict.phone}
-              </p>
+              <p className="text-xs text-muted-foreground">{selectedDistrict.phone}</p>
             )}
             {selectedDistrict.email && (
-              <p className="text-xs text-muted-foreground">
-                {selectedDistrict.email}
-              </p>
+              <p className="text-xs text-muted-foreground">{selectedDistrict.email}</p>
             )}
           </div>
         </MapPopup>

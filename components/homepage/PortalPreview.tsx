@@ -1,62 +1,52 @@
 "use client";
 
 import {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  type ReactNode,
-} from "react";
-import Link from "next/link";
-import { motion, AnimatePresence, useInView } from "motion/react";
-import {
-  Home,
-  Briefcase,
-  Building2,
-  GraduationCap,
-  MapPin,
-  MessageSquare,
-  Table2,
-  BarChart3,
+  Activity,
   ArrowLeft,
   ArrowRight,
-  Play,
-  Sparkles,
-  Loader2,
-  User,
-  Search,
+  ArrowUpDown,
+  BarChart3,
+  Briefcase,
+  Building2,
   ChevronLeft,
   ChevronRight,
-  SlidersHorizontal,
-  Download,
-  ArrowUpDown,
-  Layers,
-  Minus,
-  Plus,
   Compass,
-  Activity,
-  TrendingUp,
+  Download,
+  GraduationCap,
+  Home,
+  Layers,
+  Loader2,
+  MapPin,
+  MessageSquare,
+  Minus,
+  Play,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  Sparkles,
+  Table2,
   TrendingDown,
+  TrendingUp,
+  User,
 } from "lucide-react";
+import { AnimatePresence, motion, useInView } from "motion/react";
+import Link from "next/link";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Message, MessageContent } from "@/components/ai-elements/message";
-import {
-  Reasoning,
-  ReasoningTrigger,
-  ReasoningContent,
-} from "@/components/ai-elements/reasoning";
+import { Reasoning, ReasoningContent, ReasoningTrigger } from "@/components/ai-elements/reasoning";
 import { Shimmer } from "@/components/ai-elements/shimmer";
-import { Suggestions, Suggestion } from "@/components/ai-elements/suggestion";
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════
    Types & Data
@@ -133,15 +123,13 @@ const portals: PortalConfig[] = [
       {
         id: "table",
         name: "Service Request Data",
-        description:
-          "Browse, filter, and sort 311 service requests with full detail views.",
+        description: "Browse, filter, and sort 311 service requests with full detail views.",
         icon: Table2,
       },
       {
         id: "chart",
         name: "Trend Analysis",
-        description:
-          "Track request volumes, response times, and resolution rates over time.",
+        description: "Track request volumes, response times, and resolution rates over time.",
         icon: BarChart3,
       },
     ],
@@ -155,30 +143,26 @@ const portals: PortalConfig[] = [
       {
         id: "map",
         name: "Permit & License Map",
-        description:
-          "Find active construction permits, business licenses, and development sites.",
+        description: "Find active construction permits, business licenses, and development sites.",
         icon: MapPin,
         featured: true,
       },
       {
         id: "chat",
         name: "Business AI Assistant",
-        description:
-          "Get answers about permits, zoning, and economic opportunities in Montgomery.",
+        description: "Get answers about permits, zoning, and economic opportunities in Montgomery.",
         icon: MessageSquare,
       },
       {
         id: "table",
         name: "Permit Database",
-        description:
-          "Search construction permits by address, contractor, type, and status.",
+        description: "Search construction permits by address, contractor, type, and status.",
         icon: Table2,
       },
       {
         id: "chart",
         name: "Market Analytics",
-        description:
-          "Analyze permit trends, license activity, and development patterns.",
+        description: "Analyze permit trends, license activity, and development patterns.",
         icon: BarChart3,
       },
     ],
@@ -200,22 +184,19 @@ const portals: PortalConfig[] = [
       {
         id: "map",
         name: "Infrastructure Map",
-        description:
-          "Monitor code violations, fire incidents, and facility conditions citywide.",
+        description: "Monitor code violations, fire incidents, and facility conditions citywide.",
         icon: MapPin,
       },
       {
         id: "chat",
         name: "Staff AI Briefing",
-        description:
-          "Generate data-backed briefings for the mayor and department heads.",
+        description: "Generate data-backed briefings for the mayor and department heads.",
         icon: MessageSquare,
       },
       {
         id: "table",
         name: "Operations Data",
-        description:
-          "Access violation records, inspection logs, and compliance tracking.",
+        description: "Access violation records, inspection logs, and compliance tracking.",
         icon: Table2,
       },
     ],
@@ -237,8 +218,7 @@ const portals: PortalConfig[] = [
       {
         id: "chart",
         name: "Cross-Dataset Analysis",
-        description:
-          "Compare crime trends, demographics, and land use patterns across districts.",
+        description: "Compare crime trends, demographics, and land use patterns across districts.",
         icon: BarChart3,
       },
       {
@@ -251,8 +231,7 @@ const portals: PortalConfig[] = [
       {
         id: "chat",
         name: "Research AI",
-        description:
-          "Query datasets with methodology transparency and data source citations.",
+        description: "Query datasets with methodology transparency and data source citations.",
         icon: MessageSquare,
       },
     ],
@@ -351,14 +330,7 @@ function FadeInWhenVisible({
 }
 
 function SectionAccent({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "mx-auto mb-6 h-[3px] w-12 rounded-full bg-accent",
-        className,
-      )}
-    />
-  );
+  return <div className={cn("mx-auto mb-6 h-[3px] w-12 rounded-full bg-accent", className)} />;
 }
 
 /** Render markdown-style bold (**text**) as <strong> */
@@ -407,9 +379,7 @@ function FeatureCard({
           <Icon className={cn("h-4 w-4", styles.text)} />
         </div>
         <div className="min-w-0 flex-1">
-          <h4 className="mb-1 text-sm font-medium text-foreground">
-            {feature.name}
-          </h4>
+          <h4 className="mb-1 text-sm font-medium text-foreground">{feature.name}</h4>
           <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
             {feature.description}
           </p>
@@ -465,14 +435,11 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
     return () => clearTimeout(timer);
   }, [phase, charIndex, script.response.length]);
 
-  const showTool =
-    phase === "tool" || phase === "responding" || phase === "done";
+  const showTool = phase === "tool" || phase === "responding" || phase === "done";
   const showResponse = phase === "responding" || phase === "done";
   const showChips = phase === "done";
   const isToolStreaming = phase === "tool";
-  const displayedResponse = showResponse
-    ? script.response.slice(0, charIndex)
-    : "";
+  const displayedResponse = showResponse ? script.response.slice(0, charIndex) : "";
 
   const portalStyle = portalStyles[portalId];
 
@@ -480,12 +447,7 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
     <div className="flex h-full flex-col">
       {/* Chat header */}
       <div className="flex items-center gap-2 border-b px-4 py-2.5">
-        <div
-          className={cn(
-            "flex size-6 items-center justify-center rounded",
-            portalStyle.bgLight,
-          )}
-        >
+        <div className={cn("flex size-6 items-center justify-center rounded", portalStyle.bgLight)}>
           <Sparkles className={cn("size-3.5", portalStyle.text)} />
         </div>
         <span className="text-sm font-semibold">Civic Assistant</span>
@@ -516,10 +478,7 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
             className="flex items-center gap-2 text-sm text-muted-foreground"
           >
             <div
-              className={cn(
-                "flex size-6 items-center justify-center rounded",
-                portalStyle.bgLight,
-              )}
+              className={cn("flex size-6 items-center justify-center rounded", portalStyle.bgLight)}
             >
               <Sparkles className={cn("size-3.5", portalStyle.text)} />
             </div>
@@ -636,10 +595,7 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
             Ask about Montgomery data...
           </span>
           <div
-            className={cn(
-              "flex size-6 items-center justify-center rounded",
-              portalStyle.bgLight,
-            )}
+            className={cn("flex size-6 items-center justify-center rounded", portalStyle.bgLight)}
           >
             <ArrowRight className={cn("size-3", portalStyle.text)} />
           </div>
@@ -675,9 +631,7 @@ const mapLegendLayers: Record<PortalId, string[]> = {
 };
 
 /** Generate demo GeoJSON points scattered around Montgomery */
-function makeDemoPoints(
-  portalId: PortalId,
-): GeoJSON.FeatureCollection<GeoJSON.Point> {
+function makeDemoPoints(portalId: PortalId): GeoJSON.FeatureCollection<GeoJSON.Point> {
   // Real locations around Montgomery for each portal
   const seeds: Record<PortalId, [number, number][]> = {
     resident: [
@@ -796,9 +750,7 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
         [0, 1, 2].forEach((layerIdx) => {
           const filtered: GeoJSON.FeatureCollection<GeoJSON.Point> = {
             type: "FeatureCollection",
-            features: points.features.filter(
-              (f) => f.properties?.layer === layerIdx,
-            ),
+            features: points.features.filter((f) => f.properties?.layer === layerIdx),
           };
 
           map.addSource(`demo-${layerIdx}`, {
@@ -852,9 +804,7 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
         <div className="flex items-center gap-2">
           <MapPin className={cn("h-3.5 w-3.5", styles.text)} />
           <span className="text-xs font-medium">Montgomery, AL</span>
-          <span className="text-[0.6rem] text-muted-foreground">
-            32.3792° N, 86.3077° W
-          </span>
+          <span className="text-[0.6rem] text-muted-foreground">32.3792° N, 86.3077° W</span>
         </div>
         <div className="flex items-center gap-0.5">
           <div className="flex items-center rounded border bg-background">
@@ -940,11 +890,9 @@ interface TableRow {
 }
 
 const STATUS_BADGE_CLASSES: Record<StatusColor, string> = {
-  green:
-    "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/25",
+  green: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/25",
   blue: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/25",
-  amber:
-    "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/25",
+  amber: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/25",
   red: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/25",
   gray: "bg-muted text-muted-foreground border-border",
 };
@@ -1380,9 +1328,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 10 }}
                     transition={{ duration: 0.2, delay: i * 0.03 }}
-                    onClick={() =>
-                      setExpandedRow(expandedRow === row.id ? null : row.id)
-                    }
+                    onClick={() => setExpandedRow(expandedRow === row.id ? null : row.id)}
                     className={cn(
                       "cursor-pointer border-b transition-colors last:border-0",
                       "hover:bg-muted/50",
@@ -1397,9 +1343,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                     </td>
                     {/* Name */}
                     <td className="px-3 py-2.5 text-xs font-semibold">
-                      {searchQuery
-                        ? highlightMatch(row.name, searchQuery)
-                        : row.name}
+                      {searchQuery ? highlightMatch(row.name, searchQuery) : row.name}
                     </td>
                     {/* Column 3 — location or records */}
                     {data.columns[2]?.align === "right" ? (
@@ -1408,9 +1352,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                       </td>
                     ) : (
                       <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                        {searchQuery
-                          ? highlightMatch(row.location, searchQuery)
-                          : row.location}
+                        {searchQuery ? highlightMatch(row.location, searchQuery) : row.location}
                       </td>
                     )}
                     {/* Status badge */}
@@ -1436,9 +1378,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                         {row.value}
                       </td>
                     ) : (
-                      <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                        {row.date}
-                      </td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground">{row.date}</td>
                     )}
                   </motion.tr>
                 ))
@@ -1496,11 +1436,9 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
       {/* Pagination Footer */}
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          Showing{" "}
-          <span className="font-medium text-foreground">{paged.length}</span> of{" "}
+          Showing <span className="font-medium text-foreground">{paged.length}</span> of{" "}
           <span className="font-medium text-foreground">{filtered.length}</span>{" "}
-          {searchQuery &&
-            `(filtered from ${data.totalRecords.toLocaleString()})`}
+          {searchQuery && `(filtered from ${data.totalRecords.toLocaleString()})`}
           {!searchQuery && `of ${data.totalRecords.toLocaleString()}`} records
         </span>
         <div className="flex items-center gap-1.5">
@@ -1633,9 +1571,7 @@ function InlineChartDemo({ portalId }: { portalId: PortalId }) {
   const total = config.data.reduce((s, d) => s + d.value, 0);
   const prevTotal = config.data.reduce((s, d) => s + d.prev, 0);
   const changePct = ((total - prevTotal) / prevTotal) * 100;
-  const topItem = config.data.reduce((max, d) =>
-    d.value > max.value ? d : max,
-  );
+  const topItem = config.data.reduce((max, d) => (d.value > max.value ? d : max));
 
   return (
     <div className="flex flex-col gap-3 p-4 sm:p-6">
@@ -1657,25 +1593,12 @@ function InlineChartDemo({ portalId }: { portalId: PortalId }) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
       >
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={config.data}
-            margin={{ top: 12, right: 8, left: -12, bottom: 4 }}
-          >
+        <ResponsiveContainer width="100%" height="100%" minWidth={1}>
+          <AreaChart data={config.data} margin={{ top: 12, right: 8, left: -12, bottom: 4 }}>
             <defs>
-              <linearGradient
-                id={config.gradientId}
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
+              <linearGradient id={config.gradientId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={config.color} stopOpacity={0.4} />
-                <stop
-                  offset="100%"
-                  stopColor={config.color}
-                  stopOpacity={0.05}
-                />
+                <stop offset="100%" stopColor={config.color} stopOpacity={0.05} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -1699,9 +1622,7 @@ function InlineChartDemo({ portalId }: { portalId: PortalId }) {
               }}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(v: number) =>
-                v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)
-              }
+              tickFormatter={(v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v))}
             />
             <Tooltip
               contentStyle={{
@@ -1795,13 +1716,7 @@ function InlineChartDemo({ portalId }: { portalId: PortalId }) {
    Demo Renderer
    ═══════════════════════════════════════════════════════ */
 
-function DemoContent({
-  featureId,
-  portalId,
-}: {
-  featureId: FeatureId;
-  portalId: PortalId;
-}) {
+function DemoContent({ featureId, portalId }: { featureId: FeatureId; portalId: PortalId }) {
   switch (featureId) {
     case "chat":
       return <InlineChatDemo portalId={portalId} />;
@@ -1820,9 +1735,7 @@ function DemoContent({
 
 export function PortalPreview() {
   const [activePortal, setActivePortal] = useState(0);
-  const [selectedFeature, setSelectedFeature] = useState<FeatureId | null>(
-    null,
-  );
+  const [selectedFeature, setSelectedFeature] = useState<FeatureId | null>(null);
 
   const portal = portals[activePortal];
   const styles = portalStyles[portal.id];
@@ -1837,7 +1750,7 @@ export function PortalPreview() {
     : null;
 
   return (
-    <section id="portals" className="bg-background px-4 py-16">
+    <section id="portals" className="bg-background px-fluid-md py-fluid-section">
       <div className="mx-auto max-w-6xl">
         {/* Section header */}
         <FadeInWhenVisible className="text-center">
@@ -1846,21 +1759,17 @@ export function PortalPreview() {
           </span>
         </FadeInWhenVisible>
         <FadeInWhenVisible className="mt-4 text-center" delay={0.08}>
-          <h2 className="font-display text-3xl tracking-tight sm:text-4xl lg:text-[2.75rem]">
+          <h2 className="font-display text-fluid-3xl tracking-tight">
             Four portals. See them in action.
           </h2>
         </FadeInWhenVisible>
         <FadeInWhenVisible className="mx-auto mt-5 text-center" delay={0.12}>
           <SectionAccent />
         </FadeInWhenVisible>
-        <FadeInWhenVisible
-          className="mx-auto mb-10 max-w-2xl text-center"
-          delay={0.16}
-        >
-          <p className="text-[1.05rem] leading-relaxed text-muted-foreground">
-            Each portal is tailored to its audience — with specialized maps,
-            data tables, charts, and an AI assistant. Click any feature below to
-            see it in action.
+        <FadeInWhenVisible className="mx-auto mb-10 max-w-2xl text-center" delay={0.16}>
+          <p className="text-fluid-base leading-relaxed text-muted-foreground">
+            Each portal is tailored to its audience — with specialized maps, data tables, charts,
+            and an AI assistant. Click any feature below to see it in action.
           </p>
         </FadeInWhenVisible>
 
@@ -1911,12 +1820,7 @@ export function PortalPreview() {
                         className={cn(
                           "flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-all duration-200",
                           isActive
-                            ? cn(
-                                pStyles.bgLight,
-                                pStyles.border,
-                                pStyles.text,
-                                "shadow-sm",
-                              )
+                            ? cn(pStyles.bgLight, pStyles.border, pStyles.text, "shadow-sm")
                             : "border-border bg-card text-muted-foreground hover:text-foreground",
                         )}
                       >
@@ -1941,10 +1845,7 @@ export function PortalPreview() {
                   transition={{ duration: 0.35 }}
                   className="min-h-[400px] sm:min-h-[440px]"
                 >
-                  <DemoContent
-                    featureId={selectedFeature}
-                    portalId={portal.id}
-                  />
+                  <DemoContent featureId={selectedFeature} portalId={portal.id} />
                 </motion.div>
               ) : (
                 /* Bento card grid */
@@ -1968,10 +1869,7 @@ export function PortalPreview() {
                   </div>
                   <p className="mt-6 text-center text-xs text-muted-foreground">
                     Click any feature to see a live preview — or{" "}
-                    <Link
-                      href={portal.href}
-                      className={cn("font-medium underline", styles.text)}
-                    >
+                    <Link href={portal.href} className={cn("font-medium underline", styles.text)}>
                       open the full {portal.label.toLowerCase()} portal
                     </Link>
                   </p>

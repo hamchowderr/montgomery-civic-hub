@@ -1,19 +1,35 @@
+import containerQueries from "@tailwindcss/container-queries";
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
-import containerQueries from "@tailwindcss/container-queries";
 
 const config: Config = {
   darkMode: "class",
-  content: [
-    "./app/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}",
-  ],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
     extend: {
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
+      },
+      fontSize: {
+        "fluid-xs": "var(--text-fluid-xs)",
+        "fluid-sm": "var(--text-fluid-sm)",
+        "fluid-base": "var(--text-fluid-base)",
+        "fluid-lg": "var(--text-fluid-lg)",
+        "fluid-xl": "var(--text-fluid-xl)",
+        "fluid-2xl": "var(--text-fluid-2xl)",
+        "fluid-3xl": "var(--text-fluid-3xl)",
+        "fluid-hero": "var(--text-fluid-hero)",
+        "fluid-hero-sub": "var(--text-fluid-hero-sub)",
+      },
+      spacing: {
+        "fluid-xs": "var(--space-fluid-xs)",
+        "fluid-sm": "var(--space-fluid-sm)",
+        "fluid-md": "var(--space-fluid-md)",
+        "fluid-lg": "var(--space-fluid-lg)",
+        "fluid-xl": "var(--space-fluid-xl)",
+        "fluid-2xl": "var(--space-fluid-2xl)",
+        "fluid-section": "var(--space-fluid-section)",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -76,10 +92,20 @@ const config: Config = {
           from: { opacity: "0", transform: "translateX(8px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
+        chatFadeIn: {
+          from: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        blink: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.4s ease-out forwards",
         "slide-in-right": "slide-in-right 0.3s ease-out forwards",
+        chatFadeIn: "chatFadeIn 0.3s ease-out both",
+        blink: "blink 1s step-end infinite",
       },
     },
   },

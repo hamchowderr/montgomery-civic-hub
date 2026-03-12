@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { DataTable } from "@/components/ui/data-table";
 import {
   Select,
@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTableData } from "@/lib/hooks/use-table-data";
-import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 
 export function ResidentTable() {
   const {
@@ -45,21 +44,20 @@ export function ResidentTable() {
     ],
     handler: ({ datasetKey }) => {
       setSelectedDataset(datasetKey);
-      const label =
-        datasets.find((d) => d.key === datasetKey)?.label ?? datasetKey;
+      const label = datasets.find((d) => d.key === datasetKey)?.label ?? datasetKey;
       return `Table switched to ${label}`;
     },
   });
 
   return (
-    <Card className="border-0 shadow-none rounded-none">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-base">
-          {datasets.find((d) => d.key === selectedDataset)?.label ?? "Data"}
-        </CardTitle>
-        {datasets.length > 1 && (
+    <div className="flex h-full flex-col px-3 py-2">
+      {datasets.length > 1 && (
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-sm font-medium">
+            {datasets.find((d) => d.key === selectedDataset)?.label ?? "Data"}
+          </span>
           <Select value={selectedDataset} onValueChange={setSelectedDataset}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="h-7 w-[180px] text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -70,18 +68,16 @@ export function ResidentTable() {
               ))}
             </SelectContent>
           </Select>
-        )}
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          columns={columns}
-          data={data}
-          isLoading={isLoading}
-          exportable
-          exportFilename={exportFilename}
-          filterPlaceholder={filterPlaceholder}
-        />
-      </CardContent>
-    </Card>
+        </div>
+      )}
+      <DataTable
+        columns={columns}
+        data={data}
+        isLoading={isLoading}
+        exportable
+        exportFilename={exportFilename}
+        filterPlaceholder={filterPlaceholder}
+      />
+    </div>
   );
 }

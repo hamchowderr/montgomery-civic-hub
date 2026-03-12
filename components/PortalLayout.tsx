@@ -1,29 +1,31 @@
 "use client";
 
-import { useState, useEffect, useCallback, type ReactNode } from "react";
-import { Group, Panel, Separator } from "react-resizable-panels";
+import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import {
-  useCopilotAction,
-  useCopilotReadable,
-  useCopilotChat,
-} from "@copilotkit/react-core";
-import { CopilotChat } from "@copilotkit/react-ui";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import {
-  Sparkles,
+  Briefcase,
+  Building2,
+  FlaskConical,
+  GripVertical,
+  type LucideIcon,
+  MessageCircle,
   PanelLeft,
   PanelRight,
-  GripVertical,
-  MessageCircle,
+  Shield,
   X,
 } from "lucide-react";
+import { type ReactNode, useEffect, useState } from "react";
+import { Group, Panel, Separator } from "react-resizable-panels";
+import { PortalChat } from "@/components/PortalChat";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+const portalIcons: Record<string, LucideIcon> = {
+  resident: Shield,
+  business: Briefcase,
+  citystaff: Building2,
+  researcher: FlaskConical,
+};
 
 interface PortalLayoutProps {
   portal: string;
@@ -34,7 +36,10 @@ interface PortalLayoutProps {
 }
 
 function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(false);
+  const [matches, setMatches] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia(query).matches;
+  });
   useEffect(() => {
     const mql = window.matchMedia(query);
     setMatches(mql.matches);
@@ -70,26 +75,20 @@ export function PortalLayout({
 
   // AI-readable: layout state
   useCopilotReadable({
-    description:
-      "Portal layout state including chat panel position and visibility",
+    description: "Portal layout state including chat panel position and visibility",
     value: {
       chatSide,
       chatOpen,
       isMobile,
       isDesktop,
-      layout: isMobile
-        ? "mobile-sheet"
-        : isDesktop
-          ? "desktop-resizable"
-          : "tablet-fixed",
+      layout: isMobile ? "mobile-sheet" : isDesktop ? "desktop-resizable" : "tablet-fixed",
     },
   });
 
   // AI action: move chat panel
   useCopilotAction({
     name: "set_chat_position",
-    description:
-      "Move the chat panel to the left or right side of the layout (desktop only)",
+    description: "Move the chat panel to the left or right side of the layout (desktop only)",
     parameters: [
       {
         name: "side",
@@ -108,8 +107,7 @@ export function PortalLayout({
   // AI action: toggle chat panel (mobile)
   useCopilotAction({
     name: "toggle_chat_panel",
-    description:
-      "Open or close the chat panel (primarily for mobile bottom sheet)",
+    description: "Open or close the chat panel (primarily for mobile bottom sheet)",
     parameters: [
       {
         name: "open",
@@ -124,22 +122,18 @@ export function PortalLayout({
     },
   });
 
-  const { stopGeneration } = useCopilotChat();
-
-  const handleStopGeneration = useCallback(() => {
-    stopGeneration?.();
-  }, [stopGeneration]);
+  const Icon = portalIcons[portal] ?? Shield;
 
   const chatContent = (
     <div
       className="flex h-full max-h-full flex-col overflow-hidden bg-card"
       data-tour-step-id={`${portal}-chat`}
     >
-      {/* Chat header with side toggle */}
+      {/* Chat header with portal-specific icon */}
       <div className="flex shrink-0 items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex size-6 items-center justify-center rounded bg-accent/10">
-            <Sparkles className="size-3.5 text-accent" />
+            <Icon className="size-3.5 text-accent" />
           </div>
           <h3 className="text-sm font-semibold">{chatTitle}</h3>
         </div>
@@ -162,9 +156,7 @@ export function PortalLayout({
                     variant="ghost"
                     size="icon"
                     className="size-7"
-                    onClick={() =>
-                      setChatSide((s) => (s === "right" ? "left" : "right"))
-                    }
+                    onClick={() => setChatSide((s) => (s === "right" ? "left" : "right"))}
                   >
                     {chatSide === "right" ? (
                       <PanelLeft className="size-3.5" />
@@ -182,26 +174,22 @@ export function PortalLayout({
         </div>
       </div>
 
-      {/* CopilotChat — the actual chat UI from CopilotKit */}
-      <CopilotChat
-        labels={{
-          initial: welcomeMessage,
-          title: chatTitle,
-          placeholder: chatPlaceholder,
-        }}
-        onStopGeneration={handleStopGeneration}
-        className="min-h-0 flex-1 [&_.copilotKitHeader]:hidden [&_.copilotKitMessages]:overscroll-contain"
-      />
+      {/* CopilotKit chat — handles streaming, markdown, auto-scroll, tool calls */}
+      <div className="min-h-0 flex-1 overflow-hidden">
+        <PortalChat
+          portal={portal}
+          welcomeMessage={welcomeMessage}
+          chatPlaceholder={chatPlaceholder}
+        />
+      </div>
     </div>
   );
 
   if (isMobile) {
     return (
       <div className="min-h-0 flex-1">
-        {/* Full-height data panel */}
         <div className="h-full">{children}</div>
 
-        {/* Floating chat button */}
         <Button
           onClick={() => setChatOpen(true)}
           className="fixed bottom-4 right-4 z-50 size-14 rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 md:hidden"
@@ -209,7 +197,6 @@ export function PortalLayout({
           <MessageCircle className="size-6" />
         </Button>
 
-        {/* Bottom sheet with chat */}
         <Sheet open={chatOpen} onOpenChange={setChatOpen}>
           <SheetContent
             side="bottom"
@@ -233,39 +220,21 @@ export function PortalLayout({
         >
           {chatSide === "left" ? (
             <>
-              <Panel
-                defaultSize="28%"
-                minSize="20%"
-                maxSize="50%"
-                className="overflow-hidden"
-              >
+              <Panel defaultSize="28%" minSize="20%" maxSize="50%" className="overflow-hidden">
                 {chatContent}
               </Panel>
               <Handle />
-              <Panel
-                defaultSize="72%"
-                minSize="40%"
-                className="overflow-hidden"
-              >
+              <Panel defaultSize="72%" minSize="40%" className="overflow-hidden">
                 <div className="h-full">{children}</div>
               </Panel>
             </>
           ) : (
             <>
-              <Panel
-                defaultSize="72%"
-                minSize="40%"
-                className="overflow-hidden"
-              >
+              <Panel defaultSize="72%" minSize="40%" className="overflow-hidden">
                 <div className="h-full">{children}</div>
               </Panel>
               <Handle />
-              <Panel
-                defaultSize="28%"
-                minSize="20%"
-                maxSize="50%"
-                className="overflow-hidden"
-              >
+              <Panel defaultSize="28%" minSize="20%" maxSize="50%" className="overflow-hidden">
                 {chatContent}
               </Panel>
             </>
@@ -280,7 +249,7 @@ export function PortalLayout({
     <div className="min-h-0 flex-1 overflow-hidden rounded-lg border bg-card">
       <div className="flex h-full w-full">
         <div className="min-w-0 flex-1">{children}</div>
-        <div className="w-80 shrink-0 border-l">{chatContent}</div>
+        <div className="w-[clamp(280px,30%,360px)] shrink-0 border-l">{chatContent}</div>
       </div>
     </div>
   );

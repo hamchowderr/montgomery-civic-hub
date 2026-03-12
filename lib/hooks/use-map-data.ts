@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ARCGIS_URLS, queryFeaturesAsGeoJSON } from "@/lib/arcgis-client";
-import { useYearFilter, type YearRange } from "@/lib/contexts/year-filter";
 import { yearWhere } from "@/lib/arcgis-helpers";
+import { useYearFilter, type YearRange } from "@/lib/contexts/year-filter";
 
 export interface MapLayer {
   id: string;
@@ -46,8 +46,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
         fetchers: [
           {
             url: ARCGIS_URLS.serviceRequests311,
-            outFields:
-              "Request_ID,Request_Type,Department,Address,Status,District",
+            outFields: "Request_ID,Request_Type,Department,Address,Status,District",
             yearFilterField: "Year",
             layer: {
               id: "311-requests",
@@ -58,7 +57,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           },
           {
             url: ARCGIS_URLS.codeViolations,
-            outFields: "OffenceNum,CaseType,CaseStatus,Address1,District,Year",
+            outFields: "OffenceNum,CaseType,CaseStatus,Address1,CouncilDistrict,Year",
             yearFilterField: "Year",
             yearQuoted: true,
             layer: {
@@ -225,8 +224,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
         fetchers: [
           {
             url: ARCGIS_URLS.constructionPermits,
-            outFields:
-              "PermitNo,PermitDescription,PhysicalAddress,EstimatedCost,PermitStatus,Year",
+            outFields: "PermitNo,PermitDescription,PhysicalAddress,EstimatedCost,PermitStatus,Year",
             yearFilterField: "Year",
             yearQuoted: true,
             layer: {
@@ -238,8 +236,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           },
           {
             url: ARCGIS_URLS.businessLicense,
-            outFields:
-              "custCOMPANY_NAME,custDBA,Full_Address,scNAME,pvYEAR,pvEFFDATE,pvEXPIRE",
+            outFields: "custCOMPANY_NAME,custDBA,Full_Address,scNAME,pvYEAR,pvEFFDATE,pvEXPIRE",
             yearFilterField: "pvYEAR",
             layer: {
               id: "business-licenses",
@@ -294,8 +291,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
         fetchers: [
           {
             url: ARCGIS_URLS.serviceRequests311,
-            outFields:
-              "Request_ID,Request_Type,Department,Address,Status,District",
+            outFields: "Request_ID,Request_Type,Department,Address,Status,District",
             yearFilterField: "Year",
             layer: {
               id: "311-requests",
@@ -316,7 +312,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           },
           {
             url: ARCGIS_URLS.codeViolations,
-            outFields: "OffenceNum,CaseType,CaseStatus,Address1,District,Year",
+            outFields: "OffenceNum,CaseType,CaseStatus,Address1,CouncilDistrict,Year",
             yearFilterField: "Year",
             yearQuoted: true,
             layer: {
@@ -393,8 +389,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
         fetchers: [
           {
             url: ARCGIS_URLS.serviceRequests311,
-            outFields:
-              "Request_ID,Request_Type,Department,Status,District,Year",
+            outFields: "Request_ID,Request_Type,Department,Status,District,Year",
             yearFilterField: "Year",
             layer: {
               id: "311-requests",
@@ -438,8 +433,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           },
           {
             url: ARCGIS_URLS.constructionPermits,
-            outFields:
-              "PermitDescription,PhysicalAddress,PermitStatus,EstimatedCost,Year",
+            outFields: "PermitDescription,PhysicalAddress,PermitStatus,EstimatedCost,Year",
             yearFilterField: "Year",
             yearQuoted: true,
             layer: {
@@ -487,9 +481,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
 }
 
 export function useMapData(portal: string): UseMapDataReturn {
-  const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection | null>(
-    null,
-  );
+  const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection | null>(null);
   const [layers, setLayers] = useState<MapLayer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { yearRange } = useYearFilter();
@@ -511,11 +503,7 @@ export function useMapData(portal: string): UseMapDataReturn {
           // Build where clause: combine existing where + year filter
           let where = fetcher.where ?? "1=1";
           if (fetcher.yearFilterField) {
-            const yw = yearWhere(
-              yearRange,
-              fetcher.yearFilterField,
-              fetcher.yearQuoted ?? false,
-            );
+            const yw = yearWhere(yearRange, fetcher.yearFilterField, fetcher.yearQuoted ?? false);
             where = where === "1=1" ? yw : `(${where}) AND ${yw}`;
           }
 

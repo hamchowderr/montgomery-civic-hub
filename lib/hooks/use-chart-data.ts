@@ -1,9 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ARCGIS_URLS, queryFeatureAttributes } from "@/lib/arcgis-client";
-import { useYearFilter, type YearRange } from "@/lib/contexts/year-filter";
+import {
+  ARCGIS_URLS,
+  queryFeatureAttributes,
+  queryFeatureCount,
+  queryFeatureStats,
+  queryMultiStats,
+  queryTotalStats,
+} from "@/lib/arcgis-client";
 import { yearWhere } from "@/lib/arcgis-helpers";
+import { useYearFilter, type YearRange } from "@/lib/contexts/year-filter";
 
 interface UseChartDataReturn {
   data: any[] | null;
@@ -13,318 +20,254 @@ interface UseChartDataReturn {
 }
 
 // ---------------------------------------------------------------------------
-// Shared / existing fetchers (now year-aware)
+// Shared helpers
+// ---------------------------------------------------------------------------
+
+// Normalize district values to "D1", "D2", etc.
+function normalizeDistrict(raw: unknown): string {
+  const s = String(raw ?? "0").trim();
+  if (s === "0" || s === "" || s.toLowerCase() === "unknown") return "Unassigned";
+  const num = s.replace(/\D+/g, "");
+  return num ? `D${num}` : "Unassigned";
+}
+
+const TRANSPORTATION_TERMS = /road|street|traffic|pothole|transit|sidewalk|signal/i;
+
+// ---------------------------------------------------------------------------
+// Fetchers: Shared / Existing
 // ---------------------------------------------------------------------------
 
 async function fetchBudgetChartData(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.constructionPermits,
-    outFields: "PermitNo,DistrictCouncil,EstimatedCost",
     where: yearWhere(yr, "Year", true),
+    groupByField: "DistrictCouncil",
+    statisticField: "EstimatedCost",
+    statisticType: "sum",
   });
 
-  const districtMap = new Map<string, number>();
-  for (const row of attrs) {
-    const district = String(row.DistrictCouncil ?? "Unknown");
-    const cost = Number(row.EstimatedCost) || 0;
-    const key =
-      district === "0" || district === "Unknown"
-        ? "Unassigned"
-        : `District ${district}`;
-    districtMap.set(key, (districtMap.get(key) ?? 0) + cost);
-  }
-
-  return Array.from(districtMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([department, budget]) => ({
-      department,
-      budget: Math.round((budget / 1_000_000) * 10) / 10,
-    }));
+  return stats
+    .map((s) => {
+      const key = s.group === "0" || s.group === "Unknown" ? "Unassigned" : `District ${s.group}`;
+      return { department: key, budget: Math.round((s.value / 1_000_000) * 10) / 10 };
+    })
+    .sort((a, b) => a.department.localeCompare(b.department));
 }
 
 async function fetchCrimeTrendsData(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.serviceRequests311,
-    outFields: "Year,Request_ID",
     where: yearWhere(yr),
+    groupByField: "Year",
+    statisticField: "Request_ID",
+    statisticType: "count",
   });
 
-  const yearMap = new Map<number, number>();
-  for (const row of attrs) {
-    const year = Number(row.Year);
-    if (year > 0) {
-      yearMap.set(year, (yearMap.get(year) ?? 0) + 1);
-    }
-  }
-
-  return Array.from(yearMap.entries())
-    .sort(([a], [b]) => a - b)
-    .map(([year, count]) => ({ year: year.toString(), count }));
+  return stats
+    .filter((s) => s.group !== "Unknown" && s.group !== "0" && s.group !== "null")
+    .sort((a, b) => a.group.localeCompare(b.group))
+    .map((s) => ({ year: s.group, count: s.value }));
 }
 
 async function fetchServiceRequestsData(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.serviceRequests311,
-    outFields: "Request_Type,Year",
     where: yearWhere(yr),
+    groupByField: "Request_Type",
+    statisticField: "Request_ID",
+    statisticType: "count",
   });
 
-  const typeMap = new Map<string, number>();
-  for (const row of attrs) {
-    const type = String(row.Request_Type ?? "Other");
-    typeMap.set(type, (typeMap.get(type) ?? 0) + 1);
-  }
-
-  return Array.from(typeMap.entries())
-    .sort(([, a], [, b]) => b - a)
+  return stats
+    .sort((a, b) => b.value - a.value)
     .slice(0, 10)
-    .map(([type, count]) => ({ type, count }));
+    .map((s) => ({ type: s.group, count: s.value }));
 }
 
 async function fetchPermitActivityData(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const rows = await queryMultiStats({
     url: ARCGIS_URLS.constructionPermits,
-    outFields: "Year,PermitNo,EstimatedCost",
     where: yearWhere(yr, "Year", true),
+    groupByField: "Year",
+    statistics: [
+      { field: "PermitNo", type: "count", alias: "permit_count" },
+      { field: "EstimatedCost", type: "sum", alias: "total_cost" },
+    ],
   });
 
-  const yearMap = new Map<string, { count: number; cost: number }>();
-  for (const row of attrs) {
-    const year = String(row.Year ?? "Unknown");
-    if (year === "Unknown" || year === "0") continue;
-    const entry = yearMap.get(year) ?? { count: 0, cost: 0 };
-    entry.count += 1;
-    entry.cost += Number(row.EstimatedCost) || 0;
-    yearMap.set(year, entry);
-  }
-
-  return Array.from(yearMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([year, { count, cost }]) => ({ year, permits: count, cost }));
+  return rows
+    .map((r) => {
+      const year = String(r.Year ?? "Unknown");
+      return { year, permits: Number(r.permit_count) || 0, cost: Number(r.total_cost) || 0 };
+    })
+    .filter((r) => r.year !== "Unknown" && r.year !== "0")
+    .sort((a, b) => a.year.localeCompare(b.year));
 }
 
 async function fetchCityOwnedPropertiesData(): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.cityOwnedProperties,
-    outFields: "Property_Type,Ward",
+    groupByField: "Use_",
+    statisticField: "OBJECTID_1",
+    statisticType: "count",
   });
 
-  const typeMap = new Map<string, number>();
-  for (const row of attrs) {
-    const type = String(row.Property_Type ?? "Unknown");
-    typeMap.set(type, (typeMap.get(type) ?? 0) + 1);
-  }
-
-  return Array.from(typeMap.entries())
-    .sort(([, a], [, b]) => b - a)
+  return stats
+    .filter((s) => s.group && s.group !== "Unknown" && s.group !== "null")
+    .sort((a, b) => b.value - a.value)
     .slice(0, 10)
-    .map(([type, count]) => ({ type, count }));
+    .map((s) => ({ type: s.group, count: s.value }));
 }
 
-const TRANSPORTATION_TERMS =
-  /road|street|traffic|pothole|transit|sidewalk|signal/i;
-
 async function fetchTransportationRequestsData(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  // Get all request type counts, then filter client-side by transportation terms.
+  // Stats result set is small (one row per type) so no pagination issue.
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.serviceRequests311,
-    outFields: "Request_Type,Year",
     where: yearWhere(yr),
+    groupByField: "Request_Type",
+    statisticField: "Request_ID",
+    statisticType: "count",
   });
 
-  const typeMap = new Map<string, number>();
-  for (const row of attrs) {
-    const type = String(row.Request_Type ?? "");
-    if (TRANSPORTATION_TERMS.test(type)) {
-      typeMap.set(type, (typeMap.get(type) ?? 0) + 1);
-    }
-  }
-
-  return Array.from(typeMap.entries())
-    .sort(([, a], [, b]) => b - a)
+  return stats
+    .filter((s) => TRANSPORTATION_TERMS.test(s.group))
+    .sort((a, b) => b.value - a.value)
     .slice(0, 10)
-    .map(([type, count]) => ({ type, count }));
+    .map((s) => ({ type: s.group, count: s.value }));
 }
 
 // ---------------------------------------------------------------------------
-// NEW fetchers: Resident
+// Fetchers: Resident
 // ---------------------------------------------------------------------------
 
 async function fetchRequestsByStatus(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.serviceRequests311,
-    outFields: "Status,Year",
     where: yearWhere(yr),
+    groupByField: "Status",
+    statisticField: "Request_ID",
+    statisticType: "count",
   });
 
-  const statusMap = new Map<string, number>();
-  for (const row of attrs) {
-    const status = String(row.Status ?? "Unknown");
-    statusMap.set(status, (statusMap.get(status) ?? 0) + 1);
-  }
-
-  return Array.from(statusMap.entries())
-    .sort(([, a], [, b]) => b - a)
-    .map(([status, count]) => ({ status, count }));
+  return stats.sort((a, b) => b.value - a.value).map((s) => ({ status: s.group, count: s.value }));
 }
 
 async function fetchRequestsByDistrict(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.serviceRequests311,
-    outFields: "District,Year",
     where: yearWhere(yr),
+    groupByField: "District",
+    statisticField: "Request_ID",
+    statisticType: "count",
   });
 
-  const districtMap = new Map<string, number>();
-  for (const row of attrs) {
-    const d = String(row.District ?? "Unknown");
-    const key = d === "0" || d === "Unknown" ? "Unassigned" : `District ${d}`;
-    districtMap.set(key, (districtMap.get(key) ?? 0) + 1);
-  }
-
-  return Array.from(districtMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([district, count]) => ({ district, count }));
+  return stats
+    .map((s) => {
+      const key = s.group === "0" || s.group === "Unknown" ? "Unassigned" : `District ${s.group}`;
+      return { district: key, count: s.value };
+    })
+    .sort((a, b) => a.district.localeCompare(b.district));
 }
 
 async function fetchFacilityCounts(): Promise<any[]> {
-  const [police, fire, community, libraries, schools, daycare, health] =
-    await Promise.all([
-      queryFeatureAttributes({
-        url: ARCGIS_URLS.policeFacilities,
-        outFields: "Facility_Name",
-      }),
-      queryFeatureAttributes({
-        url: ARCGIS_URLS.fireStations,
-        outFields: "Name",
-      }),
-      queryFeatureAttributes({
-        url: ARCGIS_URLS.communityCenters,
-        outFields: "FACILITY_N",
-      }),
-      queryFeatureAttributes({
-        url: ARCGIS_URLS.libraries,
-        outFields: "BRANCH_NAME",
-      }),
-      queryFeatureAttributes({
-        url: ARCGIS_URLS.educationFacilities,
-        outFields: "NAME",
-      }),
-      queryFeatureAttributes({
-        url: ARCGIS_URLS.daycareCenters,
-        outFields: "Name",
-      }),
-      queryFeatureAttributes({
-        url: ARCGIS_URLS.healthCare,
-        outFields: "COMPANY_NA",
-      }),
-    ]);
+  const [police, fire, community, libraries, schools, daycare, health] = await Promise.all([
+    queryFeatureCount(ARCGIS_URLS.policeFacilities),
+    queryFeatureCount(ARCGIS_URLS.fireStations),
+    queryFeatureCount(ARCGIS_URLS.communityCenters),
+    queryFeatureCount(ARCGIS_URLS.libraries),
+    queryFeatureCount(ARCGIS_URLS.educationFacilities),
+    queryFeatureCount(ARCGIS_URLS.daycareCenters),
+    queryFeatureCount(ARCGIS_URLS.healthCare),
+  ]);
 
   return [
-    { facility: "Schools", count: schools.length },
-    { facility: "Health Care", count: health.length },
-    { facility: "Daycare Centers", count: daycare.length },
-    { facility: "Community Centers", count: community.length },
-    { facility: "Fire Stations", count: fire.length },
-    { facility: "Police Facilities", count: police.length },
-    { facility: "Libraries", count: libraries.length },
+    { facility: "Schools", count: schools ?? 0 },
+    { facility: "Health Care", count: health ?? 0 },
+    { facility: "Daycare Centers", count: daycare ?? 0 },
+    { facility: "Community Centers", count: community ?? 0 },
+    { facility: "Fire Stations", count: fire ?? 0 },
+    { facility: "Police Facilities", count: police ?? 0 },
+    { facility: "Libraries", count: libraries ?? 0 },
   ].sort((a, b) => b.count - a.count);
 }
 
 // ---------------------------------------------------------------------------
-// NEW fetchers: Business
+// Fetchers: Business
 // ---------------------------------------------------------------------------
 
 async function fetchLicensesByCategory(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.businessLicense,
-    outFields: "scNAME,pvYEAR",
     where: yearWhere(yr, "pvYEAR"),
+    groupByField: "scNAME",
+    statisticField: "scNAME",
+    statisticType: "count",
   });
 
-  const catMap = new Map<string, number>();
-  for (const row of attrs) {
-    const cat = String(row.scNAME ?? "Other");
-    catMap.set(cat, (catMap.get(cat) ?? 0) + 1);
-  }
-
-  return Array.from(catMap.entries())
-    .sort(([, a], [, b]) => b - a)
+  return stats
+    .sort((a, b) => b.value - a.value)
     .slice(0, 10)
-    .map(([category, count]) => ({ category, count }));
+    .map((s) => ({ category: s.group, count: s.value }));
 }
 
 async function fetchPermitStatusBreakdown(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.constructionPermits,
-    outFields: "PermitStatus,Year",
     where: yearWhere(yr, "Year", true),
+    groupByField: "PermitStatus",
+    statisticField: "PermitNo",
+    statisticType: "count",
   });
 
-  const statusMap = new Map<string, number>();
-  for (const row of attrs) {
-    const status = String(row.PermitStatus ?? "Unknown");
-    statusMap.set(status, (statusMap.get(status) ?? 0) + 1);
-  }
-
-  return Array.from(statusMap.entries())
-    .sort(([, a], [, b]) => b - a)
-    .map(([status, count]) => ({ status, count }));
+  return stats.sort((a, b) => b.value - a.value).map((s) => ({ status: s.group, count: s.value }));
 }
 
 async function fetchLicensesByYear(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.businessLicense,
-    outFields: "pvYEAR",
     where: yearWhere(yr, "pvYEAR"),
+    groupByField: "pvYEAR",
+    statisticField: "pvYEAR",
+    statisticType: "count",
   });
 
-  const yearMap = new Map<number, number>();
-  for (const row of attrs) {
-    const year = Number(row.pvYEAR);
-    if (year > 0) {
-      yearMap.set(year, (yearMap.get(year) ?? 0) + 1);
-    }
-  }
-
-  return Array.from(yearMap.entries())
-    .sort(([a], [b]) => a - b)
-    .map(([year, count]) => ({ year: year.toString(), count }));
+  return stats
+    .filter((s) => s.group !== "Unknown" && s.group !== "0" && s.group !== "null")
+    .sort((a, b) => a.group.localeCompare(b.group))
+    .map((s) => ({ year: s.group, count: s.value }));
 }
 
 // ---------------------------------------------------------------------------
-// NEW fetchers: City Staff
+// Fetchers: City Staff
 // ---------------------------------------------------------------------------
 
 async function fetchViolationsByStatus(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.codeViolations,
-    outFields: "CaseStatus,Year",
     where: yearWhere(yr, "Year", true),
+    groupByField: "CaseStatus",
+    statisticField: "OffenceNum",
+    statisticType: "count",
   });
 
-  const statusMap = new Map<string, number>();
-  for (const row of attrs) {
-    const status = String(row.CaseStatus ?? "Unknown");
-    statusMap.set(status, (statusMap.get(status) ?? 0) + 1);
-  }
-
-  return Array.from(statusMap.entries())
-    .sort(([, a], [, b]) => b - a)
-    .map(([status, count]) => ({ status, count }));
+  return stats.sort((a, b) => b.value - a.value).map((s) => ({ status: s.group, count: s.value }));
 }
 
 async function fetchViolationsByDistrict(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.codeViolations,
-    outFields: "District,Year",
     where: yearWhere(yr, "Year", true),
+    groupByField: "CouncilDistrict",
+    statisticField: "OffenceNum",
+    statisticType: "count",
   });
 
+  // Merge normalized district keys (e.g. "DISTRICT 5" → "D5")
   const districtMap = new Map<string, number>();
-  for (const row of attrs) {
-    const d = String(row.District ?? "Unknown");
-    const key = d === "0" || d === "Unknown" ? "Unassigned" : `District ${d}`;
-    districtMap.set(key, (districtMap.get(key) ?? 0) + 1);
+  for (const s of stats) {
+    const key = normalizeDistrict(s.group);
+    districtMap.set(key, (districtMap.get(key) ?? 0) + s.value);
   }
 
   return Array.from(districtMap.entries())
@@ -333,40 +276,35 @@ async function fetchViolationsByDistrict(yr: YearRange): Promise<any[]> {
 }
 
 async function fetchPavingByStatus(): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.pavingProject,
-    outFields: "Status,Year",
+    groupByField: "Status",
+    statisticField: "Status",
+    statisticType: "count",
   });
 
-  const statusMap = new Map<string, number>();
-  for (const row of attrs) {
-    const status = String(row.Status ?? "Unknown");
-    statusMap.set(status, (statusMap.get(status) ?? 0) + 1);
-  }
-
-  return Array.from(statusMap.entries())
-    .sort(([, a], [, b]) => b - a)
-    .map(([status, count]) => ({ status, count }));
+  return stats.sort((a, b) => b.value - a.value).map((s) => ({ status: s.group, count: s.value }));
 }
 
-async function fetchNuisanceByType(yr: YearRange): Promise<any[]> {
+async function fetchNuisanceByType(_yr: YearRange): Promise<any[]> {
+  // Nuisance Remark field is comma-separated keywords — must parse client-side.
+  // Dataset is small (~hundreds of records), so pagination isn't a concern here.
   const attrs = await queryFeatureAttributes({
     url: ARCGIS_URLS.nuisance,
-    outFields: "Type,Date",
-  });
-
-  // Nuisance doesn't have a Year field — filter by Date if available
-  const filtered = attrs.filter((row) => {
-    if (!row.Date) return true;
-    const d = new Date(Number(row.Date));
-    const y = d.getFullYear();
-    return y >= yr.from && y <= yr.to;
+    outFields: "Remark",
   });
 
   const typeMap = new Map<string, number>();
-  for (const row of filtered) {
-    const type = String(row.Type ?? "Unknown");
-    typeMap.set(type, (typeMap.get(type) ?? 0) + 1);
+  for (const row of attrs) {
+    const remark = String(row.Remark ?? "");
+    if (!remark) continue;
+    const keywords = remark
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    for (const kw of keywords) {
+      typeMap.set(kw, (typeMap.get(kw) ?? 0) + 1);
+    }
   }
 
   return Array.from(typeMap.entries())
@@ -376,79 +314,70 @@ async function fetchNuisanceByType(yr: YearRange): Promise<any[]> {
 }
 
 // ---------------------------------------------------------------------------
-// NEW fetchers: Researcher
+// Fetchers: Researcher
 // ---------------------------------------------------------------------------
 
 async function fetchViolationsByYear(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.codeViolations,
-    outFields: "Year,OffenceNum",
     where: yearWhere(yr, "Year", true),
+    groupByField: "Year",
+    statisticField: "OffenceNum",
+    statisticType: "count",
   });
 
-  const yearMap = new Map<string, number>();
-  for (const row of attrs) {
-    const year = String(row.Year ?? "Unknown");
-    if (year === "Unknown" || year === "0") continue;
-    yearMap.set(year, (yearMap.get(year) ?? 0) + 1);
-  }
-
-  return Array.from(yearMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([year, count]) => ({ year, count }));
+  return stats
+    .filter((s) => s.group !== "Unknown" && s.group !== "0" && s.group !== "null")
+    .sort((a, b) => a.group.localeCompare(b.group))
+    .map((s) => ({ year: s.group, count: s.value }));
 }
 
 async function fetchPermitsByYear(yr: YearRange): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const stats = await queryFeatureStats({
     url: ARCGIS_URLS.constructionPermits,
-    outFields: "Year,PermitNo",
     where: yearWhere(yr, "Year", true),
+    groupByField: "Year",
+    statisticField: "PermitNo",
+    statisticType: "count",
   });
 
-  const yearMap = new Map<string, number>();
-  for (const row of attrs) {
-    const year = String(row.Year ?? "Unknown");
-    if (year === "Unknown" || year === "0") continue;
-    yearMap.set(year, (yearMap.get(year) ?? 0) + 1);
-  }
-
-  return Array.from(yearMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([year, count]) => ({ year, count }));
+  return stats
+    .filter((s) => s.group !== "Unknown" && s.group !== "0" && s.group !== "null")
+    .sort((a, b) => a.group.localeCompare(b.group))
+    .map((s) => ({ year: s.group, count: s.value }));
 }
 
 async function fetchDistrictComparison(yr: YearRange): Promise<any[]> {
-  const [requests, violations] = await Promise.all([
-    queryFeatureAttributes({
+  const [requestStats, violationStats] = await Promise.all([
+    queryFeatureStats({
       url: ARCGIS_URLS.serviceRequests311,
-      outFields: "District,Year",
       where: yearWhere(yr),
+      groupByField: "District",
+      statisticField: "Request_ID",
+      statisticType: "count",
     }),
-    queryFeatureAttributes({
+    queryFeatureStats({
       url: ARCGIS_URLS.codeViolations,
-      outFields: "District,Year",
       where: yearWhere(yr, "Year", true),
+      groupByField: "CouncilDistrict",
+      statisticField: "OffenceNum",
+      statisticType: "count",
     }),
   ]);
 
-  const districtData = new Map<
-    string,
-    { requests: number; violations: number }
-  >();
+  const districtData = new Map<string, { requests: number; violations: number }>();
 
-  for (const row of requests) {
-    const d = String(row.District ?? "0");
-    const key = d === "0" ? "Unassigned" : `D${d}`;
+  for (const s of requestStats) {
+    const key = normalizeDistrict(s.group);
     const entry = districtData.get(key) ?? { requests: 0, violations: 0 };
-    entry.requests += 1;
+    entry.requests += s.value;
     districtData.set(key, entry);
   }
 
-  for (const row of violations) {
-    const d = String(row.District ?? "0");
-    const key = d === "0" ? "Unassigned" : `D${d}`;
+  for (const s of violationStats) {
+    const key = normalizeDistrict(s.group);
     const entry = districtData.get(key) ?? { requests: 0, violations: 0 };
-    entry.violations += 1;
+    entry.violations += s.value;
     districtData.set(key, entry);
   }
 
@@ -462,56 +391,40 @@ async function fetchDistrictComparison(yr: YearRange): Promise<any[]> {
 }
 
 async function fetchCensusData(): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const totals = await queryTotalStats({
     url: ARCGIS_URLS.censusBlock,
-    outFields: "P1_003N,P1_004N,P1_005N,P1_006N,P1_007N,P1_008N",
+    statistics: [
+      { field: "P1_003N", type: "sum", alias: "white" },
+      { field: "P1_004N", type: "sum", alias: "black" },
+      { field: "P1_005N", type: "sum", alias: "native" },
+      { field: "P1_006N", type: "sum", alias: "asian" },
+      { field: "P1_007N", type: "sum", alias: "pacific" },
+      { field: "P1_008N", type: "sum", alias: "other" },
+    ],
   });
 
-  let white = 0;
-  let black = 0;
-  let native = 0;
-  let asian = 0;
-  let pacific = 0;
-  let other = 0;
-
-  for (const row of attrs) {
-    white += Number(row.P1_003N) || 0;
-    black += Number(row.P1_004N) || 0;
-    native += Number(row.P1_005N) || 0;
-    asian += Number(row.P1_006N) || 0;
-    pacific += Number(row.P1_007N) || 0;
-    other += Number(row.P1_008N) || 0;
-  }
-
   return [
-    { category: "Black / African Am.", value: black },
-    { category: "White", value: white },
-    { category: "Asian", value: asian },
-    { category: "Native American", value: native },
-    { category: "Pacific Islander", value: pacific },
-    { category: "Other", value: other },
+    { category: "Black / African Am.", value: totals.black ?? 0 },
+    { category: "White", value: totals.white ?? 0 },
+    { category: "Asian", value: totals.asian ?? 0 },
+    { category: "Native American", value: totals.native ?? 0 },
+    { category: "Pacific Islander", value: totals.pacific ?? 0 },
+    { category: "Other", value: totals.other ?? 0 },
   ].sort((a, b) => b.value - a.value);
 }
 
 async function fetchHouseholdData(): Promise<any[]> {
-  const attrs = await queryFeatureAttributes({
+  const totals = await queryTotalStats({
     url: ARCGIS_URLS.censusBlock,
-    outFields: "TOT_HH,OCC_HH,VAC_HH",
+    statistics: [
+      { field: "OCC_HH", type: "sum", alias: "occupied" },
+      { field: "VAC_HH", type: "sum", alias: "vacant" },
+    ],
   });
 
-  let totalHH = 0;
-  let occupied = 0;
-  let vacant = 0;
-
-  for (const row of attrs) {
-    totalHH += Number(row.TOT_HH) || 0;
-    occupied += Number(row.OCC_HH) || 0;
-    vacant += Number(row.VAC_HH) || 0;
-  }
-
   return [
-    { category: "Occupied", value: occupied },
-    { category: "Vacant", value: vacant },
+    { category: "Occupied", value: totals.occupied ?? 0 },
+    { category: "Vacant", value: totals.vacant ?? 0 },
   ];
 }
 
@@ -605,8 +518,7 @@ export function useChartData(chartId: string): UseChartDataReturn {
       }
       setData(result);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to load chart data";
+      const message = err instanceof Error ? err.message : "Failed to load chart data";
       setError(message);
       setData(null);
     } finally {

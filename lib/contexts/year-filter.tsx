@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
 
 export interface YearRange {
   from: number;
@@ -28,7 +21,7 @@ interface YearFilterContextValue {
 const CURRENT_YEAR = new Date().getFullYear();
 const MIN_YEAR = 2018;
 
-const defaultRange: YearRange = { from: CURRENT_YEAR, to: CURRENT_YEAR };
+const defaultRange: YearRange = { from: MIN_YEAR, to: CURRENT_YEAR };
 
 const YearFilterContext = createContext<YearFilterContextValue | null>(null);
 
@@ -39,19 +32,14 @@ export function YearFilterProvider({
   children: ReactNode;
   initialRange?: YearRange;
 }) {
-  const [yearRange, setYearRange] = useState<YearRange>(
-    initialRange ?? defaultRange,
-  );
+  const [yearRange, setYearRange] = useState<YearRange>(initialRange ?? defaultRange);
 
   const setFrom = useCallback(
     (year: number) => setYearRange((prev) => ({ ...prev, from: year })),
     [],
   );
 
-  const setTo = useCallback(
-    (year: number) => setYearRange((prev) => ({ ...prev, to: year })),
-    [],
-  );
+  const setTo = useCallback((year: number) => setYearRange((prev) => ({ ...prev, to: year })), []);
 
   const yearOptions = useMemo(() => {
     const years: number[] = [];
@@ -82,11 +70,7 @@ export function YearFilterProvider({
     [yearRange, setFrom, setTo, buildWhereClause, yearOptions],
   );
 
-  return (
-    <YearFilterContext.Provider value={value}>
-      {children}
-    </YearFilterContext.Provider>
-  );
+  return <YearFilterContext.Provider value={value}>{children}</YearFilterContext.Provider>;
 }
 
 export function useYearFilter(): YearFilterContextValue {

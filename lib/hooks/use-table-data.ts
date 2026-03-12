@@ -1,10 +1,10 @@
 "use client";
 
+import type { ColumnDef } from "@tanstack/react-table";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { type ColumnDef } from "@tanstack/react-table";
 import { ARCGIS_URLS, queryFeatureAttributes } from "@/lib/arcgis-client";
+import { formatCurrency, yearWhere } from "@/lib/arcgis-helpers";
 import { useYearFilter, type YearRange } from "@/lib/contexts/year-filter";
-import { yearWhere, formatCurrency } from "@/lib/arcgis-helpers";
 
 interface UseTableDataReturn {
   data: Record<string, unknown>[];
@@ -116,7 +116,7 @@ const PORTAL_CONFIGS: Record<string, Record<string, DatasetConfig>> = {
       sources: [
         {
           url: ARCGIS_URLS.codeViolations,
-          outFields: "OffenceNum,CaseType,CaseStatus,Address1,District,Year",
+          outFields: "OffenceNum,CaseType,CaseStatus,Address1,CouncilDistrict,Year",
           yearFilterField: "Year",
           yearQuoted: true,
         },
@@ -126,7 +126,7 @@ const PORTAL_CONFIGS: Record<string, Record<string, DatasetConfig>> = {
         { key: "CaseType", header: "Type" },
         { key: "CaseStatus", header: "Status" },
         { key: "Address1", header: "Address" },
-        { key: "District", header: "District" },
+        { key: "CouncilDistrict", header: "District" },
         { key: "Year", header: "Year" },
       ],
       exportFilename: "montgomery-code-violations",
@@ -185,8 +185,7 @@ const PORTAL_CONFIGS: Record<string, Record<string, DatasetConfig>> = {
       sources: [
         {
           url: ARCGIS_URLS.businessLicense,
-          outFields:
-            "custCOMPANY_NAME,custDBA,Full_Address,scNAME,pvYEAR,pvEFFDATE,pvEXPIRE",
+          outFields: "custCOMPANY_NAME,custDBA,Full_Address,scNAME,pvYEAR,pvEFFDATE,pvEXPIRE",
           yearFilterField: "pvYEAR",
         },
       ],
@@ -233,7 +232,7 @@ const PORTAL_CONFIGS: Record<string, Record<string, DatasetConfig>> = {
       sources: [
         {
           url: ARCGIS_URLS.codeViolations,
-          outFields: "OffenceNum,CaseType,CaseStatus,Address1,District,Year",
+          outFields: "OffenceNum,CaseType,CaseStatus,Address1,CouncilDistrict,Year",
           yearFilterField: "Year",
           yearQuoted: true,
         },
@@ -243,7 +242,7 @@ const PORTAL_CONFIGS: Record<string, Record<string, DatasetConfig>> = {
         { key: "CaseType", header: "Type" },
         { key: "CaseStatus", header: "Status" },
         { key: "Address1", header: "Address" },
-        { key: "District", header: "District" },
+        { key: "CouncilDistrict", header: "District" },
         { key: "Year", header: "Year" },
       ],
       exportFilename: "montgomery-code-violations",
@@ -323,7 +322,7 @@ const PORTAL_CONFIGS: Record<string, Record<string, DatasetConfig>> = {
       sources: [
         {
           url: ARCGIS_URLS.codeViolations,
-          outFields: "OffenceNum,CaseType,CaseStatus,Address1,District,Year",
+          outFields: "OffenceNum,CaseType,CaseStatus,Address1,CouncilDistrict,Year",
           yearFilterField: "Year",
           yearQuoted: true,
         },
@@ -333,7 +332,7 @@ const PORTAL_CONFIGS: Record<string, Record<string, DatasetConfig>> = {
         { key: "CaseType", header: "Type" },
         { key: "CaseStatus", header: "Status" },
         { key: "Address1", header: "Address" },
-        { key: "District", header: "District" },
+        { key: "CouncilDistrict", header: "District" },
         { key: "Year", header: "Year" },
       ],
       exportFilename: "montgomery-code-violations",
@@ -368,8 +367,7 @@ const PORTAL_CONFIGS: Record<string, Record<string, DatasetConfig>> = {
       sources: [
         {
           url: ARCGIS_URLS.businessLicense,
-          outFields:
-            "custCOMPANY_NAME,custDBA,Full_Address,scNAME,pvYEAR,pvEFFDATE,pvEXPIRE",
+          outFields: "custCOMPANY_NAME,custDBA,Full_Address,scNAME,pvYEAR,pvEFFDATE,pvEXPIRE",
           yearFilterField: "pvYEAR",
         },
       ],
@@ -398,9 +396,7 @@ export function useTableData(portal: string): UseTableDataReturn {
     [portal],
   );
 
-  const [selectedDataset, setSelectedDataset] = useState(
-    () => datasetKeys[0] ?? "",
-  );
+  const [selectedDataset, setSelectedDataset] = useState(() => datasetKeys[0] ?? "");
 
   // Reset selected dataset when portal changes
   useEffect(() => {
@@ -439,11 +435,7 @@ export function useTableData(portal: string): UseTableDataReturn {
         config.sources.map((src) => {
           let where = src.where ?? "1=1";
           if (src.yearFilterField) {
-            const yw = yearWhere(
-              yearRange,
-              src.yearFilterField,
-              src.yearQuoted ?? false,
-            );
+            const yw = yearWhere(yearRange, src.yearFilterField, src.yearQuoted ?? false);
             where = where === "1=1" ? yw : `(${where}) AND ${yw}`;
           }
           return queryFeatureAttributes({

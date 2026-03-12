@@ -1,4 +1,5 @@
 import { AbstractAgent, type BaseEvent, EventType, type RunAgentInput } from "@ag-ui/client";
+import type { Tool as AGUITool } from "@ag-ui/core";
 import Anthropic from "@anthropic-ai/sdk";
 import type {
   ContentBlock,
@@ -147,6 +148,33 @@ async function executeBrightdataSearch(input: {
   return data.result;
 }
 
+// ── Frontend tool/context helpers ─────────────────────────────────────────
+
+/** Convert AG-UI tool definitions (from useCopilotAction) to Anthropic format */
+function convertFrontendTools(aguiTools: AGUITool[]): Tool[] {
+  return aguiTools
+    .filter((t) => !SERVER_TOOL_NAMES.has(t.name))
+    .map((t) => ({
+      name: t.name,
+      description: t.description,
+      input_schema: t.parameters ?? {
+        type: "object" as const,
+        properties: {},
+      },
+    }));
+}
+
+/** Build context supplement from useCopilotReadable values */
+function buildContextSupplement(context: Array<{ description: string; value: string }>): string {
+  if (!context || context.length === 0) return "";
+
+  const lines = context.map(
+    (c) =>
+      `- **${c.description}:** ${typeof c.value === "string" ? c.value : JSON.stringify(c.value)}`,
+  );
+  return `\n\n## Current Dashboard State (live from the UI)\n${lines.join("\n")}`;
+}
+
 // ── CivicAgent ──────────────────────────────────────────────────────────────
 
 export class CivicAgent extends AbstractAgent {
@@ -193,7 +221,16 @@ export class CivicAgent extends AbstractAgent {
 
   private async executeRun(input: RunAgentInput, subscriber: Subscriber<BaseEvent>): Promise<void> {
     const { threadId, runId } = input;
-    const systemPrompt = getSystemPrompt(this.portal);
+
+    // ── Merge frontend tools & context into the LLM call ────────────────
+    const frontendTools = convertFrontendTools((input.tools as AGUITool[]) ?? []);
+    const frontendToolNames = new Set(frontendTools.map((t) => t.name));
+    const mergedTools: Tool[] = [...allTools, ...frontendTools];
+
+    const contextSupplement = buildContextSupplement(
+      (input.context as Array<{ description: string; value: string }>) ?? [],
+    );
+    const systemPrompt = getSystemPrompt(this.portal) + contextSupplement;
 
     // RUN_STARTED
     subscriber.next({
@@ -202,28 +239,108 @@ export class CivicAgent extends AbstractAgent {
       runId,
     } as BaseEvent);
 
-    // Build combined tools: server-side + CopilotKit frontend actions
-    const frontendActionNames = new Set<string>();
-    const combinedTools: Tool[] = [...allTools];
-    for (const tool of input.tools ?? []) {
-      if (!SERVER_TOOL_NAMES.has(tool.name)) {
-        frontendActionNames.add(tool.name);
-        combinedTools.push({
-          name: tool.name,
-          description: tool.description,
-          input_schema: tool.parameters ?? { type: "object" as const, properties: {} },
+    // Convert AG-UI / CopilotKit messages to Anthropic format.
+    // On re-invocation after frontend tool execution, CopilotKit sends:
+    //   1. Original user message (role: "user")
+    //   2. Assistant message (role: "assistant", toolCalls: [...], content?: string)
+    //   3. Tool result messages (role: "tool", toolCallId, content)
+    // Anthropic expects tool results grouped as role:"user" content:[tool_result, ...]
+    const inputMessages = input.messages ?? [];
+    const anthropicMessages: MessageParam[] = [];
+
+    // biome-ignore lint/suspicious/noExplicitAny: AG-UI message types vary
+    let pendingToolResults: Array<any> = [];
+
+    const flushToolResults = () => {
+      if (pendingToolResults.length > 0) {
+        anthropicMessages.push({ role: "user", content: pendingToolResults });
+        pendingToolResults = [];
+      }
+    };
+
+    for (const m of inputMessages) {
+      if (m.role === "user") {
+        flushToolResults();
+        const content =
+          typeof m.content === "string"
+            ? m.content
+            : m.content != null
+              ? JSON.stringify(m.content)
+              : "";
+        if (content) {
+          anthropicMessages.push({ role: "user", content });
+        }
+      } else if (m.role === "assistant") {
+        flushToolResults();
+        // biome-ignore lint/suspicious/noExplicitAny: AG-UI toolCalls shape
+        const msg = m as any;
+        const toolCalls: Array<{ id: string; function: { name: string; arguments: string } }> =
+          msg.toolCalls ?? [];
+        // Build Anthropic content blocks: text (if any) + tool_use blocks
+        // biome-ignore lint/suspicious/noExplicitAny: Anthropic content block union
+        const contentBlocks: any[] = [];
+        const textContent = typeof msg.content === "string" ? msg.content : "";
+        if (textContent) {
+          contentBlocks.push({ type: "text", text: textContent });
+        }
+        for (const tc of toolCalls) {
+          let parsedInput = {};
+          try {
+            parsedInput = JSON.parse(tc.function.arguments);
+          } catch {
+            // keep empty object
+          }
+          contentBlocks.push({
+            type: "tool_use",
+            id: tc.id,
+            name: tc.function.name,
+            input: parsedInput,
+          });
+        }
+        if (contentBlocks.length > 0) {
+          anthropicMessages.push({ role: "assistant", content: contentBlocks });
+        } else if (textContent) {
+          anthropicMessages.push({ role: "assistant", content: textContent });
+        }
+        // Skip assistant messages with no content and no tool calls (edge case)
+      } else if (m.role === "tool") {
+        // biome-ignore lint/suspicious/noExplicitAny: AG-UI ToolMessage shape
+        const toolMsg = m as any;
+        pendingToolResults.push({
+          type: "tool_result",
+          tool_use_id: toolMsg.toolCallId,
+          content:
+            typeof toolMsg.content === "string"
+              ? toolMsg.content
+              : JSON.stringify(toolMsg.content ?? ""),
         });
       }
+      // Skip other roles (activity, reasoning, etc.)
     }
+    flushToolResults();
 
-    // Convert CopilotKit messages to Anthropic format
-    const inputMessages = input.messages ?? [];
-    const anthropicMessages: MessageParam[] = inputMessages
-      .filter((m) => m.role === "user" || m.role === "assistant")
-      .map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: typeof m.content === "string" ? m.content : JSON.stringify(m.content),
-      }));
+    // Debug: log the converted messages to diagnose API errors
+    console.log(
+      "[CivicAgent] Anthropic messages:",
+      JSON.stringify(
+        anthropicMessages.map((m) => ({
+          role: m.role,
+          content:
+            typeof m.content === "string"
+              ? m.content.slice(0, 80)
+              : Array.isArray(m.content)
+                ? m.content.map((b) => ({
+                    type: b.type,
+                    ...("id" in b ? { id: b.id } : {}),
+                    ...("name" in b ? { name: b.name } : {}),
+                    ...("tool_use_id" in b ? { tool_use_id: b.tool_use_id } : {}),
+                  }))
+                : typeof m.content,
+        })),
+        null,
+        2,
+      ),
+    );
 
     // Persist user message to Convex
     const lastUserMsg = anthropicMessages.findLast((m) => m.role === "user");
@@ -251,14 +368,19 @@ export class CivicAgent extends AbstractAgent {
         stepName: `iteration-${stepCount}`,
       } as BaseEvent);
 
-      const response = await this.anthropic.messages.create({
-        model: MODEL,
-        max_tokens: getMaxTokens(this.portal),
-        system: systemPrompt,
-        tools: combinedTools,
-        messages: currentMessages,
-        stream: false,
-      });
+      let response: Anthropic.Messages.Message;
+      try {
+        response = await this.anthropic.messages.create({
+          model: MODEL,
+          max_tokens: getMaxTokens(this.portal),
+          system: systemPrompt,
+          tools: mergedTools,
+          messages: currentMessages,
+        });
+      } catch (apiError) {
+        console.error("[CivicAgent] Anthropic API error:", apiError);
+        throw apiError;
+      }
 
       const toolUseBlocks = response.content.filter(
         (block): block is ToolUseBlock => block.type === "tool_use",
@@ -290,30 +412,84 @@ export class CivicAgent extends AbstractAgent {
         return;
       }
 
-      // Handle tool calls
+      // ── Classify tool calls: server-side vs frontend ──────────────────
+      const serverToolCalls = toolUseBlocks.filter((t) => !frontendToolNames.has(t.name));
+      const frontendToolCalls = toolUseBlocks.filter((t) => frontendToolNames.has(t.name));
+
+      // ── Handle frontend tool calls ────────────────────────────────────
+      // Emit events for ALL tool calls (text + tool_use blocks), then
+      // if any are frontend actions, stop the run so CopilotKit can
+      // execute them on the client and re-invoke the agent with results.
+      if (frontendToolCalls.length > 0) {
+        // Stream any text the LLM produced alongside the tool calls
+        const textContent = response.content
+          .filter(
+            (block): block is Extract<ContentBlock, { type: "text" }> => block.type === "text",
+          )
+          .map((block) => block.text)
+          .join("\n");
+
+        if (textContent.trim()) {
+          await this.streamTextMessage(subscriber, textContent, threadId);
+        }
+
+        // Emit tool call events for frontend actions
+        for (const toolUse of frontendToolCalls) {
+          subscriber.next({
+            type: EventType.TOOL_CALL_START,
+            toolCallId: toolUse.id,
+            toolCallName: toolUse.name,
+          } as BaseEvent);
+
+          subscriber.next({
+            type: EventType.TOOL_CALL_ARGS,
+            toolCallId: toolUse.id,
+            delta: JSON.stringify(toolUse.input),
+          } as BaseEvent);
+
+          subscriber.next({
+            type: EventType.TOOL_CALL_END,
+            toolCallId: toolUse.id,
+          } as BaseEvent);
+        }
+
+        // Finish step and run — CopilotKit will execute frontend actions
+        // and re-invoke the agent with tool results in messages
+        subscriber.next({
+          type: EventType.STEP_FINISHED,
+          stepName: `iteration-${stepCount}`,
+        } as BaseEvent);
+
+        subscriber.next({
+          type: EventType.RUN_FINISHED,
+          threadId,
+          runId,
+        } as BaseEvent);
+        subscriber.complete();
+        return;
+      }
+
+      // ── Handle server-side tool calls (existing behavior) ─────────────
       const toolResults: ToolResultBlockParam[] = [];
-      for (const toolUse of toolUseBlocks) {
+      for (const toolUse of serverToolCalls) {
         const toolCallId = toolUse.id;
         const statusText = getToolStatusText(
           toolUse.name,
           toolUse.input as Record<string, unknown>,
         );
 
-        // TOOL_CALL_START
         subscriber.next({
           type: EventType.TOOL_CALL_START,
           toolCallId,
           toolCallName: toolUse.name,
         } as BaseEvent);
 
-        // TOOL_CALL_ARGS
         subscriber.next({
           type: EventType.TOOL_CALL_ARGS,
           toolCallId,
           delta: JSON.stringify(toolUse.input),
         } as BaseEvent);
 
-        // Execute tool
         let result: unknown;
         let isError = false;
         try {
@@ -331,9 +507,6 @@ export class CivicAgent extends AbstractAgent {
             result = await executeBrightdataSearch(
               toolUse.input as { query?: string; url?: string; tool: string },
             );
-          } else if (frontendActionNames.has(toolUse.name)) {
-            // Frontend action — executed client-side by CopilotKit
-            result = { status: "executed" };
           } else {
             result = { error: `Unknown tool: ${toolUse.name}` };
             isError = true;
@@ -350,7 +523,6 @@ export class CivicAgent extends AbstractAgent {
 
         const sanitized = sanitizeToolResult(result);
 
-        // TOOL_CALL_END
         subscriber.next({
           type: EventType.TOOL_CALL_END,
           toolCallId,
