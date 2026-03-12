@@ -109,40 +109,46 @@ export function DataPanel({
 
   return (
     <div className="@container flex h-full flex-col overflow-hidden bg-card">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex w-full flex-1 flex-col">
-        <div className="border-b px-3 py-2 flex flex-col gap-2 @[500px]:flex-row @[500px]:items-center @[500px]:justify-between @[500px]:px-fluid-sm">
-          <TabsList className="gap-1">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="flex min-h-0 w-full flex-1 flex-col"
+      >
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b px-3 py-2">
+          {/* Tabs — compact on narrow containers, labeled when space allows */}
+          <TabsList className="gap-1 shrink-0">
             <TabsTrigger
               value="map"
               data-tour-step-id={`${portalId}-map-view`}
-              className="gap-1.5 px-2.5 sm:gap-2 sm:px-5"
+              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
             >
               <MapPin className="size-4" />
-              <span className="hidden @[400px]:inline">Map</span>
+              <span className="hidden @[440px]:inline">Map</span>
             </TabsTrigger>
             <TabsTrigger
               value="table"
               data-tour-step-id={`${portalId}-table-view`}
-              className="gap-1.5 px-2.5 sm:gap-2 sm:px-5"
+              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
             >
               <Table2 className="size-4" />
-              <span className="hidden @[400px]:inline">Table</span>
+              <span className="hidden @[440px]:inline">Table</span>
             </TabsTrigger>
             <TabsTrigger
               value="chart"
               data-tour-step-id={`${portalId}-chart-view`}
-              className="gap-1.5 px-2.5 sm:gap-2 sm:px-5"
+              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
             >
               <BarChart3 className="size-4" />
-              <span className="hidden @[400px]:inline">Chart</span>
+              <span className="hidden @[440px]:inline">Chart</span>
             </TabsTrigger>
           </TabsList>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-            {/* Year filter */}
-            <div className="flex items-center gap-2">
-              <CalendarRange className="size-3.5 text-muted-foreground" />
+
+          {/* Year filter + portal slot — wraps naturally when space is tight */}
+          <div className="flex items-center gap-2 ml-auto">
+            <div className="flex items-center gap-1.5">
+              <CalendarRange className="size-3.5 shrink-0 text-muted-foreground" />
               <Select value={String(yearRange.from)} onValueChange={(v) => setFrom(Number(v))}>
-                <SelectTrigger className="h-7 w-[80px] text-xs">
+                <SelectTrigger className="h-7 w-[68px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -155,7 +161,7 @@ export function DataPanel({
               </Select>
               <span className="text-xs text-muted-foreground">to</span>
               <Select value={String(yearRange.to)} onValueChange={(v) => setTo(Number(v))}>
-                <SelectTrigger className="h-7 w-[80px] text-xs">
+                <SelectTrigger className="h-7 w-[68px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -168,10 +174,7 @@ export function DataPanel({
               </Select>
             </div>
             {/* Slot where map layer filter portals into */}
-            <div
-              ref={slotRef}
-              className="flex items-center gap-2 sm:gap-4 [&>*+*]:border-l [&>*+*]:border-border [&>*+*]:pl-2 sm:[&>*+*]:pl-4"
-            />
+            <div ref={slotRef} className="flex items-center gap-2" />
           </div>
         </div>
 
@@ -188,7 +191,7 @@ export function DataPanel({
         >
           {tableContent}
         </TabsContent>
-        <TabsContent value="chart" className="flex-1 overflow-auto">
+        <TabsContent value="chart" className="min-h-0 flex-1 overflow-auto p-4">
           {chartContent}
         </TabsContent>
       </Tabs>

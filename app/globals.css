@@ -115,6 +115,15 @@
    ═══════════════════════════════════════════════════════ */
 
 @layer utilities {
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Diagonal hatching pattern for civic texture */
   .civic-hatch {
     background-image: repeating-linear-gradient(
@@ -359,6 +368,39 @@
   from {
     opacity: 0;
     transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   Mobile data card list — staggered entrance
+   ═══════════════════════════════════════════════════════ */
+
+@media (max-width: 639px) {
+  .mobile-data-card {
+    animation: cardSlideIn 0.2s ease-out both;
+  }
+  .mobile-data-card:nth-child(n + 2) {
+    animation-delay: 20ms;
+  }
+  .mobile-data-card:nth-child(n + 3) {
+    animation-delay: 40ms;
+  }
+  .mobile-data-card:nth-child(n + 4) {
+    animation-delay: 60ms;
+  }
+  .mobile-data-card:nth-child(n + 5) {
+    animation-delay: 80ms;
+  }
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
   }
   to {
     opacity: 1;

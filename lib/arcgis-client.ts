@@ -42,33 +42,27 @@ export const ARCGIS_URLS = {
   pavementAssessment:
     "https://gis.montgomeryal.gov/server/rest/services/PublicWorks/Pavement_Assessment_2025/MapServer/0",
   // Public services
-  healthCare:
-    "https://gis.montgomeryal.gov/server/rest/services/Health_Care_Facility/MapServer/0",
+  healthCare: "https://gis.montgomeryal.gov/server/rest/services/Health_Care_Facility/MapServer/0",
   entertainmentDistricts:
     "https://gis.montgomeryal.gov/server/rest/services/OneView/Entertainment_Districts/FeatureServer/0",
   recyclingLocations:
     "https://gis.montgomeryal.gov/server/rest/services/QAlert/QAlert_311/MapServer/4",
   garbageSchedule:
     "https://gis.montgomeryal.gov/server/rest/services/QAlert/QAlert_311/MapServer/5",
-  curbsideTrash:
-    "https://gis.montgomeryal.gov/server/rest/services/QAlert/QAlert_311/MapServer/7",
+  curbsideTrash: "https://gis.montgomeryal.gov/server/rest/services/QAlert/QAlert_311/MapServer/7",
   // Boundary / polygon layers
   councilDistricts:
     "https://gis.montgomeryal.gov/server/rest/services/SDE_City_Council/MapServer/0",
   neighborhoods:
     "https://gis.montgomeryal.gov/server/rest/services/NSD_Neighborhoods/FeatureServer/0",
   // Census demographics (2020 Census)
-  censusTract:
-    "https://gis.montgomeryal.gov/server/rest/services/Census_Boundaries/MapServer/0",
+  censusTract: "https://gis.montgomeryal.gov/server/rest/services/Census_Boundaries/MapServer/0",
   censusBlockGroup:
     "https://gis.montgomeryal.gov/server/rest/services/Census_Boundaries/MapServer/1",
-  censusBlock:
-    "https://gis.montgomeryal.gov/server/rest/services/Census_Boundaries/MapServer/2",
+  censusBlock: "https://gis.montgomeryal.gov/server/rest/services/Census_Boundaries/MapServer/2",
   // Additional layers
-  cityParks:
-    "https://gis.montgomeryal.gov/server/rest/services/OneView/City_Parks/MapServer/7",
-  zoning:
-    "https://gis.montgomeryal.gov/server/rest/services/Zoning/FeatureServer/0",
+  cityParks: "https://gis.montgomeryal.gov/server/rest/services/OneView/City_Parks/MapServer/7",
+  zoning: "https://gis.montgomeryal.gov/server/rest/services/Zoning/FeatureServer/0",
   floodHazardAreas:
     "https://gis.montgomeryal.gov/server/rest/services/OneView/Flood_Hazard_Areas/FeatureServer/0",
 } as const;
@@ -125,10 +119,7 @@ interface CacheEntry<T> {
 
 const cache = new Map<string, CacheEntry<unknown>>();
 
-function getCached<T>(
-  key: string,
-  ttl: number = DEFAULT_TTL_MS,
-): T | undefined {
+function getCached<T>(key: string, ttl: number = DEFAULT_TTL_MS): T | undefined {
   const entry = cache.get(key);
   if (!entry) return undefined;
   if (Date.now() - entry.timestamp > ttl) {
@@ -142,11 +133,7 @@ function setCache<T>(key: string, data: T): void {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-function buildCacheKey(
-  prefix: string,
-  url: string,
-  params: Record<string, unknown>,
-): string {
+function buildCacheKey(prefix: string, url: string, params: Record<string, unknown>): string {
   return `${prefix}:${url}:${JSON.stringify(params)}`;
 }
 
@@ -218,13 +205,7 @@ export async function queryFeaturesAsGeoJSON(options: {
   /** Max features to fetch. Defaults to PAGE_SIZE * MAX_PAGES (10,000). */
   maxRecords?: number;
 }): Promise<GeoJSON.FeatureCollection> {
-  const {
-    url,
-    where = "1=1",
-    outFields = "*",
-    returnGeometry = true,
-    maxRecords,
-  } = options;
+  const { url, where = "1=1", outFields = "*", returnGeometry = true, maxRecords } = options;
 
   const cacheKey = buildCacheKey("geojson", url, {
     where,
@@ -245,14 +226,7 @@ export async function queryFeaturesAsGeoJSON(options: {
       const offset = page * PAGE_SIZE;
       const count = Math.min(PAGE_SIZE, limit - allFeatures.length);
 
-      const features = await fetchPage(
-        url,
-        where,
-        outFields,
-        returnGeometry,
-        offset,
-        count,
-      );
+      const features = await fetchPage(url, where, outFields, returnGeometry, offset, count);
 
       allFeatures.push(...features);
 
@@ -336,5 +310,175 @@ export async function queryFeatureAttributes(options: {
   } catch (error) {
     console.error("[arcgis-client] queryFeatureAttributes failed:", error);
     return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// queryFeatureStats — server-side GROUP BY aggregation
+// ---------------------------------------------------------------------------
+
+/**
+ * Use ArcGIS outStatistics to get aggregated counts grouped by a field.
+ * Far more efficient than fetching all records and counting client-side,
+ * and not limited by maxRecordCount pagination.
+ */
+export async function queryFeatureStats(options: {
+  url: string;
+  where?: string;
+  groupByField: string;
+  statisticField: string;
+  statisticType?: "count" | "sum" | "avg" | "min" | "max";
+}): Promise<{ group: string; value: number }[]> {
+  const { url, where = "1=1", groupByField, statisticField, statisticType = "count" } = options;
+
+  const cacheKey = buildCacheKey("stats", url, {
+    where,
+    groupByField,
+    statisticField,
+    statisticType,
+  });
+  const cached = getCached<{ group: string; value: number }[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const outStatistics = JSON.stringify([
+      {
+        statisticType,
+        onStatisticField: statisticField,
+        outStatisticFieldName: "stat_value",
+      },
+    ]);
+
+    const params = new URLSearchParams({
+      where,
+      outStatistics,
+      groupByFieldsForStatistics: groupByField,
+      returnGeometry: "false",
+      f: "json",
+    });
+
+    const res = await fetch(`${url}/query?${params}`);
+    if (!res.ok) return [];
+
+    const raw = await res.json();
+    if (raw.error || !Array.isArray(raw.features)) return [];
+
+    const results = raw.features.map((f: { attributes: Record<string, unknown> }) => ({
+      group: String(f.attributes[groupByField] ?? "Unknown"),
+      value: Number(f.attributes.stat_value) || 0,
+    }));
+
+    setCache(cacheKey, results);
+    return results;
+  } catch (error) {
+    console.error("[arcgis-client] queryFeatureStats failed:", error);
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// queryMultiStats — multiple aggregations grouped by the same field
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch multiple aggregations in one request (e.g. count + sum grouped by Year).
+ * Returns rows with the groupBy value and each stat as a named field.
+ */
+export async function queryMultiStats(options: {
+  url: string;
+  where?: string;
+  groupByField: string;
+  statistics: { field: string; type: "count" | "sum" | "avg" | "min" | "max"; alias: string }[];
+}): Promise<Record<string, unknown>[]> {
+  const { url, where = "1=1", groupByField, statistics } = options;
+
+  const cacheKey = buildCacheKey("multistats", url, { where, groupByField, statistics });
+  const cached = getCached<Record<string, unknown>[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const outStatistics = JSON.stringify(
+      statistics.map((s) => ({
+        statisticType: s.type,
+        onStatisticField: s.field,
+        outStatisticFieldName: s.alias,
+      })),
+    );
+
+    const params = new URLSearchParams({
+      where,
+      outStatistics,
+      groupByFieldsForStatistics: groupByField,
+      returnGeometry: "false",
+      f: "json",
+    });
+
+    const res = await fetch(`${url}/query?${params}`);
+    if (!res.ok) return [];
+
+    const raw = await res.json();
+    if (raw.error || !Array.isArray(raw.features)) return [];
+
+    const results = raw.features.map((f: { attributes: Record<string, unknown> }) => f.attributes);
+    setCache(cacheKey, results);
+    return results;
+  } catch (error) {
+    console.error("[arcgis-client] queryMultiStats failed:", error);
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// queryTotalStats — ungrouped aggregation (totals across all records)
+// ---------------------------------------------------------------------------
+
+/**
+ * Sum/count/avg fields across ALL matching records without grouping.
+ * Returns a single object with each alias as a key.
+ */
+export async function queryTotalStats(options: {
+  url: string;
+  where?: string;
+  statistics: { field: string; type: "count" | "sum" | "avg" | "min" | "max"; alias: string }[];
+}): Promise<Record<string, number>> {
+  const { url, where = "1=1", statistics } = options;
+
+  const cacheKey = buildCacheKey("totalstats", url, { where, statistics });
+  const cached = getCached<Record<string, number>>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const outStatistics = JSON.stringify(
+      statistics.map((s) => ({
+        statisticType: s.type,
+        onStatisticField: s.field,
+        outStatisticFieldName: s.alias,
+      })),
+    );
+
+    const params = new URLSearchParams({
+      where,
+      outStatistics,
+      returnGeometry: "false",
+      f: "json",
+    });
+
+    const res = await fetch(`${url}/query?${params}`);
+    if (!res.ok) return {};
+
+    const raw = await res.json();
+    if (raw.error || !Array.isArray(raw.features) || raw.features.length === 0) return {};
+
+    const attrs = raw.features[0].attributes as Record<string, unknown>;
+    const result: Record<string, number> = {};
+    for (const s of statistics) {
+      result[s.alias] = Number(attrs[s.alias]) || 0;
+    }
+
+    setCache(cacheKey, result);
+    return result;
+  } catch (error) {
+    console.error("[arcgis-client] queryTotalStats failed:", error);
+    return {};
   }
 }

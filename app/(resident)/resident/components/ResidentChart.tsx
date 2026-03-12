@@ -1,62 +1,57 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  ChartErrorState,
+  PieLegendContent,
+  renderPieLabel,
+  SkeletonBars,
+} from "@/components/chart-helpers";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  type ChartConfig,
   ChartContainer,
+  ChartLegend,
   ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@/components/ui/chart";
 import { useChartData } from "@/lib/hooks/use-chart-data";
-import { SkeletonBars, ChartErrorState } from "@/components/chart-helpers";
+
+const PIE_COLORS = [
+  "hsl(221 83% 53%)",
+  "hsl(142 71% 45%)",
+  "hsl(25 95% 53%)",
+  "hsl(262 83% 58%)",
+  "hsl(346 77% 50%)",
+  "hsl(45 93% 47%)",
+  "hsl(173 80% 40%)",
+  "hsl(199 89% 48%)",
+  "hsl(292 91% 73%)",
+  "hsl(0 72% 51%)",
+];
 
 const chartConfig = {
-  count: {
-    label: "Requests",
-    color: "hsl(221 83% 53%)",
-  },
+  count: { label: "Requests", color: "hsl(221 83% 53%)" },
 } satisfies ChartConfig;
 
 const transportationChartConfig = {
-  count: {
-    label: "Requests",
-    color: "hsl(262 83% 58%)",
-  },
+  count: { label: "Requests", color: "hsl(262 83% 58%)" },
 } satisfies ChartConfig;
 
 const statusChartConfig = {
-  count: {
-    label: "Requests",
-    color: "hsl(142 71% 45%)",
-  },
+  count: { label: "Requests", color: "hsl(142 71% 45%)" },
 } satisfies ChartConfig;
 
 const districtChartConfig = {
-  count: {
-    label: "Requests",
-    color: "hsl(234 89% 74%)",
-  },
+  count: { label: "Requests", color: "hsl(234 89% 74%)" },
 } satisfies ChartConfig;
 
 const facilityChartConfig = {
-  count: {
-    label: "Facilities",
-    color: "hsl(173 80% 40%)",
-  },
+  count: { label: "Facilities", color: "hsl(173 80% 40%)" },
 } satisfies ChartConfig;
 
 const violationsStatusConfig = {
-  count: {
-    label: "Violations",
-    color: "hsl(0 72% 51%)",
-  },
+  count: { label: "Violations", color: "hsl(0 72% 51%)" },
 } satisfies ChartConfig;
 
 export function ResidentChart() {
@@ -81,13 +76,12 @@ export function ResidentChart() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid grid-cols-1 gap-4 @[700px]:grid-cols-2">
+      {/* Bar: Service Requests by Type */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Service Requests by Type</CardTitle>
-          <CardDescription>
-            Top 311 service request categories for 2024
-          </CardDescription>
+          <CardDescription>Top 311 service request categories</CardDescription>
         </CardHeader>
         <CardContent>
           {!serviceRequests.data ? (
@@ -100,16 +94,8 @@ export function ResidentChart() {
               >
                 <defs>
                   <linearGradient id="serviceGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
+                    <stop offset="0%" stopColor="var(--color-count)" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="var(--color-count)" stopOpacity={0.5} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -121,31 +107,22 @@ export function ResidentChart() {
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
+                <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                 <ChartTooltip
                   cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
                   content={<ChartTooltipContent />}
                 />
-                <Bar
-                  dataKey="count"
-                  fill="url(#serviceGrad)"
-                  radius={[6, 6, 0, 0]}
-                />
+                <Bar dataKey="count" fill="url(#serviceGrad)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Bar: Transportation Requests */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            Transportation & Road Requests
-          </CardTitle>
+          <CardTitle className="text-base">Transportation & Road Requests</CardTitle>
           <CardDescription>
             Road, traffic, pothole, and transit-related service requests
           </CardDescription>
@@ -156,32 +133,15 @@ export function ResidentChart() {
           ) : !transportation.data ? (
             <ChartErrorState message="Could not load data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={transportationChartConfig}
-              className="h-[300px] w-full"
-            >
+            <ChartContainer config={transportationChartConfig} className="h-[300px] w-full">
               <BarChart
                 data={transportation.data}
                 margin={{ top: 8, right: 12, left: 0, bottom: 60 }}
               >
                 <defs>
-                  <linearGradient
-                    id="transportGrad"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
+                  <linearGradient id="transportGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-count)" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="var(--color-count)" stopOpacity={0.5} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -193,32 +153,23 @@ export function ResidentChart() {
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
+                <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                 <ChartTooltip
                   cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
                   content={<ChartTooltipContent />}
                 />
-                <Bar
-                  dataKey="count"
-                  fill="url(#transportGrad)"
-                  radius={[6, 6, 0, 0]}
-                />
+                <Bar dataKey="count" fill="url(#transportGrad)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Donut: 311 Requests by Status */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">311 Requests by Status</CardTitle>
-          <CardDescription>
-            Current status breakdown of all 311 service requests
-          </CardDescription>
+          <CardDescription>Current status breakdown of all 311 service requests</CardDescription>
         </CardHeader>
         <CardContent>
           {requestsByStatus.isLoading ? (
@@ -226,62 +177,36 @@ export function ResidentChart() {
           ) : !requestsByStatus.data ? (
             <ChartErrorState message="Could not load data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={statusChartConfig}
-              className="h-[300px] w-full"
-            >
-              <BarChart
-                data={requestsByStatus.data}
-                margin={{ top: 8, right: 12, left: 0, bottom: 60 }}
-              >
-                <defs>
-                  <linearGradient id="statusGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="status"
-                  tick={{ fontSize: 11 }}
-                  angle={-35}
-                  textAnchor="end"
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <ChartTooltip
-                  cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar
+            <ChartContainer config={statusChartConfig} className="mx-auto h-[350px] w-full">
+              <PieChart>
+                <ChartTooltip content={<ChartTooltipContent nameKey="status" />} />
+                <Pie
+                  data={requestsByStatus.data}
                   dataKey="count"
-                  fill="url(#statusGrad)"
-                  radius={[6, 6, 0, 0]}
-                />
-              </BarChart>
+                  nameKey="status"
+                  innerRadius={60}
+                  outerRadius={110}
+                  paddingAngle={2}
+                  strokeWidth={2}
+                  stroke="hsl(var(--background))"
+                  label={renderPieLabel}
+                  labelLine={false}
+                >
+                  {requestsByStatus.data.map((_: unknown, i: number) => (
+                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartLegend content={<PieLegendContent />} />
+              </PieChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Bar: 311 Requests by District */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            311 Requests by Council District
-          </CardTitle>
+          <CardTitle className="text-base">311 Requests by Council District</CardTitle>
           <CardDescription>
             Distribution of 311 service requests across council districts
           </CardDescription>
@@ -292,26 +217,15 @@ export function ResidentChart() {
           ) : !requestsByDistrict.data ? (
             <ChartErrorState message="Could not load data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={districtChartConfig}
-              className="h-[300px] w-full"
-            >
+            <ChartContainer config={districtChartConfig} className="h-[300px] w-full">
               <BarChart
                 data={requestsByDistrict.data}
                 margin={{ top: 8, right: 12, left: 0, bottom: 60 }}
               >
                 <defs>
                   <linearGradient id="districtGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
+                    <stop offset="0%" stopColor="var(--color-count)" stopOpacity={0.9} />
+                    <stop offset="100%" stopColor="var(--color-count)" stopOpacity={0.5} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -323,31 +237,22 @@ export function ResidentChart() {
                   tickLine={false}
                   axisLine={false}
                 />
-                <YAxis
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
+                <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                 <ChartTooltip
                   cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
                   content={<ChartTooltipContent />}
                 />
-                <Bar
-                  dataKey="count"
-                  fill="url(#districtGrad)"
-                  radius={[6, 6, 0, 0]}
-                />
+                <Bar dataKey="count" fill="url(#districtGrad)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Horizontal Bar: Community Facilities */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            Community Facilities by Type
-          </CardTitle>
+          <CardTitle className="text-base">Community Facilities by Type</CardTitle>
           <CardDescription>
             Count of community facilities across Montgomery by category
           </CardDescription>
@@ -358,10 +263,7 @@ export function ResidentChart() {
           ) : !facilityCounts.data ? (
             <ChartErrorState message="Could not load data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={facilityChartConfig}
-              className="h-[300px] w-full"
-            >
+            <ChartContainer config={facilityChartConfig} className="h-[300px] w-full">
               <BarChart
                 data={facilityCounts.data}
                 layout="vertical"
@@ -369,25 +271,12 @@ export function ResidentChart() {
               >
                 <defs>
                   <linearGradient id="facilityGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
+                    <stop offset="0%" stopColor="var(--color-count)" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="var(--color-count)" stopOpacity={0.9} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid horizontal={false} strokeDasharray="3 3" />
-                <XAxis
-                  type="number"
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
+                <XAxis type="number" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                 <YAxis
                   type="category"
                   dataKey="facility"
@@ -400,23 +289,18 @@ export function ResidentChart() {
                   cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
                   content={<ChartTooltipContent />}
                 />
-                <Bar
-                  dataKey="count"
-                  fill="url(#facilityGrad)"
-                  radius={[0, 6, 6, 0]}
-                />
+                <Bar dataKey="count" fill="url(#facilityGrad)" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Donut: Code Violations by Status */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Code Violations by Status</CardTitle>
-          <CardDescription>
-            Case status breakdown for reported code violations
-          </CardDescription>
+          <CardDescription>Case status breakdown for reported code violations</CardDescription>
         </CardHeader>
         <CardContent>
           {violationsByStatus.isLoading ? (
@@ -424,58 +308,27 @@ export function ResidentChart() {
           ) : !violationsByStatus.data ? (
             <ChartErrorState message="Could not load code violations data." />
           ) : (
-            <ChartContainer
-              config={violationsStatusConfig}
-              className="h-[300px] w-full"
-            >
-              <BarChart
-                data={violationsByStatus.data}
-                margin={{ top: 8, right: 12, left: 0, bottom: 60 }}
-              >
-                <defs>
-                  <linearGradient
-                    id="violationsStatusGradResident"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="status"
-                  tick={{ fontSize: 11 }}
-                  angle={-35}
-                  textAnchor="end"
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <ChartTooltip
-                  cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar
+            <ChartContainer config={violationsStatusConfig} className="mx-auto h-[350px] w-full">
+              <PieChart>
+                <ChartTooltip content={<ChartTooltipContent nameKey="status" />} />
+                <Pie
+                  data={violationsByStatus.data}
                   dataKey="count"
-                  fill="url(#violationsStatusGradResident)"
-                  radius={[6, 6, 0, 0]}
-                />
-              </BarChart>
+                  nameKey="status"
+                  innerRadius={60}
+                  outerRadius={110}
+                  paddingAngle={2}
+                  strokeWidth={2}
+                  stroke="hsl(var(--background))"
+                  label={renderPieLabel}
+                  labelLine={false}
+                >
+                  {violationsByStatus.data.map((_: unknown, i: number) => (
+                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartLegend content={<PieLegendContent />} />
+              </PieChart>
             </ChartContainer>
           )}
         </CardContent>

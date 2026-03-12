@@ -1,61 +1,66 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  XAxis,
+  YAxis,
+} from "recharts";
 import {
+  ChartErrorState,
+  PieLegendContent,
+  renderPieLabel,
+  SkeletonBars,
+} from "@/components/chart-helpers";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  type ChartConfig,
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  type ChartConfig,
+  ChartTooltip,
+  ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useChartData } from "@/lib/hooks/use-chart-data";
-import { SkeletonBars, ChartErrorState } from "@/components/chart-helpers";
+
+const PIE_COLORS = [
+  "hsl(142 71% 45%)",
+  "hsl(25 95% 53%)",
+  "hsl(221 83% 53%)",
+  "hsl(262 83% 58%)",
+  "hsl(346 77% 50%)",
+  "hsl(45 93% 47%)",
+  "hsl(173 80% 40%)",
+  "hsl(199 89% 48%)",
+];
 
 const permitChartConfig = {
-  permits: {
-    label: "Permits Issued",
-    color: "hsl(142 71% 45%)",
-  },
-  cost: {
-    label: "Est. Cost ($M)",
-    color: "hsl(47 96% 53%)",
-  },
+  permits: { label: "Permits Issued", color: "hsl(142 71% 45%)" },
+  cost: { label: "Est. Cost ($M)", color: "hsl(47 96% 53%)" },
 } satisfies ChartConfig;
 
 const propertyChartConfig = {
-  count: {
-    label: "Properties",
-    color: "hsl(25 95% 53%)",
-  },
+  count: { label: "Properties", color: "hsl(25 95% 53%)" },
 } satisfies ChartConfig;
 
 const licensesByCategoryConfig = {
-  count: {
-    label: "Licenses",
-    color: "hsl(271 91% 65%)",
-  },
+  count: { label: "Licenses", color: "hsl(271 91% 65%)" },
 } satisfies ChartConfig;
 
 const permitStatusConfig = {
-  count: {
-    label: "Permits",
-    color: "hsl(346 77% 50%)",
-  },
+  count: { label: "Permits", color: "hsl(346 77% 50%)" },
 } satisfies ChartConfig;
 
 const licensesByYearConfig = {
-  count: {
-    label: "Licenses",
-    color: "hsl(199 89% 48%)",
-  },
+  count: { label: "Licenses", color: "hsl(199 89% 48%)" },
 } satisfies ChartConfig;
 
 export function BusinessChart() {
@@ -86,7 +91,8 @@ export function BusinessChart() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid grid-cols-1 gap-4 @[700px]:grid-cols-2">
+      {/* Line: Permit Activity Over Time (dual axis) */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Permit Activity Over Time</CardTitle>
@@ -98,47 +104,10 @@ export function BusinessChart() {
           {!chartData ? (
             <ChartErrorState message="Could not load data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={permitChartConfig}
-              className="h-[300px] w-full"
-            >
-              <BarChart
-                data={chartData}
-                margin={{ top: 8, right: 50, left: 0, bottom: 5 }}
-              >
-                <defs>
-                  <linearGradient id="permitGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-permits)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-permits)"
-                      stopOpacity={0.5}
-                    />
-                  </linearGradient>
-                  <linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-cost)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-cost)"
-                      stopOpacity={0.5}
-                    />
-                  </linearGradient>
-                </defs>
+            <ChartContainer config={permitChartConfig} className="h-[300px] w-full">
+              <LineChart data={chartData} margin={{ top: 8, right: 50, left: 0, bottom: 5 }}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="year"
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
+                <XAxis dataKey="year" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                 <YAxis
                   yAxisId="left"
                   tick={{ fontSize: 12 }}
@@ -148,10 +117,7 @@ export function BusinessChart() {
                     value: "Permits",
                     angle: -90,
                     position: "insideLeft",
-                    style: {
-                      fontSize: 11,
-                      fill: "hsl(var(--muted-foreground))",
-                    },
+                    style: { fontSize: 11, fill: "hsl(var(--muted-foreground))" },
                   }}
                 />
                 <YAxis
@@ -164,40 +130,39 @@ export function BusinessChart() {
                     value: "Cost ($M)",
                     angle: 90,
                     position: "insideRight",
-                    style: {
-                      fontSize: 11,
-                      fill: "hsl(var(--muted-foreground))",
-                    },
+                    style: { fontSize: 11, fill: "hsl(var(--muted-foreground))" },
                   }}
                 />
-                <ChartTooltip
-                  cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
-                  content={<ChartTooltipContent />}
-                />
+                <ChartTooltip content={<ChartTooltipContent />} />
                 <ChartLegend content={<ChartLegendContent />} />
-                <Bar
+                <Line
                   yAxisId="left"
+                  type="monotone"
                   dataKey="permits"
-                  fill="url(#permitGrad)"
-                  radius={[6, 6, 0, 0]}
+                  stroke="var(--color-permits)"
+                  strokeWidth={2.5}
+                  dot={{ r: 4, fill: "var(--color-permits)" }}
+                  activeDot={{ r: 6 }}
                 />
-                <Bar
+                <Line
                   yAxisId="right"
+                  type="monotone"
                   dataKey="cost"
-                  fill="url(#costGrad)"
-                  radius={[6, 6, 0, 0]}
+                  stroke="var(--color-cost)"
+                  strokeWidth={2.5}
+                  dot={{ r: 4, fill: "var(--color-cost)" }}
+                  activeDot={{ r: 6 }}
                 />
-              </BarChart>
+              </LineChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Donut: City-Owned Properties by Type */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            City-Owned Properties by Type
-          </CardTitle>
+          <CardTitle className="text-base">City-Owned Properties by Type</CardTitle>
           <CardDescription>
             Vacant and city-owned property inventory by classification
           </CardDescription>
@@ -208,64 +173,36 @@ export function BusinessChart() {
           ) : !properties.data ? (
             <ChartErrorState message="Could not load data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={propertyChartConfig}
-              className="h-[300px] w-full"
-            >
-              <BarChart
-                data={properties.data}
-                layout="vertical"
-                margin={{ top: 8, right: 30, left: 10, bottom: 5 }}
-              >
-                <defs>
-                  <linearGradient id="propertyGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  type="number"
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="type"
-                  tick={{ fontSize: 11 }}
-                  width={120}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <ChartTooltip
-                  cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar
+            <ChartContainer config={propertyChartConfig} className="mx-auto h-[350px] w-full">
+              <PieChart>
+                <ChartTooltip content={<ChartTooltipContent nameKey="type" />} />
+                <Pie
+                  data={properties.data}
                   dataKey="count"
-                  fill="url(#propertyGrad)"
-                  radius={[0, 6, 6, 0]}
-                />
-              </BarChart>
+                  nameKey="type"
+                  innerRadius={60}
+                  outerRadius={110}
+                  paddingAngle={2}
+                  strokeWidth={2}
+                  stroke="hsl(var(--background))"
+                  label={renderPieLabel}
+                  labelLine={false}
+                >
+                  {properties.data.map((_: unknown, i: number) => (
+                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartLegend content={<PieLegendContent />} />
+              </PieChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Horizontal Bar: Top Business License Categories */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            Top Business License Categories
-          </CardTitle>
+          <CardTitle className="text-base">Top Business License Categories</CardTitle>
           <CardDescription>
             Top 10 business license categories by number of active licenses
           </CardDescription>
@@ -276,65 +213,41 @@ export function BusinessChart() {
           ) : !licensesByCategory.data ? (
             <ChartErrorState message="Could not load license category data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={licensesByCategoryConfig}
-              className="h-[300px] w-full"
-            >
+            <ChartContainer config={licensesByCategoryConfig} className="h-[350px] w-full">
               <BarChart
                 data={licensesByCategory.data}
                 layout="vertical"
                 margin={{ top: 8, right: 30, left: 10, bottom: 5 }}
               >
                 <defs>
-                  <linearGradient
-                    id="licenseCatGrad"
-                    x1="0"
-                    y1="0"
-                    x2="1"
-                    y2="0"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
+                  <linearGradient id="licenseCatGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="var(--color-count)" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="var(--color-count)" stopOpacity={0.9} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  type="number"
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
+                <XAxis type="number" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                 <YAxis
                   type="category"
                   dataKey="category"
-                  tick={{ fontSize: 11 }}
-                  width={140}
+                  tick={{ fontSize: 10 }}
+                  width={160}
                   tickLine={false}
                   axisLine={false}
+                  tickFormatter={(v: string) => (v.length > 22 ? `${v.slice(0, 20)}…` : v)}
                 />
                 <ChartTooltip
                   cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
                   content={<ChartTooltipContent />}
                 />
-                <Bar
-                  dataKey="count"
-                  fill="url(#licenseCatGrad)"
-                  radius={[0, 6, 6, 0]}
-                />
+                <Bar dataKey="count" fill="url(#licenseCatGrad)" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Donut: Permits by Status */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Permits by Status</CardTitle>
@@ -348,67 +261,37 @@ export function BusinessChart() {
           ) : !permitStatus.data ? (
             <ChartErrorState message="Could not load permit status data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={permitStatusConfig}
-              className="h-[300px] w-full"
-            >
-              <BarChart
-                data={permitStatus.data}
-                margin={{ top: 8, right: 30, left: 0, bottom: 5 }}
-              >
-                <defs>
-                  <linearGradient
-                    id="permitStatusGrad"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="status"
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <ChartTooltip
-                  cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar
+            <ChartContainer config={permitStatusConfig} className="mx-auto h-[350px] w-full">
+              <PieChart>
+                <ChartTooltip content={<ChartTooltipContent nameKey="status" />} />
+                <Pie
+                  data={permitStatus.data}
                   dataKey="count"
-                  fill="url(#permitStatusGrad)"
-                  radius={[6, 6, 0, 0]}
-                />
-              </BarChart>
+                  nameKey="status"
+                  innerRadius={60}
+                  outerRadius={110}
+                  paddingAngle={2}
+                  strokeWidth={2}
+                  stroke="hsl(var(--background))"
+                  label={renderPieLabel}
+                  labelLine={false}
+                >
+                  {permitStatus.data.map((_: unknown, i: number) => (
+                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartLegend content={<PieLegendContent />} />
+              </PieChart>
             </ChartContainer>
           )}
         </CardContent>
       </Card>
 
+      {/* Area: Business Licenses by Year */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Business Licenses by Year</CardTitle>
-          <CardDescription>
-            Number of business licenses issued per year
-          </CardDescription>
+          <CardDescription>Number of business licenses issued per year</CardDescription>
         </CardHeader>
         <CardContent>
           {licensesByYear.isLoading ? (
@@ -416,56 +299,31 @@ export function BusinessChart() {
           ) : !licensesByYear.data ? (
             <ChartErrorState message="Could not load license year data. Check your connection or try refreshing." />
           ) : (
-            <ChartContainer
-              config={licensesByYearConfig}
-              className="h-[300px] w-full"
-            >
-              <BarChart
+            <ChartContainer config={licensesByYearConfig} className="h-[300px] w-full">
+              <AreaChart
                 data={licensesByYear.data}
                 margin={{ top: 8, right: 30, left: 0, bottom: 5 }}
               >
                 <defs>
-                  <linearGradient
-                    id="licenseYearGrad"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.9}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor="var(--color-count)"
-                      stopOpacity={0.5}
-                    />
+                  <linearGradient id="licenseYearFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-count)" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="var(--color-count)" stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="year"
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <ChartTooltip
-                  cursor={{ fill: "hsl(var(--muted) / 0.3)" }}
-                  content={<ChartTooltipContent />}
-                />
-                <Bar
+                <XAxis dataKey="year" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+                <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Area
+                  type="monotone"
                   dataKey="count"
-                  fill="url(#licenseYearGrad)"
-                  radius={[6, 6, 0, 0]}
+                  stroke="var(--color-count)"
+                  strokeWidth={2.5}
+                  fill="url(#licenseYearFill)"
+                  dot={{ r: 4, fill: "var(--color-count)" }}
+                  activeDot={{ r: 6 }}
                 />
-              </BarChart>
+              </AreaChart>
             </ChartContainer>
           )}
         </CardContent>

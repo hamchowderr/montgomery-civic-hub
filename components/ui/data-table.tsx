@@ -1,10 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
 import {
   type ColumnDef,
-  type SortingState,
   type ColumnFiltersState,
   type FilterFn,
   flexRender,
@@ -13,8 +10,31 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Filter,
+  Search,
+  X,
+} from "lucide-react";
+import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -23,25 +43,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ArrowUpDown,
-  Download,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  X,
-} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, unknown>[];
@@ -70,16 +72,25 @@ function SkeletonRows({ columns, rows }: { columns: number; rows: number }) {
   );
 }
 
-function downloadCSV<TData>(
-  data: TData[],
-  columns: ColumnDef<TData, unknown>[],
-  filename: string,
-) {
+function SkeletonCards({ count }: { count: number }) {
+  return (
+    <div className="flex flex-col gap-2">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="rounded-lg border bg-card p-3">
+          <Skeleton className="mb-2 h-4 w-3/4" />
+          <Skeleton className="mb-1 h-3 w-1/2" />
+          <Skeleton className="h-3 w-1/3" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function downloadCSV<TData>(data: TData[], columns: ColumnDef<TData, unknown>[], filename: string) {
   const headers = columns
     .map((col) => {
       if (typeof col.header === "string") return col.header;
-      if ("accessorKey" in col && col.accessorKey)
-        return String(col.accessorKey);
+      if ("accessorKey" in col && col.accessorKey) return String(col.accessorKey);
       return col.id ?? "";
     })
     .filter(Boolean);
@@ -90,9 +101,7 @@ function downloadCSV<TData>(
       if (!key) return "";
       const value = (row as Record<string, unknown>)[key];
       const str = String(value ?? "");
-      return str.includes(",") || str.includes('"')
-        ? `"${str.replace(/"/g, '""')}"`
-        : str;
+      return str.includes(",") || str.includes('"') ? `"${str.replace(/"/g, '""')}"` : str;
     }),
   );
 
@@ -135,11 +144,7 @@ function smartFormat(key: string, value: unknown): string {
     });
   }
   // ISO date strings
-  if (
-    DATE_KEYS.test(key) &&
-    typeof value === "string" &&
-    /^\d{4}-\d{2}-\d{2}/.test(value)
-  ) {
+  if (DATE_KEYS.test(key) && typeof value === "string" && /^\d{4}-\d{2}-\d{2}/.test(value)) {
     return new Date(value).toLocaleDateString("en-US", {
       weekday: "short",
       month: "short",
@@ -195,12 +200,8 @@ function RowDetailDialog<TData>({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-base leading-snug pr-6">
-            {title}
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            Full details for this record
-          </DialogDescription>
+          <DialogTitle className="text-base leading-snug pr-6">{title}</DialogTitle>
+          <DialogDescription className="sr-only">Full details for this record</DialogDescription>
         </DialogHeader>
         <Separator />
         <div className="grid gap-3">
@@ -231,10 +232,7 @@ interface Facet {
   values: string[];
 }
 
-function detectFacets<TData>(
-  data: TData[],
-  columns: ColumnDef<TData, unknown>[],
-): Facet[] {
+function detectFacets<TData>(data: TData[], columns: ColumnDef<TData, unknown>[]): Facet[] {
   if (data.length === 0) return [];
 
   const facets: Facet[] = [];
@@ -283,47 +281,167 @@ function FacetFilterBar({
   onToggle: (columnKey: string, value: string) => void;
   onClearAll: () => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const hasActive = Object.values(activeFilters).some((v) => v.length > 0);
+  const activeCount = Object.values(activeFilters).reduce((sum, v) => sum + v.length, 0);
 
   return (
-    <div className="flex flex-wrap items-start gap-3">
-      {facets.map((facet) => (
-        <div key={facet.columnKey} className="flex flex-col gap-1">
-          <span className="text-[11px] font-medium text-muted-foreground px-0.5">
-            {facet.header}
+    <div className="flex flex-col gap-1.5">
+      {/* Mobile: collapsible toggle */}
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors sm:hidden"
+      >
+        <Filter className="size-3" />
+        Filters
+        {activeCount > 0 && (
+          <span className="inline-flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            {activeCount}
           </span>
-          <div className="flex flex-wrap gap-1">
-            {facet.values.map((val) => {
-              const isActive = activeFilters[facet.columnKey]?.includes(val);
-              return (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => onToggle(facet.columnKey, val)}
-                  className={cn(
-                    "inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-colors",
-                    isActive
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background text-muted-foreground border-input hover:bg-accent hover:text-accent-foreground",
-                  )}
-                >
-                  {val}
-                </button>
-              );
-            })}
+        )}
+        <ChevronDown className={cn("size-3 transition-transform", expanded && "rotate-180")} />
+      </button>
+
+      {/* Filter chips — always visible on sm+, collapsible on mobile */}
+      <div
+        className={cn(
+          "flex flex-wrap items-start gap-3",
+          "max-sm:overflow-hidden max-sm:transition-[max-height,opacity] max-sm:duration-200",
+          expanded ? "max-sm:max-h-[500px] max-sm:opacity-100" : "max-sm:max-h-0 max-sm:opacity-0",
+        )}
+      >
+        {facets.map((facet) => (
+          <div key={facet.columnKey} className="flex flex-col gap-1">
+            <span className="text-[11px] font-medium text-muted-foreground px-0.5">
+              {facet.header}
+            </span>
+            <div className="flex flex-wrap gap-1">
+              {facet.values.map((val) => {
+                const isActive = activeFilters[facet.columnKey]?.includes(val);
+                return (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => onToggle(facet.columnKey, val)}
+                    className={cn(
+                      "inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium transition-colors",
+                      isActive
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background text-muted-foreground border-input hover:bg-accent hover:text-accent-foreground",
+                    )}
+                  >
+                    {val}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-      {hasActive && (
-        <button
-          type="button"
-          onClick={onClearAll}
-          className="self-end inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <X className="size-3" />
-          Clear filters
-        </button>
-      )}
+        ))}
+        {hasActive && (
+          <button
+            type="button"
+            onClick={onClearAll}
+            className="self-end inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X className="size-3" />
+            Clear filters
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Pick the best 3 columns for the mobile card preview: title, subtitle, badge */
+function pickCardFields<TData>(columns: ColumnDef<TData, unknown>[]): {
+  title: string;
+  titleHeader: string;
+  subtitle: string;
+  subtitleHeader: string;
+  badge: string;
+  badgeHeader: string;
+} {
+  const cols = columns.map((c) => ({ key: getColumnKey(c), header: getColumnHeader(c) }));
+
+  // Title: first text-like column (Type, Description, Company, Street, etc.)
+  const titleCol =
+    cols.find((c) =>
+      /type|description|company|name|street|request_type|casetype|remark/i.test(c.key),
+    ) ??
+    cols[1] ??
+    cols[0];
+
+  // Subtitle: address or department or location
+  const subtitleCol =
+    cols.find(
+      (c) =>
+        /address|department|location|category|contractor|project/i.test(c.key) &&
+        c.key !== titleCol?.key,
+    ) ??
+    cols.find((c) => c.key !== titleCol?.key) ??
+    cols[0];
+
+  // Badge: status or district
+  const badgeCol =
+    cols.find(
+      (c) =>
+        /status|district|year|zoning/i.test(c.key) &&
+        c.key !== titleCol?.key &&
+        c.key !== subtitleCol?.key,
+    ) ?? cols[0];
+
+  return {
+    title: titleCol?.key ?? "",
+    titleHeader: titleCol?.header ?? "",
+    subtitle: subtitleCol?.key ?? "",
+    subtitleHeader: subtitleCol?.header ?? "",
+    badge: badgeCol?.key ?? "",
+    badgeHeader: badgeCol?.header ?? "",
+  };
+}
+
+function MobileCardList<TData>({
+  rows,
+  columns,
+  onSelect,
+  idKey,
+}: {
+  rows: TData[];
+  columns: ColumnDef<TData, unknown>[];
+  onSelect: (row: TData) => void;
+  idKey: string;
+}) {
+  const fields = useMemo(() => pickCardFields(columns), [columns]);
+
+  return (
+    <div className="flex flex-col gap-1.5 sm:hidden">
+      {rows.map((row, i) => {
+        const record = row as Record<string, unknown>;
+        const id = record[idKey] ?? i;
+        const title = smartFormat(fields.title, record[fields.title]);
+        const subtitle = smartFormat(fields.subtitle, record[fields.subtitle]);
+        const badge = smartFormat(fields.badge, record[fields.badge]);
+
+        return (
+          <button
+            key={String(id)}
+            type="button"
+            onClick={() => onSelect(row)}
+            className="mobile-data-card flex items-start gap-3 rounded-lg border bg-card p-3 text-left transition-colors hover:bg-muted/50 active:bg-muted/70"
+          >
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium leading-snug line-clamp-2">{title}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{subtitle}</p>
+            </div>
+            {badge !== "—" && (
+              <span className="shrink-0 mt-0.5 inline-flex items-center rounded-md bg-muted px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                {badge}
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -344,10 +462,7 @@ export function DataTable<TData>({
   const [selectedRow, setSelectedRow] = useState<TData | null>(null);
 
   const facets = useMemo(() => detectFacets(data, columns), [data, columns]);
-  const facetColumnKeys = useMemo(
-    () => new Set(facets.map((f) => f.columnKey)),
-    [facets],
-  );
+  const facetColumnKeys = useMemo(() => new Set(facets.map((f) => f.columnKey)), [facets]);
 
   const columnsWithFacetFilter = useMemo(
     () =>
@@ -388,12 +503,8 @@ export function DataTable<TData>({
 
   function toggleFacetValue(columnKey: string, value: string) {
     const current = activeFilters[columnKey] ?? [];
-    const next = current.includes(value)
-      ? current.filter((v) => v !== value)
-      : [...current, value];
-    table
-      .getColumn(columnKey)
-      ?.setFilterValue(next.length > 0 ? next : undefined);
+    const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+    table.getColumn(columnKey)?.setFilterValue(next.length > 0 ? next : undefined);
     table.setPageIndex(0);
   }
 
@@ -404,12 +515,20 @@ export function DataTable<TData>({
     table.setPageIndex(0);
   }
 
+  // Determine a unique-ish ID key for card list keying
+  const idKey = useMemo(() => {
+    const keys = columns.map((c) => getColumnKey(c));
+    return keys.find((k) => /id|num|no$/i.test(k)) ?? keys[0] ?? "";
+  }, [columns]);
+
   const totalRows = table.getFilteredRowModel().rows.length;
   const pageCount = table.getPageCount();
   const currentPage = table.getState().pagination.pageIndex + 1;
+  const pageRows = table.getRowModel().rows;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
+      {/* Search + export */}
       <div className="flex items-center justify-between gap-2">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -417,16 +536,12 @@ export function DataTable<TData>({
             placeholder={filterPlaceholder}
             value={
               filterColumn
-                ? ((table
-                    .getColumn(filterColumn)
-                    ?.getFilterValue() as string) ?? "")
+                ? ((table.getColumn(filterColumn)?.getFilterValue() as string) ?? "")
                 : globalFilter
             }
             onChange={(e) => {
               if (filterColumn) {
-                table
-                  .getColumn(filterColumn)
-                  ?.setFilterValue(e.target.value || undefined);
+                table.getColumn(filterColumn)?.setFilterValue(e.target.value || undefined);
               } else {
                 setGlobalFilter(e.target.value);
               }
@@ -442,11 +557,13 @@ export function DataTable<TData>({
             onClick={() => downloadCSV(data, columns, exportFilename)}
           >
             <Download className="mr-1.5 h-3.5 w-3.5" />
-            Export CSV
+            <span className="hidden sm:inline">Export CSV</span>
+            <span className="sm:hidden">CSV</span>
           </Button>
         )}
       </div>
 
+      {/* Facet filters — collapsible on mobile */}
       {!isLoading && facets.length > 0 && data.length > 0 && (
         <FacetFilterBar
           facets={facets}
@@ -456,7 +573,8 @@ export function DataTable<TData>({
         />
       )}
 
-      <div className="rounded-md border">
+      {/* Desktop/tablet: standard table */}
+      <div className="hidden sm:block rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -469,17 +587,11 @@ export function DataTable<TData>({
                         className="flex items-center gap-1 hover:text-foreground transition-colors"
                         onClick={header.column.getToggleSortingHandler()}
                       >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                         <ArrowUpDown className="size-3.5" />
                       </button>
                     ) : (
-                      flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )
+                      flexRender(header.column.columnDef.header, header.getContext())
                     )}
                   </TableHead>
                 ))}
@@ -509,10 +621,7 @@ export function DataTable<TData>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -522,13 +631,30 @@ export function DataTable<TData>({
         </Table>
       </div>
 
+      {/* Mobile: card list */}
+      <div className="sm:hidden">
+        {isLoading ? (
+          <SkeletonCards count={8} />
+        ) : pageRows.length === 0 ? (
+          <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">
+            {globalFilter || columnFilters.length > 0 ? "No matching results" : "No data available"}
+          </div>
+        ) : (
+          <MobileCardList
+            rows={pageRows.map((r) => r.original)}
+            columns={columns}
+            onSelect={setSelectedRow}
+            idKey={idKey}
+          />
+        )}
+      </div>
+
+      {/* Pagination */}
       {!isLoading && data.length > 0 && (
         <div className="flex items-center justify-between px-1">
           <p className="text-xs text-muted-foreground">
             {totalRows} row{totalRows !== 1 ? "s" : ""}
-            {globalFilter || columnFilters.length > 0
-              ? ` (filtered from ${data.length})`
-              : ""}
+            {globalFilter || columnFilters.length > 0 ? ` (filtered from ${data.length})` : ""}
             {pageCount > 1 && (
               <span>
                 {" "}
@@ -573,4 +699,4 @@ export function DataTable<TData>({
   );
 }
 
-export { type ColumnDef } from "@tanstack/react-table";
+export type { ColumnDef } from "@tanstack/react-table";

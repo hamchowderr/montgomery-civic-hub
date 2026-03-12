@@ -1,18 +1,17 @@
 "use client";
 
-import { PortalNav } from "@/components/PortalNav";
-import { CityStaffMap } from "./components/CityStaffMap";
-import { CityStaffChart } from "./components/CityStaffChart";
+import { useCopilotReadable } from "@copilotkit/react-core";
+import { Building2, HelpCircle } from "lucide-react";
+import { CopilotProvider } from "@/components/CopilotProvider";
 import { DataPanel } from "@/components/DataPanel";
 import { PortalLayout } from "@/components/PortalLayout";
-import { CityStaffTable } from "./components/CityStaffTable";
-import { YearFilterProvider } from "@/lib/contexts/year-filter";
-
-import { CopilotProvider } from "@/components/CopilotProvider";
-import { useCopilotReadable } from "@copilotkit/react-core";
+import { PortalNav } from "@/components/PortalNav";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, Building2 } from "lucide-react";
 import { useTour } from "@/components/ui/tour";
+import { YearFilterProvider } from "@/lib/contexts/year-filter";
+import { CityStaffChart } from "./components/CityStaffChart";
+import { CityStaffMap } from "./components/CityStaffMap";
+import { CityStaffTable } from "./components/CityStaffTable";
 
 function CityStaffContent() {
   const { start } = useTour();
@@ -23,17 +22,17 @@ function CityStaffContent() {
   });
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4 sm:p-6">
+    <main className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3 sm:gap-4 sm:p-4 md:p-6">
       <div
-        className="flex items-center justify-between"
+        className="flex items-center justify-between gap-2"
         data-tour-step-id="citystaff-welcome"
       >
-        <div className="flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-portal-citystaff/10">
-            <Building2 className="h-4.5 w-4.5 text-portal-citystaff" />
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="flex size-8 sm:size-9 items-center justify-center rounded-lg bg-portal-citystaff/10 shrink-0">
+            <Building2 className="size-4 text-portal-citystaff" />
           </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
+          <div className="min-w-0">
+            <h1 className="text-lg font-bold tracking-tight sm:text-xl md:text-2xl truncate">
               City Staff Dashboard
             </h1>
             <p className="hidden text-sm text-muted-foreground sm:block">
@@ -41,12 +40,8 @@ function CityStaffContent() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => start("citystaff-tour")}
-          >
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="outline" size="sm" onClick={() => start("citystaff-tour")}>
             <HelpCircle className="size-3.5" />
             <span className="hidden sm:inline">Take a Tour</span>
           </Button>

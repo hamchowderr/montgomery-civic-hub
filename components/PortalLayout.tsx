@@ -36,7 +36,10 @@ interface PortalLayoutProps {
 }
 
 function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(false);
+  const [matches, setMatches] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia(query).matches;
+  });
   useEffect(() => {
     const mql = window.matchMedia(query);
     setMatches(mql.matches);
