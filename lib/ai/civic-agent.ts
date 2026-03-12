@@ -332,10 +332,11 @@ export class CivicAgent extends AbstractAgent {
             typeof m.content === "string"
               ? m.content.slice(0, 80)
               : Array.isArray(m.content)
-                ? m.content.map((b: Record<string, unknown>) => ({
+                ? m.content.map((b) => ({
                     type: b.type,
-                    ...(b.type === "tool_use" ? { id: b.id, name: b.name } : {}),
-                    ...(b.type === "tool_result" ? { tool_use_id: b.tool_use_id } : {}),
+                    ...("id" in b ? { id: b.id } : {}),
+                    ...("name" in b ? { name: b.name } : {}),
+                    ...("tool_use_id" in b ? { tool_use_id: b.tool_use_id } : {}),
                   }))
                 : typeof m.content,
         })),
