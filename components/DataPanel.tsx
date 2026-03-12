@@ -122,12 +122,12 @@ export function DataPanel({
         onValueChange={setActiveTab}
         className="flex w-full flex-1 flex-col"
       >
-        <div className="border-b px-3 py-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+        <div className="border-b px-3 py-2 flex flex-wrap items-center gap-2 sm:justify-between sm:px-4">
           <TabsList className="gap-1">
             <TabsTrigger
               value="map"
               data-tour-step-id={`${portalId}-map-view`}
-              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
+              className="gap-1.5 px-2.5 sm:gap-2 sm:px-5"
             >
               <MapPin className="size-4" />
               <span className="hidden sm:inline">Map</span>
@@ -135,7 +135,7 @@ export function DataPanel({
             <TabsTrigger
               value="table"
               data-tour-step-id={`${portalId}-table-view`}
-              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
+              className="gap-1.5 px-2.5 sm:gap-2 sm:px-5"
             >
               <Table2 className="size-4" />
               <span className="hidden sm:inline">Table</span>
@@ -143,21 +143,21 @@ export function DataPanel({
             <TabsTrigger
               value="chart"
               data-tour-step-id={`${portalId}-chart-view`}
-              className="gap-1.5 px-3 sm:gap-2 sm:px-5"
+              className="gap-1.5 px-2.5 sm:gap-2 sm:px-5"
             >
               <BarChart3 className="size-4" />
               <span className="hidden sm:inline">Chart</span>
             </TabsTrigger>
           </TabsList>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
             {/* Year filter */}
-            <div className="flex items-center gap-2">
-              <CalendarRange className="size-3.5 text-muted-foreground" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <CalendarRange className="size-3.5 shrink-0 text-muted-foreground" />
               <Select
                 value={String(yearRange.from)}
                 onValueChange={(v) => setFrom(Number(v))}
               >
-                <SelectTrigger className="h-7 w-[80px] text-xs">
+                <SelectTrigger className="h-7 w-[70px] sm:w-[80px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -177,7 +177,7 @@ export function DataPanel({
                 value={String(yearRange.to)}
                 onValueChange={(v) => setTo(Number(v))}
               >
-                <SelectTrigger className="h-7 w-[80px] text-xs">
+                <SelectTrigger className="h-7 w-[70px] sm:w-[80px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -196,7 +196,7 @@ export function DataPanel({
             {/* Slot where map layer filter portals into */}
             <div
               ref={slotRef}
-              className="flex items-center gap-4 [&>*+*]:border-l [&>*+*]:border-border [&>*+*]:pl-4"
+              className="flex items-center gap-2 sm:gap-4 [&>*+*]:border-l [&>*+*]:border-border [&>*+*]:pl-2 sm:[&>*+*]:pl-4"
             />
           </div>
         </div>

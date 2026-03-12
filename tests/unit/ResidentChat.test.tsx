@@ -18,15 +18,13 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe("ResidentChat", () => {
-  it("renders a chat input field", () => {
+  it("renders the card title", () => {
     render(<ResidentChat />, { wrapper: Wrapper });
-    const input = screen.getByPlaceholderText(/ask about/i);
-    expect(input).toBeInTheDocument();
+    expect(screen.getByText("Resident Assistant")).toBeInTheDocument();
   });
 
-  it("renders a submit button", () => {
-    render(<ResidentChat />, { wrapper: Wrapper });
-    const button = screen.getByRole("button");
-    expect(button).toBeInTheDocument();
+  it("renders the CopilotChat component", () => {
+    const { container } = render(<ResidentChat />, { wrapper: Wrapper });
+    expect(container.querySelector(".copilotKitChat")).toBeInTheDocument();
   });
 });

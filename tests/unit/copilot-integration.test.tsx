@@ -56,35 +56,6 @@ describe("CopilotProvider", () => {
 // ── Portal Chat Components ─────────────────────────────────────────────────────
 
 describe("ResidentChat", () => {
-  it("renders chat input and submit button", async () => {
-    const { ResidentChat } =
-      await import("@/app/(resident)/resident/components/ResidentChat");
-
-    render(<ResidentChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="resident">{children}</CopilotWrapper>
-      ),
-    });
-
-    expect(
-      screen.getByPlaceholderText(/ask about neighborhood safety/i),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button")).toBeInTheDocument();
-  });
-
-  it("renders welcome message", async () => {
-    const { ResidentChat } =
-      await import("@/app/(resident)/resident/components/ResidentChat");
-
-    render(<ResidentChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="resident">{children}</CopilotWrapper>
-      ),
-    });
-
-    expect(screen.getByText(/neighborhood safety/i)).toBeInTheDocument();
-  });
-
   it("renders card title", async () => {
     const { ResidentChat } =
       await import("@/app/(resident)/resident/components/ResidentChat");
@@ -100,35 +71,6 @@ describe("ResidentChat", () => {
 });
 
 describe("BusinessChat", () => {
-  it("renders chat input and submit button", async () => {
-    const { BusinessChat } =
-      await import("@/app/(business)/business/components/BusinessChat");
-
-    render(<BusinessChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="business">{children}</CopilotWrapper>
-      ),
-    });
-
-    expect(
-      screen.getByPlaceholderText(/ask about permits/i),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button")).toBeInTheDocument();
-  });
-
-  it("renders welcome message", async () => {
-    const { BusinessChat } =
-      await import("@/app/(business)/business/components/BusinessChat");
-
-    render(<BusinessChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="business">{children}</CopilotWrapper>
-      ),
-    });
-
-    expect(screen.getByText(/business permits/i)).toBeInTheDocument();
-  });
-
   it("renders card title", async () => {
     const { BusinessChat } =
       await import("@/app/(business)/business/components/BusinessChat");
@@ -144,35 +86,6 @@ describe("BusinessChat", () => {
 });
 
 describe("CityStaffChat", () => {
-  it("renders chat input and submit button", async () => {
-    const { CityStaffChat } =
-      await import("@/app/(citystaff)/citystaff/components/CityStaffChat");
-
-    render(<CityStaffChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="citystaff">{children}</CopilotWrapper>
-      ),
-    });
-
-    expect(
-      screen.getByPlaceholderText(/ask about budgets/i),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button")).toBeInTheDocument();
-  });
-
-  it("renders welcome message", async () => {
-    const { CityStaffChat } =
-      await import("@/app/(citystaff)/citystaff/components/CityStaffChat");
-
-    render(<CityStaffChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="citystaff">{children}</CopilotWrapper>
-      ),
-    });
-
-    expect(screen.getByText(/budget lookups/i)).toBeInTheDocument();
-  });
-
   it("renders card title", async () => {
     const { CityStaffChat } =
       await import("@/app/(citystaff)/citystaff/components/CityStaffChat");
@@ -188,35 +101,6 @@ describe("CityStaffChat", () => {
 });
 
 describe("ResearcherChat", () => {
-  it("renders chat input and submit button", async () => {
-    const { ResearcherChat } =
-      await import("@/app/(researcher)/researcher/components/ResearcherChat");
-
-    render(<ResearcherChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="researcher">{children}</CopilotWrapper>
-      ),
-    });
-
-    expect(
-      screen.getByPlaceholderText(/ask about crime trends/i),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button")).toBeInTheDocument();
-  });
-
-  it("renders welcome message", async () => {
-    const { ResearcherChat } =
-      await import("@/app/(researcher)/researcher/components/ResearcherChat");
-
-    render(<ResearcherChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="researcher">{children}</CopilotWrapper>
-      ),
-    });
-
-    expect(screen.getByText(/crime statistics/i)).toBeInTheDocument();
-  });
-
   it("renders card title", async () => {
     const { ResearcherChat } =
       await import("@/app/(researcher)/researcher/components/ResearcherChat");
@@ -234,39 +118,16 @@ describe("ResearcherChat", () => {
 // ── ChatWidget ─────────────────────────────────────────────────────────────────
 
 describe("ChatWidget", () => {
-  it("renders the floating chat button", async () => {
+  it("renders the floating chat button when closed", async () => {
     const { ChatWidget } = await import("@/components/ChatWidget");
 
     render(
-      <ChatWidget
-        portal="resident"
-        title="Test Chat"
-        welcomeMessage="Hello!"
-        placeholder="Type here..."
-      />,
+      <ChatWidget open={false} onToggle={() => {}}>
+        <div>Chat content</div>
+      </ChatWidget>,
       {
         wrapper: ({ children }) => (
           <CopilotWrapper agent="resident">{children}</CopilotWrapper>
-        ),
-      },
-    );
-
-    expect(screen.getByLabelText("Open chat")).toBeInTheDocument();
-  });
-
-  it("renders with correct portal-specific props", async () => {
-    const { ChatWidget } = await import("@/components/ChatWidget");
-
-    render(
-      <ChatWidget
-        portal="business"
-        title="Business Chat"
-        welcomeMessage="Welcome to business!"
-        placeholder="Ask about permits..."
-      />,
-      {
-        wrapper: ({ children }) => (
-          <CopilotWrapper agent="business">{children}</CopilotWrapper>
         ),
       },
     );
@@ -310,7 +171,7 @@ describe("DataPanel (CopilotKit integration)", () => {
   it("renders controlled tabs (value prop) for programmatic switching", async () => {
     const { DataPanel } = await import("@/components/DataPanel");
 
-    const { container } = render(
+    render(
       <DataPanel
         portalId="resident"
         mapContent={mapContent}
@@ -321,7 +182,6 @@ describe("DataPanel (CopilotKit integration)", () => {
       { wrapper: DataPanelWrapper },
     );
 
-    // The table tab should be the active/selected one
     const tableTab = screen.getByRole("tab", { name: /table/i });
     expect(tableTab).toHaveAttribute("data-state", "active");
   });
@@ -339,10 +199,8 @@ describe("DataPanel (CopilotKit integration)", () => {
       { wrapper: DataPanelWrapper },
     );
 
-    // Map and table are force-mounted to preserve state (MapLibre, scroll position)
     expect(screen.getByTestId("map")).toBeInTheDocument();
     expect(screen.getByTestId("table")).toBeInTheDocument();
-    // Chart is NOT force-mounted — only renders when its tab is active
     expect(screen.queryByTestId("chart")).not.toBeInTheDocument();
   });
 

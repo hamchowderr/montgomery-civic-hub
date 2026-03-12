@@ -15,6 +15,7 @@ import type {
 import { allTools } from "./tools";
 import { getSystemPrompt } from "./prompts";
 import { queryFeatureServer } from "@/lib/arcgis";
+import { DATASET_NAME_TO_URL } from "@/lib/arcgis-client";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 
@@ -25,10 +26,10 @@ const MAX_ITERATIONS = 5;
 const MAX_TOOL_RESULT_CHARS = 50_000;
 
 const MAX_TOKENS: Record<string, number> = {
-  resident: 4096,
-  business: 4096,
-  citystaff: 8192,
-  researcher: 8192,
+  resident: 2048,
+  business: 2048,
+  citystaff: 4096,
+  researcher: 4096,
 };
 
 // ── Helpers (reused from existing client.ts) ────────────────────────────────
@@ -91,7 +92,16 @@ async function executeArcgisQuery(
   portal: string,
   convex: ConvexHttpClient | null,
 ): Promise<unknown> {
-  // Check Convex dataset_registry first
+  // 1. Primary: use the hardcoded DATASET_NAME_TO_URL mapping (instant, no network)
+  const directUrl = DATASET_NAME_TO_URL[input.dataset];
+  if (directUrl) {
+    return queryFeatureServer(directUrl, {
+      where: input.where,
+      limit: input.limit,
+    });
+  }
+
+  // 2. Check Convex dataset_registry for dynamically registered datasets
   if (convex) {
     try {
       const cached = await convex.query(api.datasetRegistry.getByName, {
@@ -108,33 +118,37 @@ async function executeArcgisQuery(
     }
   }
 
-  // Fall back to ArcGIS Hub v3 API
-  const datasetRes = await fetch(
-    `https://opendata-citymgm.hub.arcgis.com/api/v3/datasets?filter[name]=${encodeURIComponent(input.dataset)}&page[size]=1`,
-  );
-  if (!datasetRes.ok) return { error: "Dataset not found" };
-  const datasetData = await datasetRes.json();
-  const featureUrl = datasetData.data?.[0]?.attributes?.url;
-  if (!featureUrl) return { error: `Dataset "${input.dataset}" not found` };
+  // 3. Last resort: ArcGIS Hub v3 API search (may fail from cloud IPs)
+  try {
+    const datasetRes = await fetch(
+      `https://opendata-citymgm.hub.arcgis.com/api/v3/datasets?filter[name]=${encodeURIComponent(input.dataset)}&page[size]=1`,
+    );
+    if (!datasetRes.ok) return { error: `Dataset "${input.dataset}" not found in local catalog or Hub API` };
+    const datasetData = await datasetRes.json();
+    const featureUrl = datasetData.data?.[0]?.attributes?.url;
+    if (!featureUrl) return { error: `Dataset "${input.dataset}" not found` };
 
-  // Cache for future requests
-  if (convex) {
-    try {
-      await convex.mutation(api.mutations.insertDatasetRegistry, {
-        name: input.dataset,
-        featureServerUrl: featureUrl,
-        portals: [portal],
-        fields: {},
-      });
-    } catch {
-      // Non-critical
+    // Cache for future requests
+    if (convex) {
+      try {
+        await convex.mutation(api.mutations.insertDatasetRegistry, {
+          name: input.dataset,
+          featureServerUrl: featureUrl,
+          portals: [portal],
+          fields: {},
+        });
+      } catch {
+        // Non-critical
+      }
     }
-  }
 
-  return queryFeatureServer(featureUrl, {
-    where: input.where,
-    limit: input.limit,
-  });
+    return queryFeatureServer(featureUrl, {
+      where: input.where,
+      limit: input.limit,
+    });
+  } catch {
+    return { error: `Dataset "${input.dataset}" not found in local catalog and Hub API is unreachable` };
+  }
 }
 
 async function executeBrightdataSearch(input: {
@@ -261,7 +275,8 @@ export class CivicAgent extends AbstractAgent {
         stepName: `iteration-${stepCount}`,
       } as BaseEvent);
 
-      const response = await this.anthropic.messages.create({
+      // Use streaming API for real token-by-token output
+      const stream = this.anthropic.messages.stream({
         model: MODEL,
         max_tokens: getMaxTokens(this.portal),
         system: systemPrompt,
@@ -269,27 +284,77 @@ export class CivicAgent extends AbstractAgent {
         messages: currentMessages,
       });
 
+      // Stream text deltas to the client as they arrive
+      const messageId = `msg-${Date.now()}-${stepCount}`;
+      let textStarted = false;
+      let streamedText = "";
+
+      try {
+        for await (const event of stream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            if (!textStarted) {
+              subscriber.next({
+                type: EventType.TEXT_MESSAGE_START,
+                messageId,
+                role: "assistant",
+              } as BaseEvent);
+              textStarted = true;
+            }
+            streamedText += event.delta.text;
+            subscriber.next({
+              type: EventType.TEXT_MESSAGE_CONTENT,
+              messageId,
+              delta: event.delta.text,
+            } as BaseEvent);
+          }
+        }
+      } catch (streamError) {
+        // Ensure TEXT_MESSAGE_END is sent if we started a message
+        if (textStarted) {
+          subscriber.next({
+            type: EventType.TEXT_MESSAGE_END,
+            messageId,
+          } as BaseEvent);
+        }
+        throw streamError;
+      }
+
+      // Get the final message to check for tool use
+      const response = await stream.finalMessage();
+
       const toolUseBlocks = response.content.filter(
         (block): block is ToolUseBlock => block.type === "tool_use",
       );
 
-      if (toolUseBlocks.length === 0 || response.stop_reason === "end_turn") {
-        // No more tool calls — extract and stream final text
-        const textContent = response.content
-          .filter(
-            (block): block is Extract<ContentBlock, { type: "text" }> =>
-              block.type === "text",
-          )
-          .map((block) => block.text)
-          .join("\n");
+      if (toolUseBlocks.length === 0) {
+        // No more tool calls — finalize the streamed text
+        if (textStarted) {
+          subscriber.next({
+            type: EventType.TEXT_MESSAGE_END,
+            messageId,
+          } as BaseEvent);
+        } else {
+          // Edge case: no text was streamed (shouldn't happen, but handle gracefully)
+          const textContent = response.content
+            .filter(
+              (block): block is Extract<ContentBlock, { type: "text" }> =>
+                block.type === "text",
+            )
+            .map((block) => block.text)
+            .join("\n");
+          await this.streamTextMessage(subscriber, textContent, threadId);
+          streamedText = textContent;
+        }
 
         subscriber.next({
           type: EventType.STEP_FINISHED,
           stepName: `iteration-${stepCount}`,
         } as BaseEvent);
 
-        await this.streamTextMessage(subscriber, textContent, threadId);
-        await this.persistAssistantMessage(threadId, textContent);
+        await this.persistAssistantMessage(threadId, streamedText);
 
         subscriber.next({
           type: EventType.RUN_FINISHED,
@@ -298,6 +363,14 @@ export class CivicAgent extends AbstractAgent {
         } as BaseEvent);
         subscriber.complete();
         return;
+      }
+
+      // Tool calls found — close any in-progress text message
+      if (textStarted) {
+        subscriber.next({
+          type: EventType.TEXT_MESSAGE_END,
+          messageId,
+        } as BaseEvent);
       }
 
       // Handle tool calls
@@ -363,12 +436,12 @@ export class CivicAgent extends AbstractAgent {
           toolCallId,
         } as BaseEvent);
 
-        // TOOL_CALL_RESULT — use a unique messageId for the result
+        // TOOL_CALL_RESULT — send actual result content for CopilotKit to display
         subscriber.next({
           type: EventType.TOOL_CALL_RESULT,
           toolCallId,
           messageId: `tool-result-${toolCallId}`,
-          content: statusText,
+          content: isError ? `Error: ${sanitized}` : statusText,
           role: "tool",
         } as BaseEvent);
 
@@ -405,43 +478,53 @@ export class CivicAgent extends AbstractAgent {
     currentMessages.push({
       role: "user",
       content:
-        "You have used all available tool calls. Please respond now with the information you have gathered so far. Do not request any more tool calls.",
+        "You have used all available tool calls. Please provide a concise summary based on the data you have gathered. Do not request any more tool calls.",
     });
 
     let fullText = "";
-    const messageId = `msg-${Date.now()}`;
+    {
+      const messageId = `msg-${Date.now()}`;
+      subscriber.next({
+        type: EventType.TEXT_MESSAGE_START,
+        messageId,
+        role: "assistant",
+      } as BaseEvent);
 
-    subscriber.next({
-      type: EventType.TEXT_MESSAGE_START,
-      messageId,
-      role: "assistant",
-    } as BaseEvent);
+      try {
+        const stream = this.anthropic.messages.stream({
+          model: MODEL,
+          max_tokens: getMaxTokens(this.portal),
+          system: systemPrompt,
+          messages: currentMessages,
+        });
 
-    const stream = this.anthropic.messages.stream({
-      model: MODEL,
-      max_tokens: getMaxTokens(this.portal),
-      system: systemPrompt,
-      messages: currentMessages,
-    });
-
-    for await (const event of stream) {
-      if (
-        event.type === "content_block_delta" &&
-        event.delta.type === "text_delta"
-      ) {
-        fullText += event.delta.text;
+        for await (const event of stream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            fullText += event.delta.text;
+            subscriber.next({
+              type: EventType.TEXT_MESSAGE_CONTENT,
+              messageId,
+              delta: event.delta.text,
+            } as BaseEvent);
+          }
+        }
+      } catch (streamError) {
+        // Still close the message on error
         subscriber.next({
-          type: EventType.TEXT_MESSAGE_CONTENT,
+          type: EventType.TEXT_MESSAGE_END,
           messageId,
-          delta: event.delta.text,
         } as BaseEvent);
+        throw streamError;
       }
-    }
 
-    subscriber.next({
-      type: EventType.TEXT_MESSAGE_END,
-      messageId,
-    } as BaseEvent);
+      subscriber.next({
+        type: EventType.TEXT_MESSAGE_END,
+        messageId,
+      } as BaseEvent);
+    }
 
     subscriber.next({
       type: EventType.STEP_FINISHED,

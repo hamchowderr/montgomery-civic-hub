@@ -1,3 +1,5 @@
+@import "@copilotkit/react-ui/styles.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -152,6 +154,95 @@
   }
   .portal-accent-researcher {
     --portal-hue: var(--portal-researcher);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CopilotKit theme overrides — map to civic CSS variables
+   ═══════════════════════════════════════════════════════ */
+
+:root .copilotKitChat {
+  --copilot-kit-primary-color: hsl(var(--accent));
+  --copilot-kit-contrast-color: hsl(var(--accent-foreground));
+  --copilot-kit-background-color: hsl(var(--card));
+  --copilot-kit-input-background-color: hsl(var(--background));
+  --copilot-kit-secondary-color: hsl(var(--muted));
+  --copilot-kit-secondary-contrast-color: hsl(var(--foreground));
+  --copilot-kit-separator-color: hsl(var(--border));
+  --copilot-kit-muted-color: hsl(var(--muted-foreground));
+}
+
+.dark .copilotKitChat {
+  --copilot-kit-primary-color: hsl(var(--accent));
+  --copilot-kit-contrast-color: hsl(var(--accent-foreground));
+  --copilot-kit-background-color: hsl(var(--card));
+  --copilot-kit-input-background-color: hsl(var(--background));
+  --copilot-kit-secondary-color: hsl(var(--muted));
+  --copilot-kit-secondary-contrast-color: hsl(var(--foreground));
+  --copilot-kit-separator-color: hsl(var(--border));
+  --copilot-kit-muted-color: hsl(var(--muted-foreground));
+}
+
+/* ═══════════════════════════════════════════════════════
+   CopilotKit text size & readability overrides
+   ═══════════════════════════════════════════════════════ */
+
+.copilotKitChat .copilotKitMessage {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.copilotKitChat .copilotKitMarkdown p,
+.copilotKitChat .copilotKitMarkdown li,
+.copilotKitChat .copilotKitMarkdown td,
+.copilotKitChat .copilotKitMarkdown th {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.copilotKitChat .copilotKitMarkdown h1 {
+  font-size: 1.125rem;
+}
+
+.copilotKitChat .copilotKitMarkdown h2 {
+  font-size: 1rem;
+}
+
+.copilotKitChat .copilotKitMarkdown h3 {
+  font-size: 0.875rem;
+}
+
+.copilotKitChat .copilotKitMarkdown pre,
+.copilotKitChat .copilotKitMarkdown code {
+  font-size: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CopilotKit mobile chat fixes
+   ═══════════════════════════════════════════════════════ */
+
+/* Ensure CopilotKit chat container fills available space and scrolls */
+.copilotKitChat {
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Messages area must scroll, not grow infinitely */
+.copilotKitChat .copilotKitMessages {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Keep input visible and prevent it from being pushed off-screen */
+.copilotKitChat .copilotKitInputContainer {
+  flex-shrink: 0;
+}
+
+/* On mobile, reduce input min-height to save space */
+@media (max-width: 767px) {
+  .copilotKitChat .copilotKitInputContainer {
+    min-height: 60px;
+    padding-bottom: 8px;
   }
 }
 
