@@ -1,12 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useThemeConfig } from "@/components/active-theme";
-import { Check } from "@/components/icons";
-import { DEFAULT_THEME, THEMES } from "@/lib/themes";
+import { Check, ChevronLeft, ChevronRight } from "@/components/icons";
+import { DEFAULT_THEME, THEMES, THEMES_PER_PAGE } from "@/lib/themes";
 import { cn } from "@/lib/utils";
 
 export function PresetSelector() {
   const { theme, setTheme } = useThemeConfig();
+  const [page, setPage] = useState(() => {
+    const idx = THEMES.findIndex((t) => t.value === theme.preset);
+    return idx >= THEMES_PER_PAGE ? 1 : 0;
+  });
+
+  const totalPages = Math.ceil(THEMES.length / THEMES_PER_PAGE);
+  const pageThemes = THEMES.slice(page * THEMES_PER_PAGE, (page + 1) * THEMES_PER_PAGE);
 
   const handlePreset = (value: string) => {
     setTheme({ ...theme, ...DEFAULT_THEME, preset: value as any });
@@ -14,9 +22,30 @@ export function PresetSelector() {
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-muted-foreground">Theme</p>
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-medium text-muted-foreground">Theme</p>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            className="grid h-5 w-5 place-items-center rounded text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+          >
+            <ChevronLeft size={14} />
+          </button>
+          <span className="text-[10px] tabular-nums text-muted-foreground">
+            {page + 1}/{totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page === totalPages - 1}
+            className="grid h-5 w-5 place-items-center rounded text-muted-foreground transition-colors hover:text-foreground disabled:opacity-30"
+          >
+            <ChevronRight size={14} />
+          </button>
+        </div>
+      </div>
       <div className="grid grid-cols-4 gap-2.5">
-        {THEMES.map((t) => {
+        {pageThemes.map((t) => {
           const isActive = theme.preset === t.value;
           return (
             <button

@@ -13,7 +13,7 @@ export function ThemeScaleSelector() {
   const { theme, setTheme } = useThemeConfig();
 
   return (
-    <div className="w-28 space-y-2">
+    <div className="space-y-2">
       <p className="text-xs font-medium text-muted-foreground">Scale</p>
       <ToggleGroup
         className="w-full"

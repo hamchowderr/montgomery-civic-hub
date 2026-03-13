@@ -359,7 +359,7 @@ function WhyMontgomerySection() {
           {montgomeryHighlights.map((item, i) => (
             <FadeInWhenVisible key={item.title} delay={i * 0.08}>
               <div className="group rounded-lg border bg-card p-fluid-md transition-colors hover:border-accent/30">
-                <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-md bg-accent/10 text-accent transition-colors group-hover:bg-accent/15">
+                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-md bg-accent/10 text-accent transition-colors group-hover:bg-accent/15">
                   <item.icon size={20} />
                 </div>
                 <h3 className="mb-2 text-lg font-semibold tracking-tight">{item.title}</h3>
@@ -493,6 +493,19 @@ function CTASection() {
   const { isSignedIn } = useAuth();
   return (
     <section className="relative overflow-hidden bg-civic-navy px-fluid-md py-fluid-section text-white">
+      {/* Background video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.15]"
+        src="/hero-bg.mp4"
+      />
+
+      {/* Dark overlay */}
+      <div className="pointer-events-none absolute inset-0 bg-civic-navy/60" />
+
       {/* Warm glow */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -right-32 top-0 h-72 w-72 rounded-full bg-civic-accent/[0.06] blur-[100px]" />

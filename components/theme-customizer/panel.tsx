@@ -30,10 +30,9 @@ export function ThemeCustomizerPanel() {
       <DropdownMenuContent className="me-4 w-80 p-4 shadow-xl lg:me-0" align="end">
         <PresetSelector />
         <Separator className="my-3" />
-        <div className="flex gap-4">
-          <ThemeRadiusSelector />
-          <ThemeScaleSelector />
-        </div>
+        <ThemeRadiusSelector />
+        <Separator className="my-3" />
+        <ThemeScaleSelector />
         <Separator className="my-3" />
         <ResetThemeButton />
       </DropdownMenuContent>

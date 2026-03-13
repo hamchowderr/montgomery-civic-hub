@@ -1,0 +1,64 @@
+[data-theme-preset="sage"] {
+  --background: 145 8% 97%;
+  --foreground: 145 15% 18%;
+  --card: 0 0% 100%;
+  --card-foreground: 145 15% 18%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 145 15% 18%;
+  --primary: 145 25% 42%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 135 20% 58%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 145 6% 95%;
+  --muted-foreground: 145 10% 40%;
+  --accent: 145 6% 92%;
+  --accent-foreground: 145 15% 18%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 145 8% 80%;
+  --input: 145 8% 76%;
+  --ring: 145 25% 42%;
+  --radius: 0.5rem;
+  --chart-1: 145 25% 42%;
+  --chart-2: 135 20% 52%;
+  --chart-3: 160 30% 38%;
+  --chart-4: 120 25% 45%;
+  --chart-5: 180 35% 42%;
+  --chart-6: 25 50% 48%;
+  --chart-7: 260 35% 48%;
+  --chart-8: 340 40% 48%;
+  --chart-9: 45 50% 45%;
+  --chart-10: 0 45% 48%;
+}
+
+.dark [data-theme-preset="sage"] {
+  --background: 145 15% 7%;
+  --foreground: 145 6% 90%;
+  --card: 145 12% 11%;
+  --card-foreground: 145 6% 90%;
+  --popover: 145 12% 11%;
+  --popover-foreground: 145 6% 90%;
+  --primary: 145 25% 42%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 135 20% 58%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 145 10% 18%;
+  --muted-foreground: 145 8% 58%;
+  --accent: 145 10% 18%;
+  --accent-foreground: 145 6% 90%;
+  --destructive: 22 70% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 145 10% 25%;
+  --input: 145 8% 30%;
+  --ring: 145 25% 42%;
+  --chart-1: 145 30% 50%;
+  --chart-2: 135 25% 58%;
+  --chart-3: 160 25% 48%;
+  --chart-4: 120 20% 52%;
+  --chart-5: 180 30% 50%;
+  --chart-6: 25 45% 55%;
+  --chart-7: 260 30% 55%;
+  --chart-8: 340 35% 55%;
+  --chart-9: 45 45% 52%;
+  --chart-10: 0 40% 55%;
+}

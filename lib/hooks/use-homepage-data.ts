@@ -1,11 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import {
-  ARCGIS_URLS,
-  queryFeatureCount,
-  queryFeatureAttributes,
-} from "@/lib/arcgis-client";
+import { ARCGIS_URLS, queryFeatureAttributes, queryFeatureCount } from "@/lib/arcgis-client";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -26,10 +22,22 @@ export interface PermitStatusEntry {
   count: number;
 }
 
+export interface ViolationTypeEntry {
+  type: string;
+  count: number;
+}
+
+export interface LicenseCategoryEntry {
+  category: string;
+  count: number;
+}
+
 interface UseHomepageDataReturn {
   stats: HomepageStats | null;
   requestTypes: RequestTypeEntry[];
   permitStatus: PermitStatusEntry[];
+  violationTypes: ViolationTypeEntry[];
+  licenseCategories: LicenseCategoryEntry[];
   loading: boolean;
   error: string | null;
 }
@@ -91,6 +99,8 @@ export function useHomepageData(): UseHomepageDataReturn {
   const [stats, setStats] = useState<HomepageStats | null>(null);
   const [requestTypes, setRequestTypes] = useState<RequestTypeEntry[]>([]);
   const [permitStatus, setPermitStatus] = useState<PermitStatusEntry[]>([]);
+  const [violationTypes, setViolationTypes] = useState<ViolationTypeEntry[]>([]);
+  const [licenseCategories, setLicenseCategories] = useState<LicenseCategoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -106,32 +116,30 @@ export function useHomepageData(): UseHomepageDataReturn {
         codeViolations,
         topRequestTypes,
         permitBreakdown,
+        violationBreakdown,
+        licenseBreakdown,
       ] = await Promise.all([
         // 1. 311 Service Requests count (current year)
         queryFeatureCount(ARCGIS_URLS.serviceRequests311, yearEq()),
         // 2. Active Construction Permits count (current year — Year field is quoted string)
-        queryFeatureCount(
-          ARCGIS_URLS.constructionPermits,
-          yearEq("Year", true),
-        ),
+        queryFeatureCount(ARCGIS_URLS.constructionPermits, yearEq("Year", true)),
         // 3. Business Licenses count (current year — pvYEAR field)
         queryFeatureCount(ARCGIS_URLS.businessLicense, yearEq("pvYEAR")),
         // 4. Code Violations count (current year — Year field is quoted string)
         queryFeatureCount(ARCGIS_URLS.codeViolations, yearEq("Year", true)),
         // 5. Top 5 service request types grouped by Request_Type
-        fetchGroupedStats(
-          ARCGIS_URLS.serviceRequests311,
-          "OBJECTID",
-          "Request_Type",
-          yearEq(),
-        ),
+        fetchGroupedStats(ARCGIS_URLS.serviceRequests311, "OBJECTID", "Request_Type", yearEq()),
         // 6. Permits by status breakdown
         fetchGroupedStats(
           ARCGIS_URLS.constructionPermits,
           "OBJECTID",
-          "Status",
+          "PermitStatus",
           yearEq("Year", true),
         ),
+        // 7. Code violations by case type
+        fetchGroupedStats(ARCGIS_URLS.codeViolations, "OBJECTID", "CaseType", yearEq("Year", true)),
+        // 8. Business licenses by category (top entries)
+        fetchGroupedStats(ARCGIS_URLS.businessLicense, "OBJECTID", "scNAME", yearEq("pvYEAR")),
       ]);
 
       setStats({
@@ -141,7 +149,6 @@ export function useHomepageData(): UseHomepageDataReturn {
         codeViolations,
       });
 
-      // Take top 5 request types
       setRequestTypes(
         topRequestTypes.slice(0, 5).map((r) => ({
           type: r.name,
@@ -149,17 +156,30 @@ export function useHomepageData(): UseHomepageDataReturn {
         })),
       );
 
-      // Normalize permit status to Pending/Approved/Issued buckets (plus any others)
       setPermitStatus(
         permitBreakdown.map((p) => ({
           status: p.name,
           count: p.count,
         })),
       );
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch homepage data",
+
+      // Filter out null types, take top 6
+      setViolationTypes(
+        violationBreakdown
+          .filter((v) => v.name && v.name !== "null")
+          .slice(0, 6)
+          .map((v) => ({ type: v.name, count: v.count })),
       );
+
+      // Filter out null categories, take top 8
+      setLicenseCategories(
+        licenseBreakdown
+          .filter((l) => l.name && l.name !== "null" && l.name.trim() !== "")
+          .slice(0, 8)
+          .map((l) => ({ category: l.name, count: l.count })),
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch homepage data");
     } finally {
       setLoading(false);
     }
@@ -169,5 +189,5 @@ export function useHomepageData(): UseHomepageDataReturn {
     fetchAll();
   }, [fetchAll]);
 
-  return { stats, requestTypes, permitStatus, loading, error };
+  return { stats, requestTypes, permitStatus, violationTypes, licenseCategories, loading, error };
 }

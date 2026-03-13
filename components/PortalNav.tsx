@@ -8,6 +8,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { GraduationCap, HelpCircle, Home, Moon, Settings, Sun } from "@/components/icons";
+import { ThemeCustomizerPanel } from "@/components/theme-customizer/panel";
 import { Button } from "@/components/ui/button";
 import { useTour } from "@/components/ui/tour";
 import { api } from "@/convex/_generated/api";
@@ -134,6 +135,8 @@ export function PortalNav() {
             <HelpCircle size={16} />
           </Button>
         )}
+
+        <ThemeCustomizerPanel />
 
         <Button
           variant="ghost"

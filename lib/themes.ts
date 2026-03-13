@@ -7,6 +7,7 @@ export const DEFAULT_THEME = {
 export type ThemeType = typeof DEFAULT_THEME;
 
 export const THEMES = [
+  // Page 1
   {
     name: "Default",
     value: "default",
@@ -47,4 +48,48 @@ export const THEMES = [
     value: "lavender-dream",
     colors: ["hsl(307, 45%, 42%)", "hsl(201, 15%, 58%)"],
   },
+  // Page 2
+  {
+    name: "Midnight",
+    value: "midnight",
+    colors: ["hsl(230, 50%, 25%)", "hsl(210, 60%, 45%)"],
+  },
+  {
+    name: "Cherry",
+    value: "cherry",
+    colors: ["hsl(350, 65%, 45%)", "hsl(340, 40%, 62%)"],
+  },
+  {
+    name: "Sage",
+    value: "sage",
+    colors: ["hsl(145, 25%, 42%)", "hsl(135, 20%, 58%)"],
+  },
+  {
+    name: "Amber",
+    value: "amber",
+    colors: ["hsl(35, 70%, 45%)", "hsl(28, 55%, 55%)"],
+  },
+  {
+    name: "Slate",
+    value: "slate",
+    colors: ["hsl(215, 20%, 40%)", "hsl(215, 15%, 55%)"],
+  },
+  {
+    name: "Coral",
+    value: "coral",
+    colors: ["hsl(15, 75%, 55%)", "hsl(8, 50%, 65%)"],
+  },
+  {
+    name: "Indigo",
+    value: "indigo",
+    colors: ["hsl(245, 55%, 50%)", "hsl(255, 40%, 62%)"],
+  },
+  {
+    name: "Copper",
+    value: "copper",
+    colors: ["hsl(20, 50%, 38%)", "hsl(30, 45%, 52%)"],
+  },
 ];
+
+/** Number of presets visible per page in the theme selector */
+export const THEMES_PER_PAGE = 8;
