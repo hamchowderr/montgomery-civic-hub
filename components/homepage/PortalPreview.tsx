@@ -1,6 +1,22 @@
 "use client";
 
 import { Briefcase, Building2, Table2 } from "lucide-react";
+import { AnimatePresence, motion, useInView } from "motion/react";
+import Link from "next/link";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { Message, MessageContent } from "@/components/ai-elements/message";
+import { Reasoning, ReasoningContent, ReasoningTrigger } from "@/components/ai-elements/reasoning";
+import { Shimmer } from "@/components/ai-elements/shimmer";
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 import {
   Activity,
   ArrowLeft,
@@ -27,22 +43,6 @@ import {
   TrendingUp,
   User,
 } from "@/components/icons";
-import { AnimatePresence, motion, useInView } from "motion/react";
-import Link from "next/link";
-import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { Message, MessageContent } from "@/components/ai-elements/message";
-import { Reasoning, ReasoningContent, ReasoningTrigger } from "@/components/ai-elements/reasoning";
-import { Shimmer } from "@/components/ai-elements/shimmer";
-import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -396,57 +396,45 @@ function FeatureCard({
    Inline Chat Demo
    ═══════════════════════════════════════════════════════ */
 
+type ChatPhase = "typing" | "tool" | "responding" | "done";
+
 function InlineChatDemo({ portalId }: { portalId: PortalId }) {
   const script = chatScripts[portalId];
-
-  type Phase = "typing" | "tool" | "streaming" | "done";
-  const [phase, setPhase] = useState<Phase>("typing");
+  const [phase, setPhase] = useState<ChatPhase>("typing");
   const [charIndex, setCharIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, margin: "-80px" });
-  const hasStarted = useRef(false);
+  // Key to force full replay when a suggestion chip is clicked
+  const [replayKey, setReplayKey] = useState(0);
 
   const handleChipClick = useCallback(() => {
-    // Reset animation
     setPhase("typing");
     setCharIndex(0);
-    hasStarted.current = false;
-    // Small delay then restart
-    setTimeout(() => {
-      hasStarted.current = true;
-    }, 100);
+    setReplayKey((k) => k + 1);
   }, []);
 
+  // Realistic timeline: typing 1.2s -> tool use 2.5s -> responding char-by-char
   useEffect(() => {
-    if (!isInView || hasStarted.current) return;
-    hasStarted.current = true;
-
     const timers: ReturnType<typeof setTimeout>[] = [];
-
-    // typing → tool
     timers.push(setTimeout(() => setPhase("tool"), 1200));
-    // tool → streaming
-    timers.push(setTimeout(() => setPhase("streaming"), 2800));
-
+    timers.push(setTimeout(() => setPhase("responding"), 3700));
     return () => timers.forEach(clearTimeout);
-  }, [isInView]);
+  }, [replayKey]);
 
-  // Stream characters
+  // Realistic typewriter: 1 char at ~25ms (readable speed)
   useEffect(() => {
-    if (phase !== "streaming") return;
+    if (phase !== "responding") return;
     if (charIndex >= script.response.length) {
-      setPhase("done");
-      return;
+      const timer = setTimeout(() => setPhase("done"), 400);
+      return () => clearTimeout(timer);
     }
     const timer = setTimeout(
-      () => setCharIndex((i) => i + 1),
-      Math.random() * 8 + 4, // 4-12ms per char
+      () => setCharIndex((prev) => Math.min(prev + 1, script.response.length)),
+      25,
     );
     return () => clearTimeout(timer);
   }, [phase, charIndex, script.response.length]);
 
-  const showTool = phase !== "typing";
-  const showResponse = phase === "streaming" || phase === "done";
+  const showTool = phase === "tool" || phase === "responding" || phase === "done";
+  const showResponse = phase === "responding" || phase === "done";
   const showChips = phase === "done";
   const isToolStreaming = phase === "tool";
   const displayedResponse = showResponse ? script.response.slice(0, charIndex) : "";
@@ -607,7 +595,7 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
           <div
             className={cn("flex size-6 items-center justify-center rounded", portalStyle.bgLight)}
           >
-            <ArrowRight size={12} className={portalStyle.text} />
+            <ArrowRight className={cn("size-3", portalStyle.text)} />
           </div>
         </div>
       </div>
@@ -1258,7 +1246,10 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
       {/* Working search bar */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            size={14}
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
           <input
             type="text"
             value={searchQuery}
@@ -1271,7 +1262,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
               onClick={() => setSearchQuery("")}
               className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
             >
-              <span className="text-[10px] font-medium">&times;</span>
+              <span className="text-[10px] font-medium">✕</span>
             </button>
           )}
         </div>
@@ -1290,8 +1281,8 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                 <th
                   key={col.key}
                   className={cn(
-                    "px-3 py-2 text-left text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground",
-                    col.align === "right" && "text-right",
+                    "px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground",
+                    col.align === "right" ? "text-right" : "text-left",
                   )}
                 >
                   <button
@@ -1433,7 +1424,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                         <div className="text-[0.6rem] font-medium uppercase tracking-wider text-muted-foreground">
                           {col.label}
                         </div>
-                        <div className="text-xs font-medium">{val || "\u2014"}</div>
+                        <div className="text-xs font-medium">{val || "—"}</div>
                       </div>
                     );
                   })}
@@ -1880,8 +1871,8 @@ export function PortalPreview() {
                   </div>
                   <p className="mt-6 text-center text-xs text-muted-foreground">
                     Click any feature to see a live preview — or{" "}
-                    <Link href={portal.href} className={cn("font-medium underline", styles.text)}>
-                      open the full {portal.label.toLowerCase()} portal
+                    <Link href="/sign-up" className={cn("font-medium underline", styles.text)}>
+                      create an account to get started
                     </Link>
                   </p>
                 </motion.div>

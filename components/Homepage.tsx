@@ -1,15 +1,7 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { Landmark, Map } from "lucide-react";
-import {
-  ArrowRight,
-  BarChart3,
-  ChevronDown,
-  MessageSquare,
-  Shield,
-  TrendingUp,
-  Users,
-} from "@/components/icons";
 import {
   animate,
   motion,
@@ -24,6 +16,15 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Footer } from "@/components/Footer";
 import { LiveDataShowcase } from "@/components/homepage/LiveDataShowcase";
 import { PortalPreview } from "@/components/homepage/PortalPreview";
+import {
+  ArrowRight,
+  BarChart3,
+  ChevronDown,
+  MessageSquare,
+  Shield,
+  TrendingUp,
+  Users,
+} from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════
@@ -148,6 +149,7 @@ function SectionAccent({ className }: { className?: string }) {
    ═══════════════════════════════════════════════════════ */
 
 function HeroSection() {
+  const { isSignedIn } = useAuth();
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -190,25 +192,25 @@ function HeroSection() {
         }}
       />
 
-      {/* City seal */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, delay: 0.3 }}
-        className="pointer-events-none absolute left-1/2 top-8 -translate-x-1/2"
-      >
-        <Image
-          src="/montgomery-seal.png"
-          alt="City of Montgomery Seal"
-          width={80}
-          height={80}
-          className="opacity-70 drop-shadow-lg"
-          priority
-        />
-      </motion.div>
-
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center text-center">
+        {/* City seal */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, delay: 0.3 }}
+          className="pointer-events-none mb-6"
+        >
+          <Image
+            src="/montgomery-seal.png"
+            alt="City of Montgomery Seal"
+            width={80}
+            height={80}
+            className="opacity-70 drop-shadow-lg"
+            priority
+          />
+        </motion.div>
+
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -267,10 +269,10 @@ function HeroSection() {
           className="flex flex-col gap-3 sm:flex-row sm:gap-4"
         >
           <Link
-            href="/sign-up"
+            href={isSignedIn ? "/portal-redirect" : "/sign-up"}
             className="group inline-flex items-center justify-center gap-2 rounded-sm bg-accent px-7 py-3 text-sm font-medium text-accent-foreground transition-all hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20"
           >
-            Create Account
+            {isSignedIn ? "Go to Dashboard" : "Create Account"}
             <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
           </Link>
           <Link
@@ -488,6 +490,7 @@ function HowItWorksSection() {
    ═══════════════════════════════════════════════════════ */
 
 function CTASection() {
+  const { isSignedIn } = useAuth();
   return (
     <section className="relative overflow-hidden bg-civic-navy px-fluid-md py-fluid-section text-white">
       {/* Warm glow */}
@@ -523,10 +526,10 @@ function CTASection() {
         <FadeInWhenVisible delay={0.16}>
           <div className="mt-10 flex justify-center gap-4">
             <Link
-              href="/sign-up"
+              href={isSignedIn ? "/portal-redirect" : "/sign-up"}
               className="group inline-flex items-center gap-2 rounded-sm bg-accent px-8 py-3.5 text-sm font-medium text-accent-foreground transition-all hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20"
             >
-              Create Account
+              {isSignedIn ? "Go to Dashboard" : "Create Account"}
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
@@ -542,7 +545,7 @@ function CTASection() {
 
 export function Homepage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen scrollbar-none">
       <HeroSection />
       <StatsSection />
       <LiveDataShowcase />

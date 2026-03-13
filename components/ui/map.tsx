@@ -1033,7 +1033,7 @@ type MapRouteProps = {
 function MapRoute({
   id: propId,
   coordinates,
-  color = "#4285F4",
+  color = "hsl(var(--primary))",
   width = 3,
   opacity = 0.8,
   dashArray,
@@ -1168,7 +1168,7 @@ function MapClusterLayer<P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonPr
   clusterRadius = 50,
   clusterColors = ["#22c55e", "#eab308", "#ef4444"],
   clusterThresholds = [100, 750],
-  pointColor = "#3b82f6",
+  pointColor = "hsl(var(--primary))",
   onPointClick,
   onClusterClick,
 }: MapClusterLayerProps<P>) {
@@ -1442,7 +1442,7 @@ type MapPolygonLayerProps = {
 function MapPolygonLayer({
   id: propId,
   data,
-  fillColor = "#a855f7",
+  fillColor = "hsl(var(--primary))",
   fillOpacity = 0.25,
   outlineColor,
   outlineWidth = 2,
@@ -1598,7 +1598,7 @@ type MapLineLayerProps = {
 function MapLineLayer({
   id: propId,
   data,
-  color = "#f59e0b",
+  color = "hsl(var(--secondary))",
   width = 3,
   opacity = 0.8,
   interactive = true,
