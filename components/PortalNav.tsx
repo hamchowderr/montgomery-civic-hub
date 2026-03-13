@@ -1,7 +1,8 @@
 "use client";
 
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
-import { Briefcase, Building2, GraduationCap, Home, Moon, Sun } from "lucide-react";
+import { Briefcase, Building2 } from "lucide-react";
+import { GraduationCap, Home, Moon, Sun } from "@/components/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -82,7 +83,7 @@ export function PortalNav() {
                   !isActive && "text-muted-foreground hover:text-foreground",
                 )}
               >
-                <portal.icon className="size-3.5" />
+                <portal.icon size={14} />
                 <span className="hidden sm:inline">{portal.label}</span>
               </Button>
             </Link>
@@ -99,8 +100,8 @@ export function PortalNav() {
           aria-label="Toggle theme"
           className="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 text-muted-foreground hover:text-foreground"
         >
-          <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <Sun size={16} className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon size={16} className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
         </Button>
 
         {isSignedIn ? (

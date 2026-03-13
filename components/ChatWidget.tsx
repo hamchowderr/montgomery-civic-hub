@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
 interface ChatWidgetProps {
@@ -50,7 +50,7 @@ export function ChatWidget({ open, onToggle, children }: ChatWidgetProps) {
               onClick={onToggle}
               className="absolute right-2 top-2 z-10 size-7 rounded-full"
             >
-              <X className="size-3.5" />
+              <X size={14} />
             </Button>
             {children}
           </motion.div>
@@ -72,7 +72,7 @@ export function ChatWidget({ open, onToggle, children }: ChatWidgetProps) {
               className="size-14 rounded-full shadow-lg shadow-accent/20 bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 hover:shadow-xl transition-transform"
               aria-label="Open chat"
             >
-              <MessageCircle className="size-6" />
+              <MessageCircle size={24} />
             </Button>
           </motion.div>
         )}

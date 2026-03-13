@@ -1,13 +1,12 @@
 "use client";
 
+import { Briefcase, Building2, Table2 } from "lucide-react";
 import {
   Activity,
   ArrowLeft,
   ArrowRight,
   ArrowUpDown,
   BarChart3,
-  Briefcase,
-  Building2,
   ChevronLeft,
   ChevronRight,
   Compass,
@@ -24,11 +23,10 @@ import {
   Search,
   SlidersHorizontal,
   Sparkles,
-  Table2,
   TrendingDown,
   TrendingUp,
   User,
-} from "lucide-react";
+} from "@/components/icons";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import Link from "next/link";
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
@@ -85,7 +83,7 @@ const portalStyles = {
 interface PortalConfig {
   id: PortalId;
   label: string;
-  icon: typeof Home;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   href: string;
   features: FeatureConfig[];
 }
@@ -94,7 +92,7 @@ interface FeatureConfig {
   id: FeatureId;
   name: string;
   description: string;
-  icon: typeof MapPin;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   featured?: boolean;
 }
 
@@ -376,7 +374,7 @@ function FeatureCard({
             styles.bgLight,
           )}
         >
-          <Icon className={cn("h-4 w-4", styles.text)} />
+          <Icon size={16} className={styles.text} />
         </div>
         <div className="min-w-0 flex-1">
           <h4 className="mb-1 text-sm font-medium text-foreground">{feature.name}</h4>
@@ -388,7 +386,7 @@ function FeatureCard({
 
       {/* Play indicator on hover */}
       <div className="absolute bottom-4 right-4 opacity-0 transition-opacity group-hover:opacity-100">
-        <Play className={cn("h-3.5 w-3.5", styles.text)} />
+        <Play size={14} className={styles.text} />
       </div>
     </button>
   );
@@ -398,45 +396,57 @@ function FeatureCard({
    Inline Chat Demo
    ═══════════════════════════════════════════════════════ */
 
-type ChatPhase = "typing" | "tool" | "responding" | "done";
-
 function InlineChatDemo({ portalId }: { portalId: PortalId }) {
   const script = chatScripts[portalId];
-  const [phase, setPhase] = useState<ChatPhase>("typing");
+
+  type Phase = "typing" | "tool" | "streaming" | "done";
+  const [phase, setPhase] = useState<Phase>("typing");
   const [charIndex, setCharIndex] = useState(0);
-  // Key to force full replay when a suggestion chip is clicked
-  const [replayKey, setReplayKey] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-80px" });
+  const hasStarted = useRef(false);
 
   const handleChipClick = useCallback(() => {
+    // Reset animation
     setPhase("typing");
     setCharIndex(0);
-    setReplayKey((k) => k + 1);
+    hasStarted.current = false;
+    // Small delay then restart
+    setTimeout(() => {
+      hasStarted.current = true;
+    }, 100);
   }, []);
 
-  // Realistic timeline: typing 1.2s -> tool use 2.5s -> responding char-by-char
   useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    timers.push(setTimeout(() => setPhase("tool"), 1200));
-    timers.push(setTimeout(() => setPhase("responding"), 3700));
-    return () => timers.forEach(clearTimeout);
-  }, [replayKey]);
+    if (!isInView || hasStarted.current) return;
+    hasStarted.current = true;
 
-  // Realistic typewriter: 1 char at ~25ms (readable speed)
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    // typing → tool
+    timers.push(setTimeout(() => setPhase("tool"), 1200));
+    // tool → streaming
+    timers.push(setTimeout(() => setPhase("streaming"), 2800));
+
+    return () => timers.forEach(clearTimeout);
+  }, [isInView]);
+
+  // Stream characters
   useEffect(() => {
-    if (phase !== "responding") return;
+    if (phase !== "streaming") return;
     if (charIndex >= script.response.length) {
-      const timer = setTimeout(() => setPhase("done"), 400);
-      return () => clearTimeout(timer);
+      setPhase("done");
+      return;
     }
     const timer = setTimeout(
-      () => setCharIndex((prev) => Math.min(prev + 1, script.response.length)),
-      25,
+      () => setCharIndex((i) => i + 1),
+      Math.random() * 8 + 4, // 4-12ms per char
     );
     return () => clearTimeout(timer);
   }, [phase, charIndex, script.response.length]);
 
-  const showTool = phase === "tool" || phase === "responding" || phase === "done";
-  const showResponse = phase === "responding" || phase === "done";
+  const showTool = phase !== "typing";
+  const showResponse = phase === "streaming" || phase === "done";
   const showChips = phase === "done";
   const isToolStreaming = phase === "tool";
   const displayedResponse = showResponse ? script.response.slice(0, charIndex) : "";
@@ -448,7 +458,7 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
       {/* Chat header */}
       <div className="flex items-center gap-2 border-b px-4 py-2.5">
         <div className={cn("flex size-6 items-center justify-center rounded", portalStyle.bgLight)}>
-          <Sparkles className={cn("size-3.5", portalStyle.text)} />
+          <Sparkles size={14} className={portalStyle.text} />
         </div>
         <span className="text-sm font-semibold">Civic Assistant</span>
         <div className="ml-auto flex items-center gap-1.5">
@@ -480,7 +490,7 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
             <div
               className={cn("flex size-6 items-center justify-center rounded", portalStyle.bgLight)}
             >
-              <Sparkles className={cn("size-3.5", portalStyle.text)} />
+              <Sparkles size={14} className={portalStyle.text} />
             </div>
             <div className="flex items-center gap-1 px-1">
               {[0, 1, 2].map((i) => (
@@ -597,7 +607,7 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
           <div
             className={cn("flex size-6 items-center justify-center rounded", portalStyle.bgLight)}
           >
-            <ArrowRight className={cn("size-3", portalStyle.text)} />
+            <ArrowRight size={12} className={portalStyle.text} />
           </div>
         </div>
       </div>
@@ -802,25 +812,25 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
       {/* Map toolbar */}
       <div className="flex items-center justify-between border-b bg-muted/30 px-3 py-1.5">
         <div className="flex items-center gap-2">
-          <MapPin className={cn("h-3.5 w-3.5", styles.text)} />
+          <MapPin size={14} className={styles.text} />
           <span className="text-xs font-medium">Montgomery, AL</span>
           <span className="text-[0.6rem] text-muted-foreground">32.3792° N, 86.3077° W</span>
         </div>
         <div className="flex items-center gap-0.5">
           <div className="flex items-center rounded border bg-background">
             <span className="px-1.5 py-0.5 text-muted-foreground">
-              <Plus className="h-3 w-3" />
+              <Plus size={12} />
             </span>
             <div className="h-3 w-px bg-border" />
             <span className="px-1.5 py-0.5 text-muted-foreground">
-              <Minus className="h-3 w-3" />
+              <Minus size={12} />
             </span>
           </div>
           <span className="ml-1 rounded border bg-background px-1.5 py-0.5 text-muted-foreground">
-            <Compass className="h-3 w-3" />
+            <Compass size={12} />
           </span>
           <span className="rounded border bg-background px-1.5 py-0.5 text-muted-foreground">
-            <Layers className="h-3 w-3" />
+            <Layers size={12} />
           </span>
         </div>
       </div>
@@ -1236,7 +1246,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
         </div>
         <div className="flex items-center gap-1.5">
           <span className="inline-flex items-center gap-1 rounded-md border border-input bg-background px-2 py-1 text-[0.65rem] font-medium text-muted-foreground">
-            <Download className="h-3 w-3" />
+            <Download size={12} />
             Export
           </span>
           <span className="rounded-full bg-muted px-2.5 py-0.5 text-[0.65rem] font-medium text-muted-foreground">
@@ -1248,7 +1258,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
       {/* Working search bar */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             value={searchQuery}
@@ -1261,12 +1271,12 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
               onClick={() => setSearchQuery("")}
               className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
             >
-              <span className="text-[10px] font-medium">✕</span>
+              <span className="text-[10px] font-medium">&times;</span>
             </button>
           )}
         </div>
         <span className="inline-flex h-8 items-center gap-1.5 rounded-md border border-input bg-background px-2.5 text-xs font-medium text-muted-foreground">
-          <SlidersHorizontal className="h-3.5 w-3.5" />
+          <SlidersHorizontal size={14} />
           Filters
         </span>
       </div>
@@ -1280,8 +1290,8 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                 <th
                   key={col.key}
                   className={cn(
-                    "px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground",
-                    col.align === "right" ? "text-right" : "text-left",
+                    "px-3 py-2 text-left text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground",
+                    col.align === "right" && "text-right",
                   )}
                 >
                   <button
@@ -1293,8 +1303,9 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                   >
                     {col.label}
                     <ArrowUpDown
+                      size={12}
                       className={cn(
-                        "h-3 w-3 transition-opacity",
+                        "transition-opacity",
                         sortKey === col.key ? "opacity-100" : "opacity-40",
                       )}
                     />
@@ -1422,7 +1433,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                         <div className="text-[0.6rem] font-medium uppercase tracking-wider text-muted-foreground">
                           {col.label}
                         </div>
-                        <div className="text-xs font-medium">{val || "—"}</div>
+                        <div className="text-xs font-medium">{val || "\u2014"}</div>
                       </div>
                     );
                   })}
@@ -1455,7 +1466,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                 : "cursor-pointer text-foreground hover:bg-muted",
             )}
           >
-            <ChevronLeft className="h-3.5 w-3.5" />
+            <ChevronLeft size={14} />
           </button>
           <button
             disabled={safePage >= totalPages}
@@ -1467,7 +1478,7 @@ function InlineTableDemo({ portalId }: { portalId: PortalId }) {
                 : cn("cursor-pointer hover:bg-muted", styles.text),
             )}
           >
-            <ChevronRight className="h-3.5 w-3.5" />
+            <ChevronRight size={14} />
           </button>
         </div>
       </div>
@@ -1578,7 +1589,7 @@ function InlineChartDemo({ portalId }: { portalId: PortalId }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity className={cn("h-4 w-4", styles.text)} />
+          <Activity size={16} className={styles.text} />
           <span className="text-sm font-medium">{config.title}</span>
         </div>
         <span className="rounded-full bg-muted px-2.5 py-0.5 text-[0.65rem] font-medium text-muted-foreground">
@@ -1683,9 +1694,9 @@ function InlineChartDemo({ portalId }: { portalId: PortalId }) {
         <div className="rounded-md border bg-card px-3 py-2 text-center">
           <div className="flex items-center justify-center gap-1">
             {changePct >= 0 ? (
-              <TrendingUp className="h-3 w-3 text-emerald-500" />
+              <TrendingUp size={12} className="text-emerald-500" />
             ) : (
-              <TrendingDown className="h-3 w-3 text-red-500" />
+              <TrendingDown size={12} className="text-red-500" />
             )}
             <span
               className={cn(
@@ -1786,7 +1797,7 @@ export function PortalPreview() {
                     onClick={() => setSelectedFeature(null)}
                     className="shrink-0"
                   >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    <ArrowLeft size={16} className="mr-2" />
                     <span className="hidden sm:inline">Back to showcase</span>
                     <span className="sm:hidden">Back</span>
                   </Button>
@@ -1804,7 +1815,7 @@ export function PortalPreview() {
                     )}
                   >
                     Open full portal
-                    <ArrowRight className="h-3 w-3" />
+                    <ArrowRight size={12} />
                   </Link>
                 </div>
               ) : (
@@ -1824,7 +1835,7 @@ export function PortalPreview() {
                             : "border-border bg-card text-muted-foreground hover:text-foreground",
                         )}
                       >
-                        <Icon className="h-4 w-4" />
+                        <Icon size={16} />
                         {p.label}
                       </button>
                     );
