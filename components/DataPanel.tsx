@@ -1,7 +1,7 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { Building2, CalendarRange, Table2 } from "lucide-react";
+import { Building2, CalendarRange, Table2, Users } from "lucide-react";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { BarChart3, MapPin } from "@/components/icons";
@@ -38,7 +38,8 @@ interface DataPanelProps {
   tableContent: React.ReactNode;
   chartContent: React.ReactNode;
   landContent?: React.ReactNode;
-  defaultTab?: "map" | "table" | "chart" | "land";
+  staffingContent?: React.ReactNode;
+  defaultTab?: "map" | "table" | "chart" | "land" | "staffing";
 }
 
 export function DataPanel({
@@ -47,6 +48,7 @@ export function DataPanel({
   tableContent,
   chartContent,
   landContent,
+  staffingContent,
   defaultTab = "map",
 }: DataPanelProps) {
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
@@ -87,7 +89,13 @@ export function DataPanel({
         type: "string",
         description: "The tab to switch to",
         required: true,
-        enum: landContent ? ["map", "table", "chart", "land"] : ["map", "table", "chart"],
+        enum: [
+          "map",
+          "table",
+          "chart",
+          ...(landContent ? ["land"] : []),
+          ...(staffingContent ? ["staffing"] : []),
+        ],
       },
     ],
     handler: ({ tab }) => {
@@ -165,6 +173,16 @@ export function DataPanel({
                 <span className="hidden @[440px]:inline">Properties</span>
               </TabsTrigger>
             )}
+            {staffingContent && (
+              <TabsTrigger
+                value="staffing"
+                data-tour-step-id="citystaff-staffing-tab"
+                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              >
+                <Users className="size-4" />
+                <span className="hidden @[440px]:inline">Staffing</span>
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Year filter + portal slot — wraps naturally when space is tight */}
@@ -232,6 +250,15 @@ export function DataPanel({
             className="flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {landContent}
+          </TabsContent>
+        )}
+        {staffingContent && (
+          <TabsContent
+            value="staffing"
+            forceMount
+            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {staffingContent}
           </TabsContent>
         )}
       </Tabs>
