@@ -1,21 +1,18 @@
 "use client";
 
-import { AlertTriangle, HardHat, Phone, TreePine } from "lucide-react";
-import { FileText, MapPin } from "@/components/icons";
 import { animate, motion, useInView } from "motion/react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import {
-  Bar,
-  BarChart,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+  AlertTriangle,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  HardHat,
+  MapPin,
+  Phone,
+  TreePine,
+} from "@/components/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHomepageData } from "@/lib/hooks/use-homepage-data";
@@ -92,7 +89,7 @@ function LiveBadge() {
 }
 
 /* ═══════════════════════════════════════════════════════
-   Stat Card
+   Stat Card — uses CSS grid to bulletproof icon centering
    ═══════════════════════════════════════════════════════ */
 
 interface StatCardProps {
@@ -106,12 +103,11 @@ interface StatCardProps {
 function StatCard({ icon: Icon, label, value, loading, delay = 0 }: StatCardProps) {
   return (
     <FadeInWhenVisible delay={delay}>
-      <Card className="group relative overflow-hidden border-border/50 transition-colors hover:border-accent/30">
-        {/* Top accent line */}
+      <Card className="group relative h-full overflow-hidden animate-card-pulse border-accent/20 transition-colors hover:border-accent/40">
         <div className="absolute left-0 top-0 h-[2px] w-full bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
 
-        <CardContent className="flex flex-col items-center gap-2 p-fluid-md text-center">
-          <div className="mb-1 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
+        <CardContent className="flex flex-col items-center gap-2 px-fluid-md pb-fluid-md pt-6 text-center">
+          <div className="grid h-10 w-10 place-items-center rounded-lg bg-accent/10 text-accent [&>div]:contents">
             <Icon size={20} />
           </div>
 
@@ -123,11 +119,9 @@ function StatCard({ icon: Icon, label, value, loading, delay = 0 }: StatCardProp
             </div>
           )}
 
-          <div className="flex min-h-[2rem] items-center text-[0.7rem] font-medium uppercase tracking-widest text-muted-foreground">
+          <div className="text-[0.7rem] font-medium uppercase tracking-widest text-muted-foreground">
             {label}
           </div>
-
-          <LiveBadge />
         </CardContent>
       </Card>
     </FadeInWhenVisible>
@@ -135,69 +129,232 @@ function StatCard({ icon: Icon, label, value, loading, delay = 0 }: StatCardProp
 }
 
 /* ═══════════════════════════════════════════════════════
-   Charts
+   Chart Colors
    ═══════════════════════════════════════════════════════ */
 
 const CHART_COLORS = [
-  "hsl(16, 65%, 48%)", // terracotta / accent
+  "hsl(16, 65%, 48%)",
   "hsl(16, 55%, 58%)",
   "hsl(30, 50%, 55%)",
   "hsl(40, 45%, 58%)",
   "hsl(200, 40%, 50%)",
-];
-
-const DONUT_COLORS = [
-  "hsl(45, 70%, 55%)", // amber — Pending
-  "hsl(160, 55%, 45%)", // green — Approved
-  "hsl(200, 60%, 50%)", // blue — Issued
-  "hsl(16, 65%, 48%)", // accent
-  "hsl(270, 40%, 55%)", // purple
+  "hsl(160, 40%, 45%)",
+  "hsl(280, 35%, 52%)",
+  "hsl(350, 45%, 50%)",
 ];
 
 /* ═══════════════════════════════════════════════════════
    Main Component
    ═══════════════════════════════════════════════════════ */
 
+/** Shared tooltip style */
+const TOOLTIP_STYLE = {
+  backgroundColor: "hsl(var(--card))",
+  border: "1px solid hsl(var(--border))",
+  borderRadius: "8px",
+  fontSize: "12px",
+};
+
+/** Truncate long labels for chart Y-axis */
+function truncateLabel(label: string, max = 22): string {
+  return label.length > max ? `${label.slice(0, max)}…` : label;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Chart Carousel — cycle through charts with arrows
+   ═══════════════════════════════════════════════════════ */
+
+interface ChartSlide {
+  title: string;
+  subtitle: string;
+  dataKey: string;
+  labelKey: string;
+  tooltipLabel: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any[];
+  labelWidth: number;
+  truncate?: boolean;
+  colorOffset?: number;
+}
+
+function ChartCarousel({ slides, loading }: { slides: ChartSlide[]; loading: boolean }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const total = slides.length;
+
+  const prev = () => setActiveIndex((i) => (i - 1 + total) % total);
+  const next = () => setActiveIndex((i) => (i + 1) % total);
+
+  const slide = slides[activeIndex];
+
+  return (
+    <Card className="border-border/50">
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={prev}
+              className="grid h-8 w-8 place-items-center rounded-md border border-border/60 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-foreground"
+              aria-label="Previous chart"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <div>
+              <CardTitle className="text-base font-semibold tracking-tight">
+                {slide?.title}
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">{slide?.subtitle}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {activeIndex + 1} / {total}
+            </span>
+            <LiveBadge />
+            <button
+              type="button"
+              onClick={next}
+              className="grid h-8 w-8 place-items-center rounded-md border border-border/60 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-foreground"
+              aria-label="Next chart"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-2">
+        {loading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-6 w-full" />
+            ))}
+          </div>
+        ) : slide && slide.data.length > 0 ? (
+          <motion.div
+            key={activeIndex}
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <ResponsiveContainer width="100%" height={260} minWidth={1}>
+              <BarChart
+                data={slide.data}
+                layout="vertical"
+                margin={{ top: 4, right: 16, left: 4, bottom: 4 }}
+              >
+                <XAxis type="number" hide />
+                <YAxis
+                  type="category"
+                  dataKey={slide.labelKey}
+                  width={slide.labelWidth}
+                  tickFormatter={slide.truncate ? (v: string) => truncateLabel(v) : undefined}
+                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  contentStyle={TOOLTIP_STYLE}
+                  formatter={(value: number) => [value.toLocaleString(), slide.tooltipLabel]}
+                />
+                <Bar dataKey={slide.dataKey} radius={[0, 4, 4, 0]} barSize={20}>
+                  {slide.data.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={CHART_COLORS[(index + (slide.colorOffset ?? 0)) % CHART_COLORS.length]}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </motion.div>
+        ) : (
+          <div className="flex h-[260px] items-center justify-center text-sm text-muted-foreground">
+            No data available
+          </div>
+        )}
+
+        {/* Dot indicators */}
+        <div className="mt-3 flex justify-center gap-1.5">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setActiveIndex(i)}
+              className={cn(
+                "h-1.5 rounded-full transition-all",
+                i === activeIndex
+                  ? "w-4 bg-accent"
+                  : "w-1.5 bg-border hover:bg-muted-foreground/40",
+              )}
+              aria-label={`Go to chart ${i + 1}`}
+            />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function LiveDataShowcase() {
-  const { stats, requestTypes, permitStatus, loading, error } = useHomepageData();
+  const { stats, requestTypes, permitStatus, violationTypes, licenseCategories, loading, error } =
+    useHomepageData();
 
   const statCards: Omit<StatCardProps, "loading">[] = [
+    { icon: Phone, label: "311 Requests", value: stats?.serviceRequests ?? null },
+    { icon: HardHat, label: "Construction Permits", value: stats?.constructionPermits ?? null },
+    { icon: FileText, label: "Business Licenses", value: stats?.businessLicenses ?? null },
+    { icon: AlertTriangle, label: "Code Violations", value: stats?.codeViolations ?? null },
+    { icon: TreePine, label: "Public Parks", value: 50 },
+    { icon: MapPin, label: "Council Districts", value: 9 },
+  ];
+
+  const chartSlides: ChartSlide[] = [
     {
-      icon: Phone,
-      label: "311 Requests",
-      value: stats?.serviceRequests ?? null,
+      title: "Top Service Request Types",
+      subtitle: "2025 311 requests by category",
+      dataKey: "count",
+      labelKey: "type",
+      tooltipLabel: "Requests",
+      data: requestTypes,
+      labelWidth: 120,
+      colorOffset: 0,
     },
     {
-      icon: HardHat,
-      label: "Construction Permits",
-      value: stats?.constructionPermits ?? null,
+      title: "Construction Permit Status",
+      subtitle: "2025 permits by current status",
+      dataKey: "count",
+      labelKey: "status",
+      tooltipLabel: "Permits",
+      data: permitStatus,
+      labelWidth: 100,
+      colorOffset: 2,
     },
     {
-      icon: FileText,
-      label: "Business Licenses",
-      value: stats?.businessLicenses ?? null,
+      title: "Code Violations by Type",
+      subtitle: "2025 violations by case type",
+      dataKey: "count",
+      labelKey: "type",
+      tooltipLabel: "Violations",
+      data: violationTypes,
+      labelWidth: 140,
+      colorOffset: 4,
     },
     {
-      icon: AlertTriangle,
-      label: "Code Violations",
-      value: stats?.codeViolations ?? null,
-    },
-    {
-      icon: TreePine,
-      label: "Public Parks",
-      value: 50,
-    },
-    {
-      icon: MapPin,
-      label: "Council Districts",
-      value: 9,
+      title: "Top Business License Categories",
+      subtitle: "2025 licenses by industry",
+      dataKey: "count",
+      labelKey: "category",
+      tooltipLabel: "Licenses",
+      data: licenseCategories,
+      labelWidth: 160,
+      truncate: true,
+      colorOffset: 1,
     },
   ];
 
   return (
     <section className="bg-background px-fluid-md py-fluid-section">
       <div className="mx-auto max-w-6xl">
-        {/* Section header */}
         <FadeInWhenVisible className="text-center">
           <span className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-accent">
             Live City Data
@@ -218,159 +375,23 @@ export function LiveDataShowcase() {
           </p>
         </FadeInWhenVisible>
 
-        {/* Error state */}
         {error && (
           <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400">
             Unable to load live data. Showing cached values where available.
           </div>
         )}
 
-        {/* Stat cards grid */}
-        <div className="grid gap-fluid-md grid-cols-[repeat(auto-fit,minmax(140px,1fr))]">
+        {/* Stat cards */}
+        <div className="grid gap-fluid-md grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
           {statCards.map((card, i) => (
             <StatCard key={card.label} {...card} loading={loading} delay={i * 0.06} />
           ))}
         </div>
 
-        {/* Charts row */}
-        <div
-          className={cn(
-            "mt-8 grid gap-fluid-md",
-            !loading && permitStatus.length > 0 ? "md:grid-cols-2" : "md:grid-cols-1",
-          )}
-        >
-          {/* Top 5 Request Types — Horizontal Bar Chart */}
-          <FadeInWhenVisible delay={0.1}>
-            <Card className="border-border/50">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-semibold tracking-tight">
-                    Top Service Request Types
-                  </CardTitle>
-                  <LiveBadge />
-                </div>
-                <p className="text-xs text-muted-foreground">2025 311 requests by category</p>
-              </CardHeader>
-              <CardContent className="pt-2">
-                {loading ? (
-                  <div className="space-y-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Skeleton key={i} className="h-6 w-full" />
-                    ))}
-                  </div>
-                ) : requestTypes.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={240} minWidth={1}>
-                    <BarChart
-                      data={requestTypes}
-                      layout="vertical"
-                      margin={{ top: 4, right: 16, left: 4, bottom: 4 }}
-                    >
-                      <XAxis type="number" hide />
-                      <YAxis
-                        type="category"
-                        dataKey="type"
-                        width={120}
-                        tick={{
-                          fontSize: 11,
-                          fill: "hsl(var(--muted-foreground))",
-                        }}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "hsl(var(--card))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px",
-                          fontSize: "12px",
-                        }}
-                        formatter={(value: number) => [value.toLocaleString(), "Requests"]}
-                      />
-                      <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={20}>
-                        {requestTypes.map((_, index) => (
-                          <Cell
-                            key={`bar-${index}`}
-                            fill={CHART_COLORS[index % CHART_COLORS.length]}
-                          />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="flex h-[240px] items-center justify-center text-sm text-muted-foreground">
-                    No request type data available
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </FadeInWhenVisible>
-
-          {/* Permit Status — Donut Chart (only shown when data exists) */}
-          {(loading || permitStatus.length > 0) && (
-            <FadeInWhenVisible delay={0.18}>
-              <Card className="border-border/50">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base font-semibold tracking-tight">
-                      Permit Status Breakdown
-                    </CardTitle>
-                    <LiveBadge />
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    2025 construction permits by status
-                  </p>
-                </CardHeader>
-                <CardContent className="pt-2">
-                  {loading ? (
-                    <div className="flex h-[240px] items-center justify-center">
-                      <Skeleton className="h-40 w-40 rounded-full" />
-                    </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height={240} minWidth={1}>
-                      <PieChart>
-                        <Pie
-                          data={permitStatus}
-                          dataKey="count"
-                          nameKey="status"
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={55}
-                          outerRadius={85}
-                          strokeWidth={2}
-                          stroke="hsl(var(--card))"
-                        >
-                          {permitStatus.map((_, index) => (
-                            <Cell
-                              key={`pie-${index}`}
-                              fill={DONUT_COLORS[index % DONUT_COLORS.length]}
-                            />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "hsl(var(--card))",
-                            border: "1px solid hsl(var(--border))",
-                            borderRadius: "8px",
-                            fontSize: "12px",
-                          }}
-                          formatter={(value: number) => [value.toLocaleString(), "Permits"]}
-                        />
-                        <Legend
-                          verticalAlign="bottom"
-                          iconType="circle"
-                          iconSize={8}
-                          formatter={(value: string) => (
-                            <span className="text-xs text-muted-foreground">{value}</span>
-                          )}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  )}
-                </CardContent>
-              </Card>
-            </FadeInWhenVisible>
-          )}
-        </div>
+        {/* Chart carousel */}
+        <FadeInWhenVisible delay={0.1} className="mt-8">
+          <ChartCarousel slides={chartSlides} loading={loading} />
+        </FadeInWhenVisible>
       </div>
     </section>
   );

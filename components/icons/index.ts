@@ -3,6 +3,7 @@
 
 // Direct name matches
 export { ActivityIcon as Activity } from "./activity";
+export { AlertTriangleIcon as AlertTriangle } from "./alert-triangle";
 export { ArrowLeftIcon as ArrowLeft } from "./arrow-left";
 export { ArrowRightIcon as ArrowRight } from "./arrow-right";
 export { BrainIcon } from "./brain";
@@ -23,6 +24,7 @@ export { FileTextIcon as FileText } from "./file-text";
 export { FlaskIcon as FlaskConical } from "./flask";
 export { GraduationCapIcon as GraduationCap } from "./graduation-cap";
 export { GripVerticalIcon as GripVertical } from "./grip-vertical";
+export { HardHatIcon as HardHat } from "./hard-hat";
 export { HomeIcon as Home } from "./home";
 export { LayersIcon as Layers } from "./layers";
 export { LoaderPinwheelIcon as Loader2 } from "./loader-pinwheel";
@@ -34,6 +36,7 @@ export { MinimizeIcon as Minus } from "./minimize";
 export { MoonIcon as Moon } from "./moon";
 export { PanelLeftOpenIcon as PanelLeft } from "./panel-left-open";
 export { PanelRightOpenIcon as PanelRight } from "./panel-right-open";
+export { PhoneIcon as Phone } from "./phone";
 export { PlayIcon as Play } from "./play";
 export { PlusIcon as Plus } from "./plus";
 export { RotateCCWIcon as RotateCcw } from "./rotate-ccw";
@@ -43,6 +46,7 @@ export { ShieldCheckIcon as Shield } from "./shield-check";
 export { SlidersHorizontalIcon as SlidersHorizontal } from "./sliders-horizontal";
 export { SparklesIcon as Sparkles } from "./sparkles";
 export { SunIcon as Sun } from "./sun";
+export { TreePineIcon as TreePine } from "./tree-pine";
 export { TrendingDownIcon as TrendingDown } from "./trending-down";
 export { TrendingUpIcon as TrendingUp } from "./trending-up";
 export { UserIcon as User } from "./user";

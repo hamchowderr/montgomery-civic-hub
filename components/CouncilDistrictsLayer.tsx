@@ -1,10 +1,10 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { Layers, X } from "@/components/icons";
 import type MapLibreGL from "maplibre-gl";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { LayerFilterPortal } from "@/components/DataPanel";
+import { Layers, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { MapPopup, useMap } from "@/components/ui/map";
 import { ARCGIS_URLS, queryFeaturesAsGeoJSON } from "@/lib/arcgis-client";
@@ -111,8 +111,8 @@ export function CouncilDistrictsLayer() {
             source: sourceId,
             paint: {
               "line-color": colorExpr as maplibregl.ExpressionSpecification,
-              "line-width": 2,
-              "line-opacity": 0.7,
+              "line-width": 3,
+              "line-opacity": 0.9,
             },
           },
           map.getStyle().layers.find((l) => l.type === "symbol")?.id,

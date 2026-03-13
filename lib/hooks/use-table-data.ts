@@ -422,39 +422,50 @@ export function useTableData(portal: string): UseTableDataReturn {
   const [isLoading, setIsLoading] = useState(true);
   const { yearRange } = useYearFilter();
 
-  const fetchData = useCallback(async () => {
-    if (!config) {
-      setData([]);
-      setIsLoading(false);
-      return;
-    }
+  const fetchData = useCallback(
+    async (signal?: AbortSignal) => {
+      if (!config) {
+        setData([]);
+        setIsLoading(false);
+        return;
+      }
 
-    setIsLoading(true);
-    try {
-      const results = await Promise.all(
-        config.sources.map((src) => {
-          let where = src.where ?? "1=1";
-          if (src.yearFilterField) {
-            const yw = yearWhere(yearRange, src.yearFilterField, src.yearQuoted ?? false);
-            where = where === "1=1" ? yw : `(${where}) AND ${yw}`;
-          }
-          return queryFeatureAttributes({
-            url: src.url,
-            where,
-            outFields: src.outFields,
-          });
-        }),
-      );
-      setData(results.flat());
-    } catch {
-      setData([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [config, yearRange]);
+      setIsLoading(true);
+      try {
+        const results = await Promise.all(
+          config.sources.map((src) => {
+            let where = src.where ?? "1=1";
+            if (src.yearFilterField) {
+              const yw = yearWhere(yearRange, src.yearFilterField, src.yearQuoted ?? false);
+              where = where === "1=1" ? yw : `(${where}) AND ${yw}`;
+            }
+            return queryFeatureAttributes({
+              url: src.url,
+              where,
+              outFields: src.outFields,
+              signal,
+            });
+          }),
+        );
+        if (!signal?.aborted) {
+          setData(results.flat());
+        }
+      } catch (err) {
+        if (signal?.aborted) return;
+        setData([]);
+      } finally {
+        if (!signal?.aborted) {
+          setIsLoading(false);
+        }
+      }
+    },
+    [config, yearRange],
+  );
 
   useEffect(() => {
-    fetchData();
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
   }, [fetchData]);
 
   return {

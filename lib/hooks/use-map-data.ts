@@ -486,58 +486,71 @@ export function useMapData(portal: string): UseMapDataReturn {
   const [isLoading, setIsLoading] = useState(true);
   const { yearRange } = useYearFilter();
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
+  const fetchData = useCallback(
+    async (signal?: AbortSignal) => {
+      const config = getPortalMapConfig(portal);
+      if (!config) {
+        setGeojson(EMPTY_FC);
+        setLayers([]);
+        setIsLoading(false);
+        return;
+      }
 
-    const config = getPortalMapConfig(portal);
-    if (!config) {
-      setGeojson(EMPTY_FC);
-      setLayers([]);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const results = await Promise.all(
-        config.fetchers.map(async (fetcher) => {
-          // Build where clause: combine existing where + year filter
-          let where = fetcher.where ?? "1=1";
-          if (fetcher.yearFilterField) {
-            const yw = yearWhere(yearRange, fetcher.yearFilterField, fetcher.yearQuoted ?? false);
-            where = where === "1=1" ? yw : `(${where}) AND ${yw}`;
-          }
-
-          const fc = await queryFeaturesAsGeoJSON({
-            url: fetcher.url,
-            outFields: fetcher.outFields,
-            where,
-          });
-          // Tag each feature with its layer ID so the map can style them
-          for (const feature of fc.features) {
-            if (feature.properties) {
-              feature.properties._layerId = fetcher.layer.id;
-            }
-          }
-          return { fc, layer: fetcher.layer };
-        }),
-      );
-
-      // Merge all FeatureCollections into one
-      const mergedFeatures = results.flatMap((r) => r.fc.features);
-      const allLayers = results.map((r) => r.layer);
-
-      setGeojson({ type: "FeatureCollection", features: mergedFeatures });
-      setLayers(allLayers);
-    } catch {
-      setGeojson(EMPTY_FC);
+      // Set layers immediately from config (populates filter UI)
       setLayers(config.fetchers.map((f) => f.layer));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [portal, yearRange]);
+      // Start with empty features
+      setGeojson(EMPTY_FC);
+      setIsLoading(true);
+
+      const promises = config.fetchers.map(async (fetcher) => {
+        let where = fetcher.where ?? "1=1";
+        if (fetcher.yearFilterField) {
+          const yw = yearWhere(yearRange, fetcher.yearFilterField, fetcher.yearQuoted ?? false);
+          where = where === "1=1" ? yw : `(${where}) AND ${yw}`;
+        }
+
+        const fc = await queryFeaturesAsGeoJSON({
+          url: fetcher.url,
+          outFields: fetcher.outFields,
+          where,
+          signal,
+        });
+
+        // Tag features with layer ID
+        for (const feature of fc.features) {
+          if (feature.properties) {
+            feature.properties._layerId = fetcher.layer.id;
+          }
+        }
+
+        // Append features incrementally
+        if (!signal?.aborted) {
+          setGeojson((prev) => ({
+            type: "FeatureCollection",
+            features: [...(prev?.features ?? []), ...fc.features],
+          }));
+        }
+      });
+
+      const results = await Promise.allSettled(promises);
+
+      if (!signal?.aborted) {
+        // Log any failures
+        for (const r of results) {
+          if (r.status === "rejected" && !(r.reason?.name === "AbortError")) {
+            console.error("[use-map-data] Layer fetch failed:", r.reason);
+          }
+        }
+        setIsLoading(false);
+      }
+    },
+    [portal, yearRange],
+  );
 
   useEffect(() => {
-    fetchData();
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort("cleanup");
   }, [fetchData]);
 
   return { geojson, layers, isLoading, refresh: fetchData };

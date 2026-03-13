@@ -1,0 +1,59 @@
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Theme Presets — split into individual files
+   ═══════════════════════════════════════════════════════ */
+
+@import "./themes/underground.css";
+@import "./themes/rose-garden.css";
+@import "./themes/lake-view.css";
+@import "./themes/sunset-glow.css";
+@import "./themes/forest-whisper.css";
+@import "./themes/ocean-breeze.css";
+@import "./themes/lavender-dream.css";
+@import "./themes/midnight.css";
+@import "./themes/cherry.css";
+@import "./themes/sage.css";
+@import "./themes/amber.css";
+@import "./themes/slate.css";
+@import "./themes/coral.css";
+@import "./themes/indigo.css";
+@import "./themes/copper.css";
+
+/* ═══════════════════════════════════════════════════════
+   Radius Overrides
+   ═══════════════════════════════════════════════════════ */
+
+[data-theme-radius="none"] {
+  --radius: 0rem;
+}
+
+[data-theme-radius="sm"] {
+  --radius: 0.3rem;
+}
+
+[data-theme-radius="md"] {
+  --radius: 0.5rem;
+}
+
+[data-theme-radius="lg"] {
+  --radius: 1rem;
+}
+
+[data-theme-radius="xl"] {
+  --radius: 1.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Scale Overrides
+   ═══════════════════════════════════════════════════════ */
+
+[data-theme-scale="sm"] {
+  font-size: 14px;
+}
+
+[data-theme-scale="lg"] {
+  font-size: 18px;
+}

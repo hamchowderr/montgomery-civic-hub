@@ -2,9 +2,9 @@
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { CalendarRange, Table2 } from "lucide-react";
-import { BarChart3, MapPin } from "@/components/icons";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
+import { BarChart3, MapPin } from "@/components/icons";
 import {
   Select,
   SelectContent,
@@ -48,11 +48,22 @@ export function DataPanel({
   defaultTab = "map",
 }: DataPanelProps) {
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
+  const [mountedTabs, setMountedTabs] = useState<Set<string>>(() => new Set([defaultTab]));
   const { yearRange, setFrom, setTo, yearOptions } = useYearFilter();
   const [slotNode, setSlotNode] = useState<HTMLDivElement | null>(null);
   const slotRef = useCallback((node: HTMLDivElement | null) => {
     setSlotNode(node);
   }, []);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setMountedTabs((prev) => {
+      if (prev.has(value)) return prev;
+      const next = new Set(prev);
+      next.add(value);
+      return next;
+    });
+  };
 
   // AI-readable: current data panel state
   useCopilotReadable({
@@ -78,7 +89,7 @@ export function DataPanel({
       },
     ],
     handler: ({ tab }) => {
-      setActiveTab(tab);
+      handleTabChange(tab);
       return `Switched to ${tab} view`;
     },
   });
@@ -112,7 +123,7 @@ export function DataPanel({
     <div className="@container flex h-full flex-col overflow-hidden bg-card">
       <Tabs
         value={activeTab}
-        onValueChange={setActiveTab}
+        onValueChange={handleTabChange}
         className="flex min-h-0 w-full flex-1 flex-col"
       >
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b px-3 py-2">
@@ -146,10 +157,13 @@ export function DataPanel({
 
           {/* Year filter + portal slot — wraps naturally when space is tight */}
           <div className="flex items-center gap-2 ml-auto">
-            <div className="flex items-center gap-1.5">
+            <div
+              className="flex items-center gap-1.5"
+              data-tour-step-id={`${portalId}-year-filter`}
+            >
               <CalendarRange className="size-3.5 shrink-0 text-muted-foreground" />
               <Select value={String(yearRange.from)} onValueChange={(v) => setFrom(Number(v))}>
-                <SelectTrigger className="h-7 w-[68px] text-xs">
+                <SelectTrigger className="h-7 w-[76px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -162,7 +176,7 @@ export function DataPanel({
               </Select>
               <span className="text-xs text-muted-foreground">to</span>
               <Select value={String(yearRange.to)} onValueChange={(v) => setTo(Number(v))}>
-                <SelectTrigger className="h-7 w-[68px] text-xs">
+                <SelectTrigger className="h-7 w-[76px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -175,14 +189,18 @@ export function DataPanel({
               </Select>
             </div>
             {/* Slot where map layer filter portals into */}
-            <div ref={slotRef} className="flex items-center gap-2" />
+            <div
+              ref={slotRef}
+              className="flex items-center gap-2"
+              data-tour-step-id={`${portalId}-layers`}
+            />
           </div>
         </div>
 
-        {/* forceMount all tabs to preserve state across switches (avoids MapLibre re-init, table scroll reset, etc.) */}
+        {/* Lazy-mount tabs on first visit; forceMount on map/table preserves MapLibre/scroll state once mounted */}
         <TabsContent value="map" forceMount className="flex-1 data-[state=inactive]:hidden">
           <LayerFilterSlotContext.Provider value={slotNode}>
-            {mapContent}
+            {mountedTabs.has("map") ? mapContent : null}
           </LayerFilterSlotContext.Provider>
         </TabsContent>
         <TabsContent
@@ -190,10 +208,10 @@ export function DataPanel({
           forceMount
           className="flex-1 overflow-auto data-[state=inactive]:hidden"
         >
-          {tableContent}
+          {mountedTabs.has("table") ? tableContent : null}
         </TabsContent>
         <TabsContent value="chart" className="min-h-0 flex-1 overflow-auto p-4">
-          {chartContent}
+          {mountedTabs.has("chart") ? chartContent : null}
         </TabsContent>
       </Tabs>
     </div>

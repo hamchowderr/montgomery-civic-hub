@@ -6,45 +6,68 @@ export const tours: Tour[] = [
     steps: [
       {
         id: "resident-welcome",
-        title: "Welcome to Your Civic Hub",
+        title: "Welcome to the Resident Portal",
         content:
-          "Your one-stop portal for Montgomery city services, safety data, and neighborhood info.",
+          "This is your personal dashboard for everything happening in Montgomery — from safety alerts and service requests to flood zones and sanitation schedules. All data is pulled live from the city's ArcGIS system.",
+        side: "bottom",
+      },
+      {
+        id: "resident-portal-nav",
+        title: "Switch Between Portals",
+        content:
+          "Montgomery Civic Hub has four portals tailored to different audiences: Resident, Business, City Staff, and Researcher. Click any tab to jump to a different portal without losing your place.",
         side: "bottom",
       },
       {
         id: "resident-map-view",
-        title: "Map View",
+        title: "Interactive Map View",
         content:
-          "See service requests and safety data plotted on an interactive map of Montgomery.",
+          "Explore Montgomery neighborhoods on a live map. Service requests, safety incidents, and city infrastructure are plotted as interactive markers. Click any marker for details.",
         side: "bottom",
         clickTarget: true,
       },
       {
+        id: "resident-layers",
+        title: "Layers & Council Districts",
+        content:
+          "Use the Layers button to toggle different data layers on and off — 311 requests, code violations, fire incidents, and more. The Districts button overlays Montgomery's 9 council district boundaries so you can see which district any location falls in.",
+        side: "bottom",
+      },
+      {
         id: "resident-table-view",
-        title: "Table View",
-        content: "Browse data in a sortable table for quick lookups.",
+        title: "Searchable Data Table",
+        content:
+          "View the same data as a sortable, searchable table. Sort by any column, filter by keywords, and quickly find specific records. Great for looking up individual service requests or checking the status of a report.",
         side: "bottom",
         clickTarget: true,
       },
       {
         id: "resident-chart-view",
-        title: "Chart View",
-        content: "Visualize trends and patterns with interactive charts.",
+        title: "Charts & Trends",
+        content:
+          "See trends over time with interactive charts. Track how service requests, safety incidents, or other metrics change month-to-month or year-to-year. Hover over any data point for exact numbers.",
         side: "bottom",
         clickTarget: true,
       },
       {
-        id: "resident-chat-input",
-        title: "Ask Claude Anything",
+        id: "resident-year-filter",
+        title: "Filter by Year Range",
         content:
-          "Type any civic question about flood zones, sanitation schedules, or emergency alerts.",
+          "Use these dropdowns to narrow all data — maps, tables, and charts — to a specific time period. The filter applies across all views so you can compare different years easily.",
+        side: "bottom",
+      },
+      {
+        id: "resident-chat-input",
+        title: "Your AI Civic Assistant",
+        content:
+          "Ask Claude any question about Montgomery in plain English. It searches live city data and local news to give you answers with sources. Try questions about flood zones, garbage schedules, street closures, or neighborhood safety.",
         side: "top",
       },
       {
         id: "resident-chat-example",
-        title: "Try It Now",
+        title: "Try These Examples",
         content:
-          'Example ask: "What is the flood zone for 100 Dexter Ave?" or "When is my garbage pickup?"',
+          '"What is the flood zone for 100 Dexter Ave?" • "When is my garbage pickup in Capitol Heights?" • "Are there any road closures this week?" • "Show me recent 311 requests near my area"',
         side: "top",
         nextLabel: "Finish Tour",
       },
@@ -55,47 +78,68 @@ export const tours: Tour[] = [
     steps: [
       {
         id: "business-welcome",
-        title: "Business Intelligence Portal",
+        title: "Welcome to the Business Portal",
         content:
-          "Live permit data, business licenses, and economic intelligence for Montgomery entrepreneurs.",
+          "Your command center for Montgomery business intelligence — live permit data, business license records, zoning info, and economic development trends. Everything is sourced from the city's official ArcGIS datasets.",
+        side: "bottom",
+      },
+      {
+        id: "business-portal-nav",
+        title: "Switch Between Portals",
+        content:
+          "Navigate between all four portals: Resident, Business, City Staff, and Researcher. Each portal focuses on different city data tailored to its audience. Click any tab to switch.",
         side: "bottom",
       },
       {
         id: "business-map-view",
-        title: "Map View",
+        title: "Permits & Licenses Map",
         content:
-          "View permits and business licenses plotted across Montgomery neighborhoods.",
+          "See active permits and business licenses plotted across Montgomery. Color-coded markers show permit types — click any marker to see the full permit details, applicant info, and status.",
         side: "bottom",
         clickTarget: true,
       },
       {
-        id: "business-table-view",
-        title: "Table View",
+        id: "business-layers",
+        title: "Layers & Council Districts",
         content:
-          "Browse permit and license records in a sortable, searchable table.",
+          "Toggle data layers to show or hide specific permit types — building permits, demolition permits, business licenses, and more. The Districts button overlays council district boundaries to see which district a business or permit falls under.",
+        side: "bottom",
+      },
+      {
+        id: "business-table-view",
+        title: "Permit & License Records",
+        content:
+          "Browse all permit and license data in a sortable table. Search by address, business name, or permit type. Sort by date to see the newest filings, or filter to find specific records quickly.",
         side: "bottom",
         clickTarget: true,
       },
       {
         id: "business-chart-view",
-        title: "Chart View",
+        title: "Economic Trends & Patterns",
         content:
-          "Track permit trends and economic patterns with interactive charts.",
+          "Track permit activity, new business filings, and economic development trends over time. Interactive charts let you spot seasonal patterns, compare neighborhoods, and identify growth areas in Montgomery.",
         side: "bottom",
         clickTarget: true,
       },
       {
-        id: "business-chat-input",
-        title: "Ask About Your Business",
+        id: "business-year-filter",
+        title: "Filter by Year Range",
         content:
-          "Ask about license requirements, permit status, local job market data, or competitive intel.",
+          "Narrow all data to a specific time window. This filter applies across the map, table, and chart views simultaneously — useful for comparing permit activity across different years.",
+        side: "bottom",
+      },
+      {
+        id: "business-chat-input",
+        title: "Your Business Intelligence Assistant",
+        content:
+          "Ask Claude anything about Montgomery's business landscape. It queries live permit data, license records, and local news to answer your questions with real sources and data.",
         side: "top",
       },
       {
         id: "business-chat-example",
-        title: "Try It Now",
+        title: "Try These Examples",
         content:
-          'Example ask: "What permits are active near downtown Montgomery?"',
+          '"What permits are active near downtown?" • "How many new business licenses were issued this year?" • "What\'s the zoning for 500 Commerce St?" • "Show me restaurant permits in Cloverdale"',
         side: "top",
         nextLabel: "Finish Tour",
       },
@@ -106,40 +150,61 @@ export const tours: Tour[] = [
     steps: [
       {
         id: "citystaff-welcome",
-        title: "Smart Cities Operations Center",
+        title: "Welcome to the City Staff Portal",
         content:
-          "Infrastructure tracking, budget dashboards, and project oversight for city employees and planners.",
+          "Your operational dashboard for infrastructure tracking, budget oversight, and project management. Designed for city employees and urban planners working with Montgomery's public systems.",
+        side: "bottom",
+      },
+      {
+        id: "citystaff-portal-nav",
+        title: "Switch Between Portals",
+        content:
+          "Jump between all four portals — Resident, Business, City Staff, and Researcher. Each shows different datasets relevant to its audience. Your current position is highlighted.",
         side: "bottom",
       },
       {
         id: "citystaff-map-view",
-        title: "Map View",
+        title: "Infrastructure & Work Orders Map",
         content:
-          "See infrastructure projects and work orders plotted on the city map.",
+          "View active infrastructure projects, work orders, and city assets on an interactive map. Markers are color-coded by project type and status. Click any marker for details including budgets, timelines, and assigned departments.",
         side: "bottom",
         clickTarget: true,
       },
       {
-        id: "citystaff-table-view",
-        title: "Table View",
+        id: "citystaff-layers",
+        title: "Layers & Council Districts",
         content:
-          "Browse project records and budget line items in a sortable table.",
+          "Control which data layers appear on the map — construction permits, code violations, infrastructure projects, and more. The Districts overlay shows all 9 council district boundaries, useful for tracking which districts have the most active projects.",
+        side: "bottom",
+      },
+      {
+        id: "citystaff-table-view",
+        title: "Project Records & Budget Data",
+        content:
+          "Browse infrastructure projects, work orders, and budget line items in a sortable table. Filter by department, status, or budget range. Sort by date to track recent activity or prioritize upcoming deadlines.",
         side: "bottom",
         clickTarget: true,
       },
       {
         id: "citystaff-chart-view",
-        title: "Chart View",
+        title: "Budget & Timeline Analytics",
         content:
-          "Monitor budget allocation and project timelines with interactive charts.",
+          "Monitor budget allocation, spending trends, and project timelines with interactive charts. Compare department spending, track completion rates, and identify bottlenecks in city operations.",
         side: "bottom",
         clickTarget: true,
       },
       {
-        id: "citystaff-chat-input",
-        title: "Operational Intelligence",
+        id: "citystaff-year-filter",
+        title: "Filter by Year Range",
         content:
-          "Ask about council agendas, budget line items, project status, or GIS layer details.",
+          "Set the date range for all data views. Useful for budget comparisons across fiscal years or tracking infrastructure project history over time.",
+        side: "bottom",
+      },
+      {
+        id: "citystaff-chat-input",
+        title: "Operational Intelligence Assistant",
+        content:
+          "Ask Claude about city operations — council agendas, budget details, project status, GIS layers, or departmental data. It pulls live data from ArcGIS and correlates with local news coverage.",
         side: "top",
         nextLabel: "Finish Tour",
       },
@@ -150,40 +215,68 @@ export const tours: Tour[] = [
     steps: [
       {
         id: "researcher-welcome",
-        title: "Public Safety Analytics",
+        title: "Welcome to the Researcher Portal",
         content:
-          "Longitudinal crime data, 911 call patterns, and local news correlation for journalists and researchers.",
+          "Your analytics workspace for public safety data, crime trends, and demographic patterns. Built for journalists, academics, and researchers who need longitudinal data with proper sourcing.",
+        side: "bottom",
+      },
+      {
+        id: "researcher-portal-nav",
+        title: "Switch Between Portals",
+        content:
+          "Access all four portals from here — each focuses on different city datasets. The Researcher portal emphasizes raw data access, trend analysis, and source attribution for publishable research.",
         side: "bottom",
       },
       {
         id: "researcher-map-view",
-        title: "Map View",
+        title: "Crime & Safety Heat Map",
         content:
-          "Explore crime hotspots and 911 call density on an interactive heat map.",
+          "Explore crime incident locations and 911 call density on an interactive heat map. Toggle between incident types, adjust the time range, and click individual markers for case-level details including offense codes and dates.",
         side: "bottom",
         clickTarget: true,
       },
       {
-        id: "researcher-table-view",
-        title: "Table View",
+        id: "researcher-layers",
+        title: "Layers & Council Districts",
         content:
-          "Browse and filter raw datasets in a sortable table with CSV export.",
+          "Toggle data layers to isolate specific crime types, 911 call categories, or safety metrics. The Districts overlay adds council district boundaries — essential for geographic analysis and comparing public safety across different parts of the city.",
+        side: "bottom",
+      },
+      {
+        id: "researcher-table-view",
+        title: "Raw Dataset Browser",
+        content:
+          "Access the underlying datasets in a full-featured table. Sort by any column, apply text filters, and export results. Every record includes its source dataset name and date range for citation purposes.",
         side: "bottom",
         clickTarget: true,
       },
       {
         id: "researcher-chart-view",
-        title: "Chart View",
+        title: "Longitudinal Trend Analysis",
         content:
-          "Visualize longitudinal crime trends and demographic patterns.",
+          "Visualize crime trends, demographic shifts, and public safety patterns over multiple years. Interactive charts let you compare time periods, identify seasonal patterns, and track year-over-year changes.",
         side: "bottom",
         clickTarget: true,
       },
       {
-        id: "researcher-chat-input",
-        title: "Research Assistant",
+        id: "researcher-year-filter",
+        title: "Filter by Year Range",
         content:
-          "Ask analytical questions. Claude correlates ArcGIS crime data with live local news and always cites dataset name and date range.",
+          "Control the time window for all analysis views. Essential for longitudinal research — compare multi-year trends or drill into a specific period for detailed analysis.",
+        side: "bottom",
+      },
+      {
+        id: "researcher-chat-input",
+        title: "AI Research Assistant",
+        content:
+          "Ask analytical questions in plain language. Claude queries ArcGIS crime and safety datasets, cross-references with live local news, and always cites the specific dataset name and date range in its responses.",
+        side: "top",
+      },
+      {
+        id: "researcher-chat-example",
+        title: "Try These Examples",
+        content:
+          '"What are the crime trends in downtown Montgomery over the past 3 years?" • "Compare 911 call volumes between 2023 and 2024" • "Show me theft incidents near Alabama State University" • "What does local news say about public safety initiatives?"',
         side: "top",
         nextLabel: "Finish Tour",
       },

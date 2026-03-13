@@ -100,12 +100,17 @@ const config: Config = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
         },
+        "card-pulse": {
+          "0%, 100%": { borderColor: "hsl(var(--accent) / 0.2)" },
+          "50%": { borderColor: "hsl(var(--accent) / 0.45)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.4s ease-out forwards",
         "slide-in-right": "slide-in-right 0.3s ease-out forwards",
         chatFadeIn: "chatFadeIn 0.3s ease-out both",
         blink: "blink 1s step-end infinite",
+        "card-pulse": "card-pulse 3s ease-in-out infinite",
       },
     },
   },

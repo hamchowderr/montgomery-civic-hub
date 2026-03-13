@@ -2,15 +2,23 @@
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { Briefcase, Building2 } from "lucide-react";
-import { FlaskConical, GripVertical, MessageCircle, PanelLeft, PanelRight, Shield, X } from "@/components/icons";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
+import {
+  FlaskConical,
+  GripVertical,
+  MessageCircle,
+  PanelLeft,
+  PanelRight,
+  Shield,
+  X,
+} from "@/components/icons";
 import { PortalChat } from "@/components/PortalChat";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const portalIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const portalIcons: Record<string, ComponentType<{ size?: number; className?: string }>> = {
   resident: Shield,
   business: Briefcase,
   citystaff: Building2,
@@ -42,7 +50,7 @@ function useMediaQuery(query: string) {
 
 function Handle() {
   return (
-    <Separator className="relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2">
+    <Separator className="relative flex w-[3px] items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-2 after:-translate-x-1/2 hover:bg-primary/30 transition-colors">
       <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
         <GripVertical size={10} />
       </div>
@@ -117,10 +125,10 @@ export function PortalLayout({
   const chatContent = (
     <div
       className="flex h-full max-h-full flex-col overflow-hidden bg-card"
-      data-tour-step-id={`${portal}-chat`}
+      data-tour-step-id={`${portal}-chat ${portal}-chat-input ${portal}-chat-example`}
     >
       {/* Chat header with portal-specific icon */}
-      <div className="flex shrink-0 items-center justify-between border-b px-4 py-3">
+      <div className="flex shrink-0 items-center justify-between border-b px-3 py-2 min-h-[56px]">
         <div className="flex items-center gap-2">
           <div className="flex size-6 items-center justify-center rounded bg-accent/10">
             <Icon size={14} className="text-accent" />
@@ -148,11 +156,7 @@ export function PortalLayout({
                     className="size-7"
                     onClick={() => setChatSide((s) => (s === "right" ? "left" : "right"))}
                   >
-                    {chatSide === "right" ? (
-                      <PanelLeft size={14} />
-                    ) : (
-                      <PanelRight size={14} />
-                    )}
+                    {chatSide === "right" ? <PanelLeft size={14} /> : <PanelRight size={14} />}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
