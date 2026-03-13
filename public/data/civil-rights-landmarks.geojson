@@ -1,0 +1,105 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3077, 32.3769] },
+      "properties": {
+        "name": "Rosa Parks Museum",
+        "year": 1955,
+        "event": "Montgomery Bus Boycott",
+        "description": "Located at 252 Montgomery Street, the museum marks the site where Rosa Parks was arrested for refusing to give up her bus seat, sparking the 381-day Montgomery Bus Boycott."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3028, 32.3773] },
+      "properties": {
+        "name": "Dexter Avenue King Memorial Baptist Church",
+        "year": 1955,
+        "event": "Bus Boycott Leadership",
+        "description": "At 454 Dexter Avenue, this National Historic Landmark is where Dr. Martin Luther King Jr. served as pastor (1954-1960) and helped organize the Montgomery Bus Boycott."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3101, 32.3770] },
+      "properties": {
+        "name": "The Legacy Museum",
+        "year": 2018,
+        "event": "From Enslavement to Mass Incarceration",
+        "description": "At 400 N. Court Street, this EJI museum tells the story of racial injustice from slavery through mass incarceration using interactive media and first-person narratives."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3028, 32.3719] },
+      "properties": {
+        "name": "National Memorial for Peace and Justice",
+        "year": 2018,
+        "event": "Lynching Memorial",
+        "description": "At 417 Caroline Street, the nation's first memorial dedicated to victims of lynching, featuring over 800 steel monuments representing counties where racial terror lynchings occurred."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.2988, 32.3791] },
+      "properties": {
+        "name": "First Baptist Church (Brick-a-Day)",
+        "year": 1961,
+        "event": "Freedom Riders Refuge",
+        "description": "At 347 N. Ripley Street, this historic church sheltered Freedom Riders in May 1961 when a mob surrounded the building. Dr. King addressed the gathering by phone from the besieged church."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3092, 32.3747] },
+      "properties": {
+        "name": "Freedom Rides Museum",
+        "year": 1961,
+        "event": "Freedom Rides",
+        "description": "At 210 S. Court Street, the restored 1951 Greyhound Bus Station is where Freedom Riders were attacked by a segregationist mob upon arrival in Montgomery on May 20, 1961."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.2997, 32.3793] },
+      "properties": {
+        "name": "Alabama State Capitol",
+        "year": 1965,
+        "event": "Selma to Montgomery March Endpoint",
+        "description": "On Dexter Avenue, the Capitol was the destination of the 54-mile Selma to Montgomery marches in March 1965, where Dr. King delivered his 'How Long, Not Long' speech to 25,000 marchers."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-87.0350, 32.4074] },
+      "properties": {
+        "name": "Brown Chapel AME Church",
+        "year": 1965,
+        "event": "Selma to Montgomery March Starting Point",
+        "description": "In Selma, Alabama, Brown Chapel AME Church served as the starting point and organizational headquarters for the three Selma to Montgomery voting rights marches in 1965."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3010, 32.3790] },
+      "properties": {
+        "name": "Selma to Montgomery National Historic Trail Marker (Mile 54)",
+        "year": 1965,
+        "event": "Selma to Montgomery March",
+        "description": "Near the Alabama State Capitol, this marker commemorates the final mile of the 54-mile Selma to Montgomery march along US Route 80, designated a National Historic Trail in 1996."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3018, 32.3780] },
+      "properties": {
+        "name": "MLK National Historic Trail Marker",
+        "year": 1996,
+        "event": "Civil Rights Heritage Preservation",
+        "description": "Along Dexter Avenue in downtown Montgomery, this marker is part of the Martin Luther King Jr. National Historic Trail connecting key sites of the civil rights movement."
+      }
+    }
+  ]
+}

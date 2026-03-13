@@ -1,0 +1,52 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-86.3077, 32.3769],
+          [-86.3065, 32.3771],
+          [-86.3050, 32.3773],
+          [-86.3040, 32.3774],
+          [-86.3028, 32.3773],
+          [-86.3010, 32.3780],
+          [-86.2997, 32.3793]
+        ]
+      },
+      "properties": {
+        "name": "Rosa Parks Boycott Route (1955)",
+        "year": 1955,
+        "event": "Montgomery Bus Boycott",
+        "description": "The route along Dexter Avenue from the Rosa Parks arrest site past Dexter Avenue Baptist Church to the Alabama State Capitol, central to the 381-day Montgomery Bus Boycott."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-86.3280, 32.3625],
+          [-86.3240, 32.3640],
+          [-86.3200, 32.3660],
+          [-86.3160, 32.3690],
+          [-86.3120, 32.3720],
+          [-86.3100, 32.3740],
+          [-86.3080, 32.3755],
+          [-86.3060, 32.3765],
+          [-86.3040, 32.3774],
+          [-86.3020, 32.3782],
+          [-86.3010, 32.3790],
+          [-86.2997, 32.3793]
+        ]
+      },
+      "properties": {
+        "name": "Selma-to-Montgomery March Final Approach (1965)",
+        "year": 1965,
+        "event": "Selma to Montgomery Voting Rights March",
+        "description": "The final approach of the 54-mile Selma to Montgomery march along US Route 80, ending at the Alabama State Capitol on March 25, 1965, where Dr. King addressed 25,000 marchers."
+      }
+    }
+  ]
+}

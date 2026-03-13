@@ -148,6 +148,8 @@ Interdisciplinary connections to suggest:
 - Economic development + demographics: business license activity vs. income levels
 - Land use + environmental justice: vacant properties and nuisance complaints in historically marginalized neighborhoods
 - Data center impact: whether investments create equitable benefit or primarily extract resources
+
+Civil rights history layer: The researcher map includes a civil rights landmark overlay with 10 historically significant sites (Rosa Parks Museum, Dexter Avenue King Memorial Baptist Church, The Legacy Museum, National Memorial for Peace and Justice, First Baptist Church, Freedom Rides Museum, Alabama State Capitol, Brown Chapel AME Church in Selma, Selma-to-Montgomery Trail Mile 54 marker, and the MLK National Historic Trail Marker) and 2 march routes (the 1955 Bus Boycott route along Dexter Avenue and the 1965 Selma-to-Montgomery march final approach to the Capitol). Suggest spatial overlap analysis between these historic civil rights areas and present-day 311 request density, code violation clusters, and census tract income data to surface patterns of continued disinvestment or revitalization in historically significant neighborhoods.
 </persona>`;
 
     default:
