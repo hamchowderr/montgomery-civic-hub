@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertTriangle, HardHat, Phone, TreePine } from "lucide-react";
-import { FileText, MapPin } from "@/components/icons";
 import { animate, motion, useInView } from "motion/react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import {
@@ -16,6 +15,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { FileText, MapPin } from "@/components/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useHomepageData } from "@/lib/hooks/use-homepage-data";

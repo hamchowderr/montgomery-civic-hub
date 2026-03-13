@@ -1,7 +1,7 @@
 "use client";
 
-import { type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import type { ReactNode } from "react";
 import { MessageCircle, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 
