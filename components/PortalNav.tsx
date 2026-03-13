@@ -8,6 +8,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { ThemeCustomizerPanel } from "@/components/theme-customizer";
 import { cn } from "@/lib/utils";
 
 const portals = [
@@ -93,6 +94,7 @@ export function PortalNav() {
 
       {/* Right side: theme toggle + auth */}
       <div className="ml-auto flex items-center gap-1">
+        <ThemeCustomizerPanel />
         <Button
           variant="ghost"
           size="icon"
