@@ -1,4 +1,5 @@
 @import "@copilotkit/react-ui/styles.css";
+@import "./themes.css";
 
 @tailwind base;
 @tailwind components;
@@ -29,10 +30,22 @@
     --accent-foreground: 40 33% 98%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 40 33% 98%;
-    --border: 35 18% 88%;
-    --input: 35 18% 88%;
+    --border: 35 20% 78%;
+    --input: 35 20% 78%;
     --ring: 16 65% 48%;
     --radius: 0.5rem;
+
+    /* Chart palette */
+    --chart-1: 221 83% 53%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 25 95% 53%;
+    --chart-4: 262 83% 58%;
+    --chart-5: 346 77% 50%;
+    --chart-6: 45 93% 47%;
+    --chart-7: 173 80% 40%;
+    --chart-8: 199 89% 48%;
+    --chart-9: 292 91% 73%;
+    --chart-10: 0 72% 51%;
 
     /* Portal accent colors */
     --portal-resident: 205 85% 45%;
@@ -84,8 +97,8 @@
     --accent-foreground: 40 33% 98%;
     --destructive: 0 62% 40%;
     --destructive-foreground: 40 33% 98%;
-    --border: 222 18% 18%;
-    --input: 222 18% 18%;
+    --border: 222 18% 24%;
+    --input: 222 18% 24%;
     --ring: 16 65% 52%;
 
     --portal-resident: 205 80% 55%;
@@ -97,6 +110,18 @@
     --civic-accent-light: 16 40% 15%;
     --civic-navy: 220 35% 85%;
     --civic-navy-light: 220 25% 15%;
+
+    /* Chart palette */
+    --chart-1: 221 80% 60%;
+    --chart-2: 142 65% 55%;
+    --chart-3: 25 90% 58%;
+    --chart-4: 262 78% 65%;
+    --chart-5: 346 72% 58%;
+    --chart-6: 45 88% 55%;
+    --chart-7: 173 75% 48%;
+    --chart-8: 199 84% 55%;
+    --chart-9: 292 85% 75%;
+    --chart-10: 0 68% 55%;
   }
 }
 

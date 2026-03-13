@@ -77,7 +77,7 @@ export function renderPieLabel({
     <text
       x={x}
       y={y}
-      fill="white"
+      fill="hsl(var(--background))"
       textAnchor="middle"
       dominantBaseline="central"
       className="text-[11px] font-medium"

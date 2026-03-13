@@ -32,49 +32,49 @@ import {
 import { useChartData } from "@/lib/hooks/use-chart-data";
 
 const PIE_COLORS = [
-  "hsl(173 80% 40%)",
-  "hsl(221 83% 53%)",
-  "hsl(25 95% 53%)",
-  "hsl(262 83% 58%)",
-  "hsl(346 77% 50%)",
-  "hsl(45 93% 47%)",
-  "hsl(142 71% 45%)",
-  "hsl(199 89% 48%)",
-  "hsl(292 91% 73%)",
-  "hsl(0 72% 51%)",
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--chart-6))",
+  "hsl(var(--chart-7))",
+  "hsl(var(--chart-8))",
+  "hsl(var(--chart-9))",
+  "hsl(var(--chart-10))",
 ];
 
 const chartConfig = {
-  count: { label: "Requests", color: "hsl(173 80% 40%)" },
+  count: { label: "Requests", color: "hsl(var(--chart-7))" },
 } satisfies ChartConfig;
 
 const violationsConfig = {
-  count: { label: "Violations", color: "hsl(0 72% 51%)" },
+  count: { label: "Violations", color: "hsl(var(--chart-10))" },
 } satisfies ChartConfig;
 
 const permitsConfig = {
-  count: { label: "Permits", color: "hsl(45 93% 47%)" },
+  count: { label: "Permits", color: "hsl(var(--chart-6))" },
 } satisfies ChartConfig;
 
 const districtConfig = {
-  requests: { label: "311 Requests", color: "hsl(221 83% 53%)" },
-  violations: { label: "Code Violations", color: "hsl(0 72% 51%)" },
+  requests: { label: "311 Requests", color: "hsl(var(--chart-1))" },
+  violations: { label: "Code Violations", color: "hsl(var(--chart-10))" },
 } satisfies ChartConfig;
 
 const censusConfig = {
-  value: { label: "Population", color: "hsl(173 80% 40%)" },
+  value: { label: "Population", color: "hsl(var(--chart-7))" },
 } satisfies ChartConfig;
 
 const licensesConfig = {
-  count: { label: "Licenses", color: "hsl(199 89% 48%)" },
+  count: { label: "Licenses", color: "hsl(var(--chart-8))" },
 } satisfies ChartConfig;
 
 const nuisanceConfig = {
-  count: { label: "Complaints", color: "hsl(292 91% 73%)" },
+  count: { label: "Complaints", color: "hsl(var(--chart-9))" },
 } satisfies ChartConfig;
 
 const householdConfig = {
-  value: { label: "Households", color: "hsl(45 93% 47%)" },
+  value: { label: "Households", color: "hsl(var(--chart-6))" },
 } satisfies ChartConfig;
 
 export function ResearcherChart() {

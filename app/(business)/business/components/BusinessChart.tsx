@@ -32,35 +32,37 @@ import {
 import { useChartData } from "@/lib/hooks/use-chart-data";
 
 const PIE_COLORS = [
-  "hsl(142 71% 45%)",
-  "hsl(25 95% 53%)",
-  "hsl(221 83% 53%)",
-  "hsl(262 83% 58%)",
-  "hsl(346 77% 50%)",
-  "hsl(45 93% 47%)",
-  "hsl(173 80% 40%)",
-  "hsl(199 89% 48%)",
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--chart-6))",
+  "hsl(var(--chart-7))",
+  "hsl(var(--chart-8))",
+  "hsl(var(--chart-9))",
+  "hsl(var(--chart-10))",
 ];
 
 const permitChartConfig = {
-  permits: { label: "Permits Issued", color: "hsl(142 71% 45%)" },
-  cost: { label: "Est. Cost ($M)", color: "hsl(47 96% 53%)" },
+  permits: { label: "Permits Issued", color: "hsl(var(--chart-2))" },
+  cost: { label: "Est. Cost ($M)", color: "hsl(var(--chart-6))" },
 } satisfies ChartConfig;
 
 const propertyChartConfig = {
-  count: { label: "Properties", color: "hsl(25 95% 53%)" },
+  count: { label: "Properties", color: "hsl(var(--chart-3))" },
 } satisfies ChartConfig;
 
 const licensesByCategoryConfig = {
-  count: { label: "Licenses", color: "hsl(271 91% 65%)" },
+  count: { label: "Licenses", color: "hsl(var(--chart-4))" },
 } satisfies ChartConfig;
 
 const permitStatusConfig = {
-  count: { label: "Permits", color: "hsl(346 77% 50%)" },
+  count: { label: "Permits", color: "hsl(var(--chart-5))" },
 } satisfies ChartConfig;
 
 const licensesByYearConfig = {
-  count: { label: "Licenses", color: "hsl(199 89% 48%)" },
+  count: { label: "Licenses", color: "hsl(var(--chart-8))" },
 } satisfies ChartConfig;
 
 export function BusinessChart() {
