@@ -6,6 +6,7 @@ import { DataPanel } from "@/components/DataPanel";
 import { PortalLayout } from "@/components/PortalLayout";
 import { PortalNav } from "@/components/PortalNav";
 import { YearFilterProvider } from "@/lib/contexts/year-filter";
+import { IncidentNewsfeed } from "./components/IncidentNewsfeed";
 import { ResidentChart } from "./components/ResidentChart";
 import { ResidentMap } from "./components/ResidentMap";
 import { ResidentTable } from "./components/ResidentTable";
@@ -29,6 +30,7 @@ function ResidentContent() {
           mapContent={<ResidentMap />}
           tableContent={<ResidentTable />}
           chartContent={<ResidentChart />}
+          newsfeedContent={<IncidentNewsfeed />}
         />
       </PortalLayout>
     </main>
