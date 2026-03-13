@@ -1,12 +1,12 @@
 "use client";
 
 import { UserProfile } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, GraduationCap, Home } from "@/components/icons";
+import { useMutation, useQuery } from "convex/react";
 import { Briefcase, Building2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, GraduationCap, Home } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { api } from "@/convex/_generated/api";
 
 const portalOptions = [
   { role: "resident" as const, label: "Resident", icon: Home },
@@ -20,9 +20,7 @@ export default function ProfileContent() {
   const user = useQuery(api.users.getCurrentUser);
   const setRole = useMutation(api.users.setUserRole);
 
-  async function handleRoleSwitch(
-    role: "resident" | "business" | "citystaff" | "researcher",
-  ) {
+  async function handleRoleSwitch(role: "resident" | "business" | "citystaff" | "researcher") {
     await setRole({ role });
     router.push(`/${role}`);
   }
@@ -30,12 +28,7 @@ export default function ProfileContent() {
   return (
     <div className="min-h-screen bg-background px-4 py-8">
       <div className="mx-auto max-w-3xl">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.back()}
-          className="mb-4"
-        >
+        <Button variant="ghost" size="sm" onClick={() => router.back()} className="mb-4">
           <ArrowLeft size={16} className="mr-1" />
           Back
         </Button>
@@ -45,8 +38,7 @@ export default function ProfileContent() {
           <h2 className="mb-3 text-lg font-semibold">Your Portal</h2>
           <p className="mb-4 text-sm text-muted-foreground">
             Your current default portal is{" "}
-            <strong className="capitalize">{user?.role ?? "not set"}</strong>.
-            Switch anytime:
+            <strong className="capitalize">{user?.role ?? "not set"}</strong>. Switch anytime:
           </p>
           <div className="flex flex-wrap gap-2">
             {portalOptions.map((opt) => (
@@ -56,7 +48,7 @@ export default function ProfileContent() {
                 size="sm"
                 onClick={() => handleRoleSwitch(opt.role)}
               >
-                <opt.icon className="mr-1 size-3.5" />
+                <opt.icon size={14} className="mr-1" />
                 {opt.label}
               </Button>
             ))}

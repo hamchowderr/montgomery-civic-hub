@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
 import { CopilotKit } from "@copilotkit/react-core";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { YearFilterProvider } from "@/lib/contexts/year-filter";
 
 // Mock maplibre-gl to avoid canvas issues in jsdom
@@ -57,13 +57,10 @@ describe("CopilotProvider", () => {
 
 describe("ResidentChat", () => {
   it("renders card title", async () => {
-    const { ResidentChat } =
-      await import("@/app/(resident)/resident/components/ResidentChat");
+    const { ResidentChat } = await import("@/app/(resident)/resident/components/ResidentChat");
 
     render(<ResidentChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="resident">{children}</CopilotWrapper>
-      ),
+      wrapper: ({ children }) => <CopilotWrapper agent="resident">{children}</CopilotWrapper>,
     });
 
     expect(screen.getByText("Resident Assistant")).toBeInTheDocument();
@@ -72,13 +69,10 @@ describe("ResidentChat", () => {
 
 describe("BusinessChat", () => {
   it("renders card title", async () => {
-    const { BusinessChat } =
-      await import("@/app/(business)/business/components/BusinessChat");
+    const { BusinessChat } = await import("@/app/(business)/business/components/BusinessChat");
 
     render(<BusinessChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="business">{children}</CopilotWrapper>
-      ),
+      wrapper: ({ children }) => <CopilotWrapper agent="business">{children}</CopilotWrapper>,
     });
 
     expect(screen.getByText("Business Assistant")).toBeInTheDocument();
@@ -87,13 +81,10 @@ describe("BusinessChat", () => {
 
 describe("CityStaffChat", () => {
   it("renders card title", async () => {
-    const { CityStaffChat } =
-      await import("@/app/(citystaff)/citystaff/components/CityStaffChat");
+    const { CityStaffChat } = await import("@/app/(citystaff)/citystaff/components/CityStaffChat");
 
     render(<CityStaffChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="citystaff">{children}</CopilotWrapper>
-      ),
+      wrapper: ({ children }) => <CopilotWrapper agent="citystaff">{children}</CopilotWrapper>,
     });
 
     expect(screen.getByText("City Staff Assistant")).toBeInTheDocument();
@@ -102,13 +93,12 @@ describe("CityStaffChat", () => {
 
 describe("ResearcherChat", () => {
   it("renders card title", async () => {
-    const { ResearcherChat } =
-      await import("@/app/(researcher)/researcher/components/ResearcherChat");
+    const { ResearcherChat } = await import(
+      "@/app/(researcher)/researcher/components/ResearcherChat"
+    );
 
     render(<ResearcherChat />, {
-      wrapper: ({ children }) => (
-        <CopilotWrapper agent="researcher">{children}</CopilotWrapper>
-      ),
+      wrapper: ({ children }) => <CopilotWrapper agent="researcher">{children}</CopilotWrapper>,
     });
 
     expect(screen.getByText("Research Assistant")).toBeInTheDocument();
@@ -126,9 +116,7 @@ describe("ChatWidget", () => {
         <div>Chat content</div>
       </ChatWidget>,
       {
-        wrapper: ({ children }) => (
-          <CopilotWrapper agent="resident">{children}</CopilotWrapper>
-        ),
+        wrapper: ({ children }) => <CopilotWrapper agent="resident">{children}</CopilotWrapper>,
       },
     );
 
@@ -186,7 +174,7 @@ describe("DataPanel (CopilotKit integration)", () => {
     expect(tableTab).toHaveAttribute("data-state", "active");
   });
 
-  it("force-mounts map and table panels (chart renders only when active)", async () => {
+  it("lazy-mounts only the default tab initially", async () => {
     const { DataPanel } = await import("@/components/DataPanel");
 
     render(
@@ -200,19 +188,14 @@ describe("DataPanel (CopilotKit integration)", () => {
     );
 
     expect(screen.getByTestId("map")).toBeInTheDocument();
-    expect(screen.getByTestId("table")).toBeInTheDocument();
+    expect(screen.queryByTestId("table")).not.toBeInTheDocument();
     expect(screen.queryByTestId("chart")).not.toBeInTheDocument();
   });
 
   it("renders tour step IDs for all portals", async () => {
     const { DataPanel } = await import("@/components/DataPanel");
 
-    for (const portalId of [
-      "resident",
-      "business",
-      "citystaff",
-      "researcher",
-    ]) {
+    for (const portalId of ["resident", "business", "citystaff", "researcher"]) {
       const { container, unmount } = render(
         <DataPanel
           portalId={portalId}
