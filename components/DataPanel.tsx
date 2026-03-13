@@ -1,7 +1,7 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { CalendarRange, Table2 } from "lucide-react";
+import { Building2, CalendarRange, Table2 } from "lucide-react";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { BarChart3, MapPin } from "@/components/icons";
@@ -37,7 +37,8 @@ interface DataPanelProps {
   mapContent: React.ReactNode;
   tableContent: React.ReactNode;
   chartContent: React.ReactNode;
-  defaultTab?: "map" | "table" | "chart";
+  landContent?: React.ReactNode;
+  defaultTab?: "map" | "table" | "chart" | "land";
 }
 
 export function DataPanel({
@@ -45,6 +46,7 @@ export function DataPanel({
   mapContent,
   tableContent,
   chartContent,
+  landContent,
   defaultTab = "map",
 }: DataPanelProps) {
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
@@ -78,14 +80,14 @@ export function DataPanel({
   // AI action: switch tabs
   useCopilotAction({
     name: "switch_data_tab",
-    description: "Switch the data panel view between Map, Table, and Chart tabs",
+    description: "Switch the data panel view between Map, Table, Chart, and Land tabs",
     parameters: [
       {
         name: "tab",
         type: "string",
         description: "The tab to switch to",
         required: true,
-        enum: ["map", "table", "chart"],
+        enum: landContent ? ["map", "table", "chart", "land"] : ["map", "table", "chart"],
       },
     ],
     handler: ({ tab }) => {
@@ -153,6 +155,16 @@ export function DataPanel({
               <BarChart3 size={16} />
               <span className="hidden @[440px]:inline">Chart</span>
             </TabsTrigger>
+            {landContent && (
+              <TabsTrigger
+                value="land"
+                data-tour-step-id="business-land-tab"
+                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              >
+                <Building2 className="size-4" />
+                <span className="hidden @[440px]:inline">Properties</span>
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Year filter + portal slot — wraps naturally when space is tight */}
@@ -213,6 +225,15 @@ export function DataPanel({
         <TabsContent value="chart" className="min-h-0 flex-1 overflow-auto p-4">
           {mountedTabs.has("chart") ? chartContent : null}
         </TabsContent>
+        {landContent && (
+          <TabsContent
+            value="land"
+            forceMount
+            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {landContent}
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

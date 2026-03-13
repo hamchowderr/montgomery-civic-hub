@@ -1,6 +1,7 @@
 "use client";
 
 import { useCopilotReadable } from "@copilotkit/react-core";
+import { useState } from "react";
 import { CopilotProvider } from "@/components/CopilotProvider";
 import { DataPanel } from "@/components/DataPanel";
 import { PortalLayout } from "@/components/PortalLayout";
@@ -9,8 +10,12 @@ import { YearFilterProvider } from "@/lib/contexts/year-filter";
 import { BusinessChart } from "./components/BusinessChart";
 import { BusinessMap } from "./components/BusinessMap";
 import { BusinessTable } from "./components/BusinessTable";
+import { LandReuseCard } from "./components/LandReuseCard";
+import { VacantLandExplorer, type VacantProperty } from "./components/VacantLandExplorer";
 
 function BusinessContent() {
+  const [selectedProperty, setSelectedProperty] = useState<VacantProperty | null>(null);
+
   useCopilotReadable({
     description: "Current portal context",
     value: { portal: "business", availableViews: ["map", "table", "chart"] },
@@ -29,6 +34,12 @@ function BusinessContent() {
           mapContent={<BusinessMap />}
           tableContent={<BusinessTable />}
           chartContent={<BusinessChart />}
+          landContent={
+            <div className="flex h-full flex-col">
+              <VacantLandExplorer onSelectProperty={setSelectedProperty} />
+              {selectedProperty && <LandReuseCard property={selectedProperty} />}
+            </div>
+          }
         />
       </PortalLayout>
     </main>
