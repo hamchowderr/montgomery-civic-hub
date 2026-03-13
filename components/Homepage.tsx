@@ -1,16 +1,15 @@
 "use client";
 
+import { Landmark, Map } from "lucide-react";
 import {
   ArrowRight,
   BarChart3,
   ChevronDown,
-  Landmark,
-  Map,
   MessageSquare,
   Shield,
   TrendingUp,
   Users,
-} from "lucide-react";
+} from "@/components/icons";
 import {
   animate,
   motion,
@@ -272,7 +271,7 @@ function HeroSection() {
             className="group inline-flex items-center justify-center gap-2 rounded-sm bg-accent px-7 py-3 text-sm font-medium text-accent-foreground transition-all hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20"
           >
             Create Account
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
           </Link>
           <Link
             href="#portals"
@@ -294,7 +293,7 @@ function HeroSection() {
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <ChevronDown className="h-5 w-5 text-white/20" />
+          <ChevronDown size={20} className="text-white/20" />
         </motion.div>
       </motion.div>
     </motion.section>
@@ -359,7 +358,7 @@ function WhyMontgomerySection() {
             <FadeInWhenVisible key={item.title} delay={i * 0.08}>
               <div className="group rounded-lg border bg-card p-fluid-md transition-colors hover:border-accent/30">
                 <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-md bg-accent/10 text-accent transition-colors group-hover:bg-accent/15">
-                  <item.icon className="h-5 w-5" />
+                  <item.icon size={20} />
                 </div>
                 <h3 className="mb-2 text-lg font-semibold tracking-tight">{item.title}</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
@@ -468,7 +467,7 @@ function HowItWorksSection() {
                   )}
                 >
                   <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-                    <step.icon className="h-7 w-7" />
+                    <step.icon size={28} />
                   </div>
                   <h3 className="mb-3 font-display text-2xl">{step.title}</h3>
                   <p className="text-fluid-base leading-relaxed text-muted-foreground">
@@ -528,7 +527,7 @@ function CTASection() {
               className="group inline-flex items-center gap-2 rounded-sm bg-accent px-8 py-3.5 text-sm font-medium text-accent-foreground transition-all hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20"
             >
               Create Account
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
         </FadeInWhenVisible>

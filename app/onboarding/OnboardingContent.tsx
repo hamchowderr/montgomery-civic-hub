@@ -1,10 +1,10 @@
 "use client";
 
 import { useConvexAuth, useMutation } from "convex/react";
-import type { LucideIcon } from "lucide-react";
-import { Briefcase, Building2, GraduationCap, Home, Loader2 } from "lucide-react";
+import { GraduationCap, Home, Loader2 } from "@/components/icons";
+import { Briefcase, Building2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { api } from "@/convex/_generated/api";
 
@@ -12,7 +12,7 @@ const portals: {
   role: "resident" | "business" | "citystaff" | "researcher";
   label: string;
   description: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   color: string;
   bgColor: string;
 }[] = [
@@ -75,7 +75,7 @@ export default function OnboardingContent() {
         <div className="w-full max-w-sm space-y-4">
           <Progress value={65} className="h-2" />
           <div className="flex items-center justify-center gap-2">
-            <Loader2 className="size-4 animate-spin text-muted-foreground" />
+            <Loader2 size={16} className="animate-spin text-muted-foreground" />
             <p className="text-sm text-muted-foreground">Loading {selecting} dashboard…</p>
           </div>
         </div>
@@ -98,7 +98,7 @@ export default function OnboardingContent() {
                 <div
                   className={`flex size-12 items-center justify-center rounded-lg ${portal.color}`}
                 >
-                  <portal.icon className="size-6" />
+                  <portal.icon size={24} />
                 </div>
                 <div className="text-center">
                   <h2 className="text-lg font-semibold">{portal.label}</h2>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { BarChart3, CalendarRange, MapPin, Table2 } from "lucide-react";
+import { CalendarRange, Table2 } from "lucide-react";
+import { BarChart3, MapPin } from "@/components/icons";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -122,7 +123,7 @@ export function DataPanel({
               data-tour-step-id={`${portalId}-map-view`}
               className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
             >
-              <MapPin className="size-4" />
+              <MapPin size={16} />
               <span className="hidden @[440px]:inline">Map</span>
             </TabsTrigger>
             <TabsTrigger
@@ -138,7 +139,7 @@ export function DataPanel({
               data-tour-step-id={`${portalId}-chart-view`}
               className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
             >
-              <BarChart3 className="size-4" />
+              <BarChart3 size={16} />
               <span className="hidden @[440px]:inline">Chart</span>
             </TabsTrigger>
           </TabsList>

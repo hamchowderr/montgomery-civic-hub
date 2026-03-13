@@ -1,7 +1,7 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { Layers, X } from "lucide-react";
+import { Layers, X } from "@/components/icons";
 import type MapLibreGL from "maplibre-gl";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { LayerFilterPortal } from "@/components/DataPanel";
@@ -239,7 +239,7 @@ export function CouncilDistrictsLayer() {
         if (visible) setSelectedDistrict(null);
       }}
     >
-      {visible ? <X className="size-4 shrink-0" /> : <Layers className="size-4 shrink-0" />}
+      {visible ? <X size={16} className="shrink-0" /> : <Layers size={16} className="shrink-0" />}
       <span className="hidden @[400px]:inline">
         {visible ? "Hide Districts" : "Show Districts"}
       </span>

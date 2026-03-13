@@ -5,13 +5,8 @@ import { useRouter } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import {
-  Home,
-  Briefcase,
-  Building2,
-  GraduationCap,
-  ArrowLeft,
-} from "lucide-react";
+import { ArrowLeft, GraduationCap, Home } from "@/components/icons";
+import { Briefcase, Building2 } from "lucide-react";
 
 const portalOptions = [
   { role: "resident" as const, label: "Resident", icon: Home },
@@ -41,7 +36,7 @@ export default function ProfileContent() {
           onClick={() => router.back()}
           className="mb-4"
         >
-          <ArrowLeft className="mr-1 size-4" />
+          <ArrowLeft size={16} className="mr-1" />
           Back
         </Button>
 

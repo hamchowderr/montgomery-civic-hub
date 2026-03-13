@@ -1,18 +1,8 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import {
-  Briefcase,
-  Building2,
-  FlaskConical,
-  GripVertical,
-  type LucideIcon,
-  MessageCircle,
-  PanelLeft,
-  PanelRight,
-  Shield,
-  X,
-} from "lucide-react";
+import { Briefcase, Building2 } from "lucide-react";
+import { FlaskConical, GripVertical, MessageCircle, PanelLeft, PanelRight, Shield, X } from "@/components/icons";
 import { type ReactNode, useEffect, useState } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { PortalChat } from "@/components/PortalChat";
@@ -20,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const portalIcons: Record<string, LucideIcon> = {
+const portalIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   resident: Shield,
   business: Briefcase,
   citystaff: Building2,
@@ -54,7 +44,7 @@ function Handle() {
   return (
     <Separator className="relative flex w-px items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2">
       <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-        <GripVertical className="h-2.5 w-2.5" />
+        <GripVertical size={10} />
       </div>
     </Separator>
   );
@@ -133,7 +123,7 @@ export function PortalLayout({
       <div className="flex shrink-0 items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex size-6 items-center justify-center rounded bg-accent/10">
-            <Icon className="size-3.5 text-accent" />
+            <Icon size={14} className="text-accent" />
           </div>
           <h3 className="text-sm font-semibold">{chatTitle}</h3>
         </div>
@@ -145,7 +135,7 @@ export function PortalLayout({
               className="size-7"
               onClick={() => setChatOpen(false)}
             >
-              <X className="size-3.5" />
+              <X size={14} />
             </Button>
           )}
           <div className="hidden lg:block">
@@ -159,9 +149,9 @@ export function PortalLayout({
                     onClick={() => setChatSide((s) => (s === "right" ? "left" : "right"))}
                   >
                     {chatSide === "right" ? (
-                      <PanelLeft className="size-3.5" />
+                      <PanelLeft size={14} />
                     ) : (
-                      <PanelRight className="size-3.5" />
+                      <PanelRight size={14} />
                     )}
                   </Button>
                 </TooltipTrigger>
@@ -194,7 +184,7 @@ export function PortalLayout({
           onClick={() => setChatOpen(true)}
           className="fixed bottom-4 right-4 z-50 size-14 rounded-full shadow-lg bg-accent text-accent-foreground hover:bg-accent/90 md:hidden"
         >
-          <MessageCircle className="size-6" />
+          <MessageCircle size={24} />
         </Button>
 
         <Sheet open={chatOpen} onOpenChange={setChatOpen}>

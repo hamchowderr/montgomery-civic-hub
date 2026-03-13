@@ -1,6 +1,7 @@
 "use client";
 
-import { AlertTriangle, FileText, HardHat, MapPin, Phone, TreePine } from "lucide-react";
+import { AlertTriangle, HardHat, Phone, TreePine } from "lucide-react";
+import { FileText, MapPin } from "@/components/icons";
 import { animate, motion, useInView } from "motion/react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import {
@@ -111,7 +112,7 @@ function StatCard({ icon: Icon, label, value, loading, delay = 0 }: StatCardProp
 
         <CardContent className="flex flex-col items-center gap-2 p-fluid-md text-center">
           <div className="mb-1 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
-            <Icon className="h-5 w-5" />
+            <Icon size={20} />
           </div>
 
           {loading ? (
