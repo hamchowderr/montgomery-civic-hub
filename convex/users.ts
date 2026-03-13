@@ -56,6 +56,12 @@ export const getCurrentUser = query({
   },
 });
 
+export const listAllUsers = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("users").collect();
+  },
+});
+
 export const setUserRole = mutation({
   args: {
     role: v.union(
@@ -69,7 +75,7 @@ export const setUserRole = mutation({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
 
-    let user = await ctx.db
+    const user = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
       .unique();

@@ -1,10 +1,11 @@
 "use client";
 
 import { useConvexAuth, useMutation } from "convex/react";
-import { GraduationCap, Home, Loader2 } from "@/components/icons";
 import { Briefcase, Building2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
+import { GraduationCap, Home, Loader2 } from "@/components/icons";
 import { Progress } from "@/components/ui/progress";
 import { api } from "@/convex/_generated/api";
 
