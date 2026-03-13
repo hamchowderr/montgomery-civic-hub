@@ -137,6 +137,33 @@ function buildCacheKey(prefix: string, url: string, params: Record<string, unkno
   return `${prefix}:${url}:${JSON.stringify(params)}`;
 }
 
+// ---------------------------------------------------------------------------
+// Concurrency limiter — prevents overwhelming the browser with parallel fetches
+// ---------------------------------------------------------------------------
+
+const MAX_CONCURRENT = 4;
+let activeRequests = 0;
+const waitQueue: (() => void)[] = [];
+
+function acquireSlot(): Promise<void> {
+  if (activeRequests < MAX_CONCURRENT) {
+    activeRequests++;
+    return Promise.resolve();
+  }
+  return new Promise<void>((resolve) => {
+    waitQueue.push(() => {
+      activeRequests++;
+      resolve();
+    });
+  });
+}
+
+function releaseSlot(): void {
+  activeRequests--;
+  const next = waitQueue.shift();
+  if (next) next();
+}
+
 /** Convert an outFields string (e.g. "NAME,POP") to the SDK's expected format. */
 function parseOutFields(outFields: string): "*" | string[] {
   if (outFields === "*") return "*";
@@ -172,21 +199,27 @@ async function fetchPage(
   returnGeometry: boolean,
   offset: number,
   count: number,
+  signal?: AbortSignal,
 ): Promise<GeoJSON.Feature[]> {
-  const params = new URLSearchParams({
-    where,
-    outFields,
-    returnGeometry: String(returnGeometry),
-    outSR: "4326",
-    resultOffset: String(offset),
-    resultRecordCount: String(count),
-    f: "geojson",
-  });
-  const res = await fetch(`${url}/query?${params}`);
-  if (!res.ok) return [];
-  const raw = await res.json();
-  if (raw.error || !Array.isArray(raw.features)) return [];
-  return raw.features;
+  await acquireSlot();
+  try {
+    const params = new URLSearchParams({
+      where,
+      outFields,
+      returnGeometry: String(returnGeometry),
+      outSR: "4326",
+      resultOffset: String(offset),
+      resultRecordCount: String(count),
+      f: "geojson",
+    });
+    const res = await fetch(`${url}/query?${params}`, { signal });
+    if (!res.ok) return [];
+    const raw = await res.json();
+    if (raw.error || !Array.isArray(raw.features)) return [];
+    return raw.features;
+  } finally {
+    releaseSlot();
+  }
 }
 
 /**
@@ -204,8 +237,16 @@ export async function queryFeaturesAsGeoJSON(options: {
   returnGeometry?: boolean;
   /** Max features to fetch. Defaults to PAGE_SIZE * MAX_PAGES (10,000). */
   maxRecords?: number;
+  signal?: AbortSignal;
 }): Promise<GeoJSON.FeatureCollection> {
-  const { url, where = "1=1", outFields = "*", returnGeometry = true, maxRecords } = options;
+  const {
+    url,
+    where = "1=1",
+    outFields = "*",
+    returnGeometry = true,
+    maxRecords,
+    signal,
+  } = options;
 
   const cacheKey = buildCacheKey("geojson", url, {
     where,
@@ -226,7 +267,15 @@ export async function queryFeaturesAsGeoJSON(options: {
       const offset = page * PAGE_SIZE;
       const count = Math.min(PAGE_SIZE, limit - allFeatures.length);
 
-      const features = await fetchPage(url, where, outFields, returnGeometry, offset, count);
+      const features = await fetchPage(
+        url,
+        where,
+        outFields,
+        returnGeometry,
+        offset,
+        count,
+        signal,
+      );
 
       allFeatures.push(...features);
 
@@ -286,6 +335,7 @@ export async function queryFeatureAttributes(options: {
   url: string;
   where?: string;
   outFields?: string;
+  signal?: AbortSignal;
 }): Promise<Record<string, unknown>[]> {
   const { url, where = "1=1", outFields = "*" } = options;
 
@@ -328,8 +378,16 @@ export async function queryFeatureStats(options: {
   groupByField: string;
   statisticField: string;
   statisticType?: "count" | "sum" | "avg" | "min" | "max";
+  signal?: AbortSignal;
 }): Promise<{ group: string; value: number }[]> {
-  const { url, where = "1=1", groupByField, statisticField, statisticType = "count" } = options;
+  const {
+    url,
+    where = "1=1",
+    groupByField,
+    statisticField,
+    statisticType = "count",
+    signal,
+  } = options;
 
   const cacheKey = buildCacheKey("stats", url, {
     where,
@@ -357,7 +415,7 @@ export async function queryFeatureStats(options: {
       f: "json",
     });
 
-    const res = await fetch(`${url}/query?${params}`);
+    const res = await fetch(`${url}/query?${params}`, { signal });
     if (!res.ok) return [];
 
     const raw = await res.json();
@@ -389,8 +447,9 @@ export async function queryMultiStats(options: {
   where?: string;
   groupByField: string;
   statistics: { field: string; type: "count" | "sum" | "avg" | "min" | "max"; alias: string }[];
+  signal?: AbortSignal;
 }): Promise<Record<string, unknown>[]> {
-  const { url, where = "1=1", groupByField, statistics } = options;
+  const { url, where = "1=1", groupByField, statistics, signal } = options;
 
   const cacheKey = buildCacheKey("multistats", url, { where, groupByField, statistics });
   const cached = getCached<Record<string, unknown>[]>(cacheKey);
@@ -413,7 +472,7 @@ export async function queryMultiStats(options: {
       f: "json",
     });
 
-    const res = await fetch(`${url}/query?${params}`);
+    const res = await fetch(`${url}/query?${params}`, { signal });
     if (!res.ok) return [];
 
     const raw = await res.json();
@@ -440,8 +499,9 @@ export async function queryTotalStats(options: {
   url: string;
   where?: string;
   statistics: { field: string; type: "count" | "sum" | "avg" | "min" | "max"; alias: string }[];
+  signal?: AbortSignal;
 }): Promise<Record<string, number>> {
-  const { url, where = "1=1", statistics } = options;
+  const { url, where = "1=1", statistics, signal } = options;
 
   const cacheKey = buildCacheKey("totalstats", url, { where, statistics });
   const cached = getCached<Record<string, number>>(cacheKey);
@@ -463,7 +523,7 @@ export async function queryTotalStats(options: {
       f: "json",
     });
 
-    const res = await fetch(`${url}/query?${params}`);
+    const res = await fetch(`${url}/query?${params}`, { signal });
     if (!res.ok) return {};
 
     const raw = await res.json();

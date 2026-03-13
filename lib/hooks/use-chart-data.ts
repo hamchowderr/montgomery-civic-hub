@@ -438,96 +438,106 @@ export function useChartData(chartId: string): UseChartDataReturn {
   const [error, setError] = useState<string | null>(null);
   const { yearRange } = useYearFilter();
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const fetchData = useCallback(
+    async (signal?: AbortSignal) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      let result: any[];
-      switch (chartId) {
-        // Existing
-        case "budget":
-          result = await fetchBudgetChartData(yearRange);
-          break;
-        case "crimeTrends":
-          result = await fetchCrimeTrendsData(yearRange);
-          break;
-        case "serviceRequests":
-          result = await fetchServiceRequestsData(yearRange);
-          break;
-        case "permitActivity":
-          result = await fetchPermitActivityData(yearRange);
-          break;
-        case "cityOwnedProperties":
-          result = await fetchCityOwnedPropertiesData();
-          break;
-        case "transportationRequests":
-          result = await fetchTransportationRequestsData(yearRange);
-          break;
-        // Resident
-        case "requestsByStatus":
-          result = await fetchRequestsByStatus(yearRange);
-          break;
-        case "requestsByDistrict":
-          result = await fetchRequestsByDistrict(yearRange);
-          break;
-        case "facilityCounts":
-          result = await fetchFacilityCounts();
-          break;
-        // Business
-        case "licensesByCategory":
-          result = await fetchLicensesByCategory(yearRange);
-          break;
-        case "permitStatusBreakdown":
-          result = await fetchPermitStatusBreakdown(yearRange);
-          break;
-        case "licensesByYear":
-          result = await fetchLicensesByYear(yearRange);
-          break;
-        // City Staff
-        case "violationsByStatus":
-          result = await fetchViolationsByStatus(yearRange);
-          break;
-        case "violationsByDistrict":
-          result = await fetchViolationsByDistrict(yearRange);
-          break;
-        case "pavingByStatus":
-          result = await fetchPavingByStatus();
-          break;
-        case "nuisanceByType":
-          result = await fetchNuisanceByType(yearRange);
-          break;
-        // Researcher
-        case "violationsByYear":
-          result = await fetchViolationsByYear(yearRange);
-          break;
-        case "permitsByYear":
-          result = await fetchPermitsByYear(yearRange);
-          break;
-        case "districtComparison":
-          result = await fetchDistrictComparison(yearRange);
-          break;
-        case "censusData":
-          result = await fetchCensusData();
-          break;
-        case "householdData":
-          result = await fetchHouseholdData();
-          break;
-        default:
-          result = [];
+      try {
+        let result: any[];
+        switch (chartId) {
+          // Existing
+          case "budget":
+            result = await fetchBudgetChartData(yearRange);
+            break;
+          case "crimeTrends":
+            result = await fetchCrimeTrendsData(yearRange);
+            break;
+          case "serviceRequests":
+            result = await fetchServiceRequestsData(yearRange);
+            break;
+          case "permitActivity":
+            result = await fetchPermitActivityData(yearRange);
+            break;
+          case "cityOwnedProperties":
+            result = await fetchCityOwnedPropertiesData();
+            break;
+          case "transportationRequests":
+            result = await fetchTransportationRequestsData(yearRange);
+            break;
+          // Resident
+          case "requestsByStatus":
+            result = await fetchRequestsByStatus(yearRange);
+            break;
+          case "requestsByDistrict":
+            result = await fetchRequestsByDistrict(yearRange);
+            break;
+          case "facilityCounts":
+            result = await fetchFacilityCounts();
+            break;
+          // Business
+          case "licensesByCategory":
+            result = await fetchLicensesByCategory(yearRange);
+            break;
+          case "permitStatusBreakdown":
+            result = await fetchPermitStatusBreakdown(yearRange);
+            break;
+          case "licensesByYear":
+            result = await fetchLicensesByYear(yearRange);
+            break;
+          // City Staff
+          case "violationsByStatus":
+            result = await fetchViolationsByStatus(yearRange);
+            break;
+          case "violationsByDistrict":
+            result = await fetchViolationsByDistrict(yearRange);
+            break;
+          case "pavingByStatus":
+            result = await fetchPavingByStatus();
+            break;
+          case "nuisanceByType":
+            result = await fetchNuisanceByType(yearRange);
+            break;
+          // Researcher
+          case "violationsByYear":
+            result = await fetchViolationsByYear(yearRange);
+            break;
+          case "permitsByYear":
+            result = await fetchPermitsByYear(yearRange);
+            break;
+          case "districtComparison":
+            result = await fetchDistrictComparison(yearRange);
+            break;
+          case "censusData":
+            result = await fetchCensusData();
+            break;
+          case "householdData":
+            result = await fetchHouseholdData();
+            break;
+          default:
+            result = [];
+        }
+        if (!signal?.aborted) {
+          setData(result);
+        }
+      } catch (err) {
+        if (signal?.aborted) return;
+        const message = err instanceof Error ? err.message : "Failed to load chart data";
+        setError(message);
+        setData(null);
+      } finally {
+        if (!signal?.aborted) {
+          setIsLoading(false);
+        }
       }
-      setData(result);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to load chart data";
-      setError(message);
-      setData(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [chartId, yearRange]);
+    },
+    [chartId, yearRange],
+  );
 
   useEffect(() => {
-    fetchData();
+    const controller = new AbortController();
+    fetchData(controller.signal);
+    return () => controller.abort();
   }, [fetchData]);
 
   return { data, isLoading, error, refresh: fetchData };

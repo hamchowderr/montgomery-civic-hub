@@ -18,38 +18,40 @@ import {
 import { useChartData } from "@/lib/hooks/use-chart-data";
 
 const PIE_COLORS = [
-  "hsl(346 77% 50%)",
-  "hsl(25 95% 53%)",
-  "hsl(45 93% 47%)",
-  "hsl(142 71% 45%)",
-  "hsl(221 83% 53%)",
-  "hsl(262 83% 58%)",
-  "hsl(173 80% 40%)",
-  "hsl(199 89% 48%)",
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--chart-6))",
+  "hsl(var(--chart-7))",
+  "hsl(var(--chart-8))",
+  "hsl(var(--chart-9))",
+  "hsl(var(--chart-10))",
 ];
 
 const chartConfig = {
-  budget: { label: "Spending", color: "hsl(346 77% 50%)" },
+  budget: { label: "Spending", color: "hsl(var(--chart-5))" },
 } satisfies ChartConfig;
 
 const violationsByStatusConfig = {
-  count: { label: "Violations", color: "hsl(0 72% 51%)" },
+  count: { label: "Violations", color: "hsl(var(--chart-10))" },
 } satisfies ChartConfig;
 
 const violationsByDistrictConfig = {
-  count: { label: "Violations", color: "hsl(25 95% 53%)" },
+  count: { label: "Violations", color: "hsl(var(--chart-3))" },
 } satisfies ChartConfig;
 
 const pavingByStatusConfig = {
-  count: { label: "Projects", color: "hsl(45 93% 47%)" },
+  count: { label: "Projects", color: "hsl(var(--chart-6))" },
 } satisfies ChartConfig;
 
 const nuisanceByTypeConfig = {
-  count: { label: "Complaints", color: "hsl(292 91% 73%)" },
+  count: { label: "Complaints", color: "hsl(var(--chart-9))" },
 } satisfies ChartConfig;
 
 const serviceRequestsConfig = {
-  count: { label: "Requests", color: "hsl(221 83% 53%)" },
+  count: { label: "Requests", color: "hsl(var(--chart-1))" },
 } satisfies ChartConfig;
 
 export function CityStaffChart() {
