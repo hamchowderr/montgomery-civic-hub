@@ -1,7 +1,16 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { Building2, CalendarRange, Landmark, Phone, Radio, Table2, Users } from "lucide-react";
+import {
+  Briefcase,
+  Building2,
+  CalendarRange,
+  Landmark,
+  Phone,
+  Radio,
+  Table2,
+  Users,
+} from "lucide-react";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { BarChart3, MapPin } from "@/components/icons";
@@ -42,6 +51,7 @@ interface DataPanelProps {
   emergencyContent?: React.ReactNode;
   newsfeedContent?: React.ReactNode;
   timelineContent?: React.ReactNode;
+  workforceContent?: React.ReactNode;
   defaultTab?:
     | "map"
     | "table"
@@ -50,7 +60,8 @@ interface DataPanelProps {
     | "staffing"
     | "emergency"
     | "newsfeed"
-    | "timeline";
+    | "timeline"
+    | "workforce";
 }
 
 export function DataPanel({
@@ -63,6 +74,7 @@ export function DataPanel({
   emergencyContent,
   newsfeedContent,
   timelineContent,
+  workforceContent,
   defaultTab = "map",
 }: DataPanelProps) {
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
@@ -112,6 +124,7 @@ export function DataPanel({
           ...(emergencyContent ? ["emergency"] : []),
           ...(newsfeedContent ? ["newsfeed"] : []),
           ...(timelineContent ? ["timeline"] : []),
+          ...(workforceContent ? ["workforce"] : []),
         ],
       },
     ],
@@ -147,100 +160,110 @@ export function DataPanel({
   });
 
   return (
-    <div className="@container flex h-full flex-col overflow-hidden bg-card">
+    <div className="flex h-full flex-col overflow-hidden bg-card">
       <Tabs
         value={activeTab}
         onValueChange={handleTabChange}
         className="flex min-h-0 w-full flex-1 flex-col"
       >
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b px-3 py-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b px-2 py-1.5 sm:px-3 sm:py-2">
           {/* Tabs — compact on narrow containers, labeled when space allows */}
-          <TabsList className="gap-1 shrink-0">
+          <TabsList className="gap-0.5 sm:gap-1 shrink-0">
             <TabsTrigger
               value="map"
               data-tour-step-id={`${portalId}-map-view`}
-              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 sm:gap-2 sm:px-4"
             >
               <MapPin size={16} />
-              <span className="hidden @[440px]:inline">Map</span>
+              <span className="hidden sm:inline">Map</span>
             </TabsTrigger>
             <TabsTrigger
               value="table"
               data-tour-step-id={`${portalId}-table-view`}
-              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 sm:gap-2 sm:px-4"
             >
               <Table2 className="size-4" />
-              <span className="hidden @[440px]:inline">Table</span>
+              <span className="hidden sm:inline">Table</span>
             </TabsTrigger>
             <TabsTrigger
               value="chart"
               data-tour-step-id={`${portalId}-chart-view`}
-              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 sm:gap-2 sm:px-4"
             >
               <BarChart3 size={16} />
-              <span className="hidden @[440px]:inline">Chart</span>
+              <span className="hidden sm:inline">Chart</span>
             </TabsTrigger>
             {landContent && (
               <TabsTrigger
                 value="land"
                 data-tour-step-id="business-land-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Building2 className="size-4" />
-                <span className="hidden @[440px]:inline">Properties</span>
+                <span className="hidden sm:inline">Properties</span>
               </TabsTrigger>
             )}
             {staffingContent && (
               <TabsTrigger
                 value="staffing"
                 data-tour-step-id="citystaff-staffing-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Users className="size-4" />
-                <span className="hidden @[440px]:inline">Staffing</span>
+                <span className="hidden sm:inline">Staffing</span>
               </TabsTrigger>
             )}
             {emergencyContent && (
               <TabsTrigger
                 value="emergency"
                 data-tour-step-id="resident-emergency-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Phone className="size-4" />
-                <span className="hidden @[440px]:inline">Emergency</span>
+                <span className="hidden sm:inline">Emergency</span>
               </TabsTrigger>
             )}
             {newsfeedContent && (
               <TabsTrigger
                 value="newsfeed"
                 data-tour-step-id="resident-newsfeed-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Radio className="size-4" />
-                <span className="hidden @[440px]:inline">Incidents</span>
+                <span className="hidden sm:inline">Incidents</span>
               </TabsTrigger>
             )}
             {timelineContent && (
               <TabsTrigger
                 value="timeline"
                 data-tour-step-id="researcher-timeline-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Landmark className="size-4" />
-                <span className="hidden @[440px]:inline">Civil Rights</span>
+                <span className="hidden sm:inline">Civil Rights</span>
+              </TabsTrigger>
+            )}
+            {workforceContent && (
+              <TabsTrigger
+                value="workforce"
+                data-tour-step-id="business-workforce-tab"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
+              >
+                <Briefcase className="size-4" />
+                <span className="hidden sm:inline">Workforce</span>
               </TabsTrigger>
             )}
           </TabsList>
 
           {/* Year filter + portal slot — wraps naturally when space is tight */}
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2 ml-auto">
             <div
-              className="flex items-center gap-1.5"
+              className="flex items-center gap-1 sm:gap-1.5"
               data-tour-step-id={`${portalId}-year-filter`}
             >
-              <CalendarRange className="size-3.5 shrink-0 text-muted-foreground" />
+              <CalendarRange className="size-3.5 shrink-0 text-muted-foreground hidden sm:block" />
               <Select value={String(yearRange.from)} onValueChange={(v) => setFrom(Number(v))}>
-                <SelectTrigger className="h-7 w-[76px] text-xs">
+                <SelectTrigger className="h-7 w-[68px] sm:w-[76px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -253,7 +276,7 @@ export function DataPanel({
               </Select>
               <span className="text-xs text-muted-foreground">to</span>
               <Select value={String(yearRange.to)} onValueChange={(v) => setTo(Number(v))}>
-                <SelectTrigger className="h-7 w-[76px] text-xs">
+                <SelectTrigger className="h-7 w-[68px] sm:w-[76px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -268,7 +291,7 @@ export function DataPanel({
             {/* Slot where map layer filter portals into */}
             <div
               ref={slotRef}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5 sm:gap-2"
               data-tour-step-id={`${portalId}-layers`}
             />
           </div>
@@ -283,7 +306,7 @@ export function DataPanel({
         <TabsContent
           value="table"
           forceMount
-          className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
         >
           {mountedTabs.has("table") ? tableContent : null}
         </TabsContent>
@@ -294,7 +317,7 @@ export function DataPanel({
           <TabsContent
             value="land"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {landContent}
           </TabsContent>
@@ -303,7 +326,7 @@ export function DataPanel({
           <TabsContent
             value="staffing"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {staffingContent}
           </TabsContent>
@@ -312,7 +335,7 @@ export function DataPanel({
           <TabsContent
             value="emergency"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {emergencyContent}
           </TabsContent>
@@ -321,7 +344,7 @@ export function DataPanel({
           <TabsContent
             value="newsfeed"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden"
           >
             {newsfeedContent}
           </TabsContent>
@@ -330,9 +353,18 @@ export function DataPanel({
           <TabsContent
             value="timeline"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {timelineContent}
+          </TabsContent>
+        )}
+        {workforceContent && (
+          <TabsContent
+            value="workforce"
+            forceMount
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {workforceContent}
           </TabsContent>
         )}
       </Tabs>

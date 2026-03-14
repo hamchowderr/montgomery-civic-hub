@@ -75,11 +75,14 @@ export function PortalChat({ portal, welcomeMessage, chatPlaceholder }: PortalCh
   return (
     <CopilotChat
       className="copilot-portal-chat h-full"
-      labels={{
-        initial: welcomeMessage,
-        placeholder: chatPlaceholder,
-        title: "",
-      }}
+      labels={
+        {
+          initial: welcomeMessage,
+          placeholder: chatPlaceholder,
+          title: "",
+          poweredBy: "Powered by Otaku Solutions",
+        } as Record<string, string>
+      }
       AssistantMessage={MontgomeryAssistantMessage}
     />
   );

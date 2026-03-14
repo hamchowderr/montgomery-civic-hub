@@ -26,6 +26,8 @@ const MAX_TOKENS: Record<string, number> = {
   business: 4096,
   citystaff: 8192,
   researcher: 8192,
+  executive: 8192,
+  insights: 8192,
 };
 
 // ── Helpers (reused from existing client.ts) ────────────────────────────────
@@ -122,6 +124,40 @@ async function executeArcgisQuery(
   });
 }
 
+// Reuse MCP session across Bright Data calls (module scope)
+let bdSessionId: string | null = null;
+
+async function getBdSessionId(token: string): Promise<string | null> {
+  if (bdSessionId) return bdSessionId;
+  try {
+    const res = await fetch(`https://mcp.brightdata.com/mcp?token=${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "initialize",
+        params: {
+          protocolVersion: "2024-11-05",
+          capabilities: {},
+          clientInfo: { name: "montgomery-civic-hub", version: "1.0.0" },
+        },
+      }),
+    });
+    const sid = res.headers.get("mcp-session-id");
+    if (sid) {
+      bdSessionId = sid;
+      return sid;
+    }
+  } catch (error) {
+    console.error("[brightdata] MCP session init failed:", error);
+  }
+  return null;
+}
+
 async function executeBrightdataSearch(input: {
   query?: string;
   url?: string;
@@ -130,22 +166,53 @@ async function executeBrightdataSearch(input: {
   const token = process.env.BRIGHTDATA_API_TOKEN;
   if (!token) return { error: "Bright Data not configured" };
 
-  const res = await fetch(`https://mcp.brightdata.com/mcp?token=${token}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "tools/call",
-      params: {
-        name: input.tool,
-        arguments: input.tool === "search_engine" ? { query: input.query } : { url: input.url },
+  const sessionId = await getBdSessionId(token);
+  if (!sessionId) return { error: "Bright Data session init failed" };
+
+  const doCall = async (sid: string) => {
+    return fetch(`https://mcp.brightdata.com/mcp?token=${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+        "mcp-session-id": sid,
       },
-    }),
-  });
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: Date.now(),
+        method: "tools/call",
+        params: {
+          name: input.tool,
+          arguments: input.tool === "search_engine" ? { query: input.query } : { url: input.url },
+        },
+      }),
+    });
+  };
+
+  let res = await doCall(sessionId);
+
+  // Session expired — retry with fresh session
+  if (res.status === 400) {
+    bdSessionId = null;
+    const newSid = await getBdSessionId(token);
+    if (!newSid) return { error: "Bright Data session refresh failed" };
+    res = await doCall(newSid);
+  }
+
   if (!res.ok) return { error: `Bright Data error: ${res.status}` };
-  const data = await res.json();
-  return data.result;
+
+  // Parse SSE response
+  const text = await res.text();
+  for (const line of text.split("\n")) {
+    if (!line.startsWith("data: ")) continue;
+    try {
+      const json = JSON.parse(line.slice(6));
+      if (json.result) return json.result;
+    } catch {
+      // skip non-JSON lines
+    }
+  }
+  return { error: "No result in Bright Data response" };
 }
 
 // ── Frontend tool/context helpers ─────────────────────────────────────────

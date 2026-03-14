@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   ARCGIS_URLS,
+  queryCountByPolygons,
   queryFeatureAttributes,
   queryFeatureCount,
   queryFeatureStats,
@@ -429,6 +430,282 @@ async function fetchHouseholdData(): Promise<any[]> {
 }
 
 // ---------------------------------------------------------------------------
+// Fetchers: Cross-Portal (Insights)
+// ---------------------------------------------------------------------------
+
+async function fetchCrossDistrictInsights(yr: YearRange): Promise<any[]> {
+  const [requestStats, violationStats, permitStats, licenseStats, nuisanceStats, pavingStats] =
+    await Promise.all([
+      queryFeatureStats({
+        url: ARCGIS_URLS.serviceRequests311,
+        where: yearWhere(yr),
+        groupByField: "District",
+        statisticField: "Request_ID",
+        statisticType: "count",
+      }),
+      queryFeatureStats({
+        url: ARCGIS_URLS.codeViolations,
+        where: yearWhere(yr, "Year", true),
+        groupByField: "CouncilDistrict",
+        statisticField: "OffenceNum",
+        statisticType: "count",
+      }),
+      queryFeatureStats({
+        url: ARCGIS_URLS.constructionPermits,
+        where: yearWhere(yr, "Year", true),
+        groupByField: "DistrictCouncil",
+        statisticField: "PermitNo",
+        statisticType: "count",
+      }),
+      queryCountByPolygons({
+        pointLayerUrl: ARCGIS_URLS.businessLicense,
+        polygonLayerUrl: ARCGIS_URLS.councilDistricts,
+        polygonLabelField: "District",
+        where: yearWhere(yr, "pvYEAR"),
+      }).catch(() => []),
+      queryFeatureStats({
+        url: ARCGIS_URLS.nuisance,
+        groupByField: "District",
+        statisticField: "District",
+        statisticType: "count",
+      }),
+      queryFeatureStats({
+        url: ARCGIS_URLS.pavingProject,
+        groupByField: "DistrictDesc",
+        statisticField: "DistrictDesc",
+        statisticType: "count",
+      }),
+    ]);
+
+  const districtData = new Map<
+    string,
+    {
+      requests: number;
+      violations: number;
+      permits: number;
+      licenses: number;
+      nuisance: number;
+      paving: number;
+    }
+  >();
+
+  const ensure = (key: string) => {
+    if (!districtData.has(key)) {
+      districtData.set(key, {
+        requests: 0,
+        violations: 0,
+        permits: 0,
+        licenses: 0,
+        nuisance: 0,
+        paving: 0,
+      });
+    }
+    return districtData.get(key)!;
+  };
+
+  for (const s of requestStats) {
+    const key = normalizeDistrict(s.group);
+    ensure(key).requests += s.value;
+  }
+  for (const s of violationStats) {
+    const key = normalizeDistrict(s.group);
+    ensure(key).violations += s.value;
+  }
+  for (const s of permitStats) {
+    const key = normalizeDistrict(s.group);
+    ensure(key).permits += s.value;
+  }
+  // Business licenses use spatial join (point-in-polygon) against council districts
+  for (const s of licenseStats) {
+    const key = normalizeDistrict(s.group);
+    ensure(key).licenses += s.value;
+  }
+  for (const s of nuisanceStats) {
+    const key = normalizeDistrict(s.group);
+    ensure(key).nuisance += s.value;
+  }
+  for (const s of pavingStats) {
+    const key = normalizeDistrict(s.group);
+    ensure(key).paving += s.value;
+  }
+
+  return Array.from(districtData.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([district, data]) => ({ district, ...data }));
+}
+
+// ---------------------------------------------------------------------------
+// Fetchers: Executive / Insights
+// ---------------------------------------------------------------------------
+
+async function fetchKpiTrends(yr: YearRange): Promise<any[]> {
+  // Sparklines need multiple years — widen to full range if single year selected
+  const allYears: YearRange = yr.from === yr.to ? { from: 2018, to: new Date().getFullYear() } : yr;
+  const [requestStats, violationStats, permitStats] = await Promise.all([
+    queryFeatureStats({
+      url: ARCGIS_URLS.serviceRequests311,
+      where: yearWhere(allYears),
+      groupByField: "Year",
+      statisticField: "Request_ID",
+      statisticType: "count",
+    }),
+    queryFeatureStats({
+      url: ARCGIS_URLS.codeViolations,
+      where: yearWhere(allYears, "Year", true),
+      groupByField: "Year",
+      statisticField: "OffenceNum",
+      statisticType: "count",
+    }),
+    queryFeatureStats({
+      url: ARCGIS_URLS.constructionPermits,
+      where: yearWhere(allYears, "Year", true),
+      groupByField: "Year",
+      statisticField: "PermitNo",
+      statisticType: "count",
+    }),
+  ]);
+
+  const yearMap = new Map<string, { requests: number; violations: number; permits: number }>();
+
+  const ensure = (year: string) => {
+    if (!yearMap.has(year)) {
+      yearMap.set(year, { requests: 0, violations: 0, permits: 0 });
+    }
+    return yearMap.get(year)!;
+  };
+
+  for (const s of requestStats) {
+    if (s.group === "Unknown" || s.group === "0" || s.group === "null") continue;
+    ensure(s.group).requests = s.value;
+  }
+  for (const s of violationStats) {
+    if (s.group === "Unknown" || s.group === "0" || s.group === "null") continue;
+    ensure(s.group).violations = s.value;
+  }
+  for (const s of permitStats) {
+    if (s.group === "Unknown" || s.group === "0" || s.group === "null") continue;
+    ensure(s.group).permits = s.value;
+  }
+
+  return Array.from(yearMap.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([year, data]) => ({ year, ...data }));
+}
+
+async function fetchMultiMetricTrends(yr: YearRange): Promise<any[]> {
+  // Trends chart needs multiple years — widen to full range if single year selected
+  const allYears: YearRange = yr.from === yr.to ? { from: 2018, to: new Date().getFullYear() } : yr;
+  const [requestStats, violationStats, permitStats, licenseStats] = await Promise.all([
+    queryFeatureStats({
+      url: ARCGIS_URLS.serviceRequests311,
+      where: yearWhere(allYears),
+      groupByField: "Year",
+      statisticField: "Request_ID",
+      statisticType: "count",
+    }),
+    queryFeatureStats({
+      url: ARCGIS_URLS.codeViolations,
+      where: yearWhere(allYears, "Year", true),
+      groupByField: "Year",
+      statisticField: "OffenceNum",
+      statisticType: "count",
+    }),
+    queryFeatureStats({
+      url: ARCGIS_URLS.constructionPermits,
+      where: yearWhere(allYears, "Year", true),
+      groupByField: "Year",
+      statisticField: "PermitNo",
+      statisticType: "count",
+    }),
+    queryFeatureStats({
+      url: ARCGIS_URLS.businessLicense,
+      where: yearWhere(allYears, "pvYEAR"),
+      groupByField: "pvYEAR",
+      statisticField: "pvYEAR",
+      statisticType: "count",
+    }).catch(() => []),
+  ]);
+
+  const yearMap = new Map<
+    string,
+    { requests: number; violations: number; permits: number; licenses: number }
+  >();
+
+  const ensure = (year: string) => {
+    if (!yearMap.has(year)) {
+      yearMap.set(year, { requests: 0, violations: 0, permits: 0, licenses: 0 });
+    }
+    return yearMap.get(year)!;
+  };
+
+  for (const s of requestStats) {
+    if (s.group === "Unknown" || s.group === "0" || s.group === "null") continue;
+    ensure(s.group).requests = s.value;
+  }
+  for (const s of violationStats) {
+    if (s.group === "Unknown" || s.group === "0" || s.group === "null") continue;
+    ensure(s.group).violations = s.value;
+  }
+  for (const s of permitStats) {
+    if (s.group === "Unknown" || s.group === "0" || s.group === "null") continue;
+    ensure(s.group).permits = s.value;
+  }
+  for (const s of licenseStats) {
+    if (s.group === "Unknown" || s.group === "0" || s.group === "null") continue;
+    ensure(s.group).licenses = s.value;
+  }
+
+  return Array.from(yearMap.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([year, data]) => ({ year, ...data }));
+}
+
+async function fetchCrossPortalSummary(yr: YearRange): Promise<any[]> {
+  const [
+    totalRequests,
+    closedRequests,
+    totalPermits,
+    permitCostStats,
+    pavingCount,
+    activeViolations,
+  ] = await Promise.all([
+    queryFeatureCount(ARCGIS_URLS.serviceRequests311, yearWhere(yr)),
+    queryFeatureCount(ARCGIS_URLS.serviceRequests311, `${yearWhere(yr)} AND Status = 'Closed'`),
+    queryFeatureCount(ARCGIS_URLS.constructionPermits, yearWhere(yr, "Year", true)),
+    queryFeatureStats({
+      url: ARCGIS_URLS.constructionPermits,
+      where: yearWhere(yr, "Year", true),
+      groupByField: "Year",
+      statisticField: "EstimatedCost",
+      statisticType: "sum",
+    }),
+    queryFeatureCount(ARCGIS_URLS.pavingProject),
+    queryFeatureCount(
+      ARCGIS_URLS.codeViolations,
+      `${yearWhere(yr, "Year", true)} AND CaseStatus = 'OPEN'`,
+    ),
+  ]);
+
+  const totalPermitCost = permitCostStats.reduce((sum, s) => sum + s.value, 0);
+  const closedPct =
+    totalRequests && totalRequests > 0
+      ? Math.round(((closedRequests ?? 0) / totalRequests) * 100)
+      : 0;
+
+  return [
+    {
+      totalRequests: totalRequests ?? 0,
+      closedRequests: closedRequests ?? 0,
+      closedPct,
+      totalPermits: totalPermits ?? 0,
+      totalPermitCost,
+      pavingCount: pavingCount ?? 0,
+      activeViolations: activeViolations ?? 0,
+    },
+  ];
+}
+
+// ---------------------------------------------------------------------------
 // Master hook
 // ---------------------------------------------------------------------------
 
@@ -513,6 +790,20 @@ export function useChartData(chartId: string): UseChartDataReturn {
             break;
           case "householdData":
             result = await fetchHouseholdData();
+            break;
+          // Cross-Portal
+          case "crossDistrictInsights":
+            result = await fetchCrossDistrictInsights(yearRange);
+            break;
+          // Executive / Insights
+          case "kpiTrends":
+            result = await fetchKpiTrends(yearRange);
+            break;
+          case "multiMetricTrends":
+            result = await fetchMultiMetricTrends(yearRange);
+            break;
+          case "crossPortalSummary":
+            result = await fetchCrossPortalSummary(yearRange);
             break;
           default:
             result = [];

@@ -1,17 +1,21 @@
 # Montgomery Civic Hub
 
-A four-portal civic dashboard for Montgomery, Alabama — powered by AI agents (CopilotKit + AG-UI), live ArcGIS data, interactive maps, and real-time analytics. Each portal is tailored for a specific audience: residents, business owners, city staff, and researchers.
+A six-portal civic dashboard for Montgomery, Alabama — powered by AI agents (CopilotKit + AG-UI), live ArcGIS data, interactive maps, and real-time analytics. Four portals serve specific audiences (residents, business owners, city staff, researchers), plus two cross-cutting analytical dashboards for executive leadership and data-driven insights.
 
 ![Homepage](screenshots/fresh-full.png)
 
 ## Portals
 
-| Portal         | Route         | Audience             | Focus                                           |
-| -------------- | ------------- | -------------------- | ----------------------------------------------- |
-| **Resident**   | `/resident`   | Citizens             | Public safety, city services, neighborhood info |
-| **Business**   | `/business`   | Business owners      | Permits, licenses, commercial zones             |
-| **City Staff** | `/citystaff`  | Government employees | Infrastructure, budgets, operations             |
-| **Researcher** | `/researcher` | Academics & analysts | Crime trends, demographics, data exports        |
+| Portal         | Route         | Audience             | Focus                                             |
+| -------------- | ------------- | -------------------- | ------------------------------------------------- |
+| **Resident**   | `/resident`   | Citizens             | Public safety, city services, neighborhood info   |
+| **Business**   | `/business`   | Business owners      | Permits, licenses, commercial zones               |
+| **City Staff** | `/citystaff`  | Government employees | Infrastructure, budgets, operations               |
+| **Researcher** | `/researcher` | Academics & analysts | Crime trends, demographics, data exports          |
+| **Executive**  | `/executive`  | City leadership      | KPI command center, briefings, cross-portal pulse |
+| **Insights**   | `/insights`   | Analysts & planners  | Cross-district equity, trends, data stories       |
+
+### Portal Dashboards (Resident, Business, City Staff, Researcher)
 
 Each portal includes:
 
@@ -21,21 +25,49 @@ Each portal includes:
 - **Charts** — Recharts visualizations of portal-specific datasets
 - **Year Filter** — Global date range filter across all data views
 
+### Analytical Dashboards (Executive, Insights)
+
+These are AI-powered analytical dashboards — no map/table/chart tabs, focused on cross-cutting analysis:
+
+**Executive** (`/executive`) — Scrollable command center for city leadership:
+
+- Morning briefing generator (AI-powered)
+- KPI grid with sparkline trends (311 requests, violations, MPD vacancy, permits)
+- Alert priority queue with severity-coded items and "Discuss with AI" buttons
+- Cross-portal pulse cards (safety, business, infrastructure, public safety)
+- Service performance charts (311 resolution rates, permit investment by district)
+- Infrastructure status (paving projects, MPD staffing)
+
+**Insights** (`/insights`) — 5-tab analytics workbench:
+
+- **Overview** — Radar chart and heat matrix across 9 districts and 6 metrics, with anomaly detection
+- **Equity** — Composite equity scoring (demand vs investment z-scores), ranked by district
+- **Trends** — Multi-metric time series with toggleable metric overlays
+- **Districts** — Deep dive into any district with rankings and city-average comparisons
+- **Stories** — AI-generated narrative analysis from computed data
+
 ### AI-Controlled Interactivity
 
 The AI agent can control all interactive UI elements through CopilotKit actions:
 
-| Action                     | What the AI can do                                        |
-| -------------------------- | --------------------------------------------------------- |
-| `switch_data_tab`          | Switch between Map, Table, and Chart views                |
-| `set_year_range`           | Adjust the global year filter across all data views       |
-| `set_map_layer_visibility` | Show/hide individual data layers on the map               |
-| `select_table_dataset`     | Switch which dataset the data table displays              |
-| `set_chat_position`        | Move the chat panel to left or right side (desktop)       |
-| `toggle_chat_panel`        | Open/close the mobile chat sheet                          |
-| `toggle_council_districts` | Show/hide the 9-district council boundary overlay on maps |
+| Action                     | Portal(s)     | What the AI can do                                          |
+| -------------------------- | ------------- | ----------------------------------------------------------- |
+| `switch_data_tab`          | All 4 portals | Switch between Map, Table, and Chart views                  |
+| `set_year_range`           | All 4 portals | Adjust the global year filter across all data views         |
+| `set_map_layer_visibility` | All 4 portals | Show/hide individual data layers on the map                 |
+| `select_table_dataset`     | All 4 portals | Switch which dataset the data table displays                |
+| `set_chat_position`        | All 6         | Move the chat panel to left or right side (desktop)         |
+| `toggle_chat_panel`        | All 6         | Open/close the mobile chat sheet                            |
+| `toggle_council_districts` | All 4 portals | Show/hide the 9-district council boundary overlay on maps   |
+| `generate_briefing`        | Executive     | Generate a quick or detailed morning briefing               |
+| `highlight_alert`          | Executive     | Scroll to and highlight a specific priority alert           |
+| `switch_executive_view`    | Executive     | Navigate to a dashboard section                             |
+| `switch_insight_tab`       | Insights      | Switch between Overview, Equity, Trends, Districts, Stories |
+| `select_district`          | Insights      | Focus on a specific district (D1-D9) for deep analysis      |
+| `toggle_metric`            | Insights      | Show/hide metrics on the trends chart                       |
+| `generate_data_story`      | Insights      | Generate a narrative data story on a chosen topic           |
 
-The AI is also aware of all current UI state (active tab, visible layers, selected dataset, year range, layout mode, district overlay status) via CopilotKit readables.
+The AI is also aware of all current UI state (active tab, visible layers, selected dataset, year range, layout mode, district overlay status, selected district, active insight tab) via CopilotKit readables.
 
 ![Chat Demo](screenshots/fresh-chat-demo.png)
 
@@ -93,9 +125,11 @@ app/
   (business)/business/       # Business portal + colocated components
   (citystaff)/citystaff/     # City Staff portal + colocated components
   (researcher)/researcher/   # Researcher portal + colocated components
+  executive/                 # Executive dashboard + colocated components
+  insights/                  # Insights analytics workbench + colocated components
   api/
     chat/[portal]/           # Legacy streaming chat endpoint
-    copilotkit/              # CopilotKit runtime endpoint (4 portal agents)
+    copilotkit/              # CopilotKit runtime endpoint (6 agents)
   privacy/, terms/           # Legal pages
   page.tsx                   # Landing page
 
@@ -140,33 +174,41 @@ tests/
   e2e/                       # Playwright smoke & visual tests
 ```
 
-### Portal Page Structure
+### Page Structure
 
-Each portal page follows this provider/layout hierarchy:
+**Portal dashboards** (resident, business, citystaff, researcher):
 
 ```
 CopilotProvider(agent="portal")
   └→ YearFilterProvider
-       └→ PortalLayout (resizable two-panel)
-            ├→ ChatPanel (CopilotKit chat)
+       └→ PortalLayout (resizable two-panel: chat + content)
             └→ DataPanel (tabbed Map/Table/Chart)
                  ├→ [Portal]Map.tsx
                  ├→ [Portal]Table.tsx
                  └→ [Portal]Chart.tsx
 ```
 
+**Analytical dashboards** (executive, insights):
+
+```
+CopilotProvider(agent="executive|insights")
+  └→ YearFilterProvider
+       └→ PortalLayout (resizable two-panel: chat + content)
+            └→ [Executive]Dashboard.tsx | InsightsDashboard.tsx (scrollable/tabbed)
+```
+
 ### Hooks
 
-| Hook                 | Purpose                                      |
-| -------------------- | -------------------------------------------- |
-| useCopilotChatStream | CopilotKit-based chat (wraps useCopilotChat) |
-| useChatStream        | Original streaming chat (legacy)             |
-| usePortalData        | Client-side ArcGIS portal stats              |
-| useMapData           | Client-side map feature data                 |
-| useChartData         | Client-side chart data                       |
-| useTableData         | Client-side table data                       |
-| useLayerVisibility   | Map layer toggle state                       |
-| useHomepageData      | Fetch and animate homepage stats             |
+| Hook                 | Purpose                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------------------ |
+| useCopilotChatStream | CopilotKit-based chat (wraps useCopilotChat)                                                           |
+| useChatStream        | Original streaming chat (legacy)                                                                       |
+| usePortalData        | Client-side ArcGIS portal stats                                                                        |
+| useMapData           | Client-side map feature data                                                                           |
+| useChartData         | Client-side chart data (20+ chart IDs including KPI trends, multi-metric trends, cross-portal summary) |
+| useTableData         | Client-side table data                                                                                 |
+| useLayerVisibility   | Map layer toggle state                                                                                 |
+| useHomepageData      | Fetch and animate homepage stats                                                                       |
 
 ## Getting Started
 

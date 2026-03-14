@@ -328,6 +328,100 @@ export async function queryFeatureCount(
 }
 
 // ---------------------------------------------------------------------------
+// queryCountByPolygons — spatial count of features within each polygon
+// ---------------------------------------------------------------------------
+
+/**
+ * Count features from `pointLayerUrl` that fall within each polygon from
+ * `polygonLayerUrl`. Returns a map of groupLabel → count.
+ *
+ * 1. Fetches polygons from `polygonLayerUrl` (with geometry).
+ * 2. For each polygon, sends a returnCountOnly query against `pointLayerUrl`
+ *    using the polygon as a spatial filter.
+ * 3. Returns { [labelFieldValue]: count }.
+ */
+export async function queryCountByPolygons(options: {
+  pointLayerUrl: string;
+  polygonLayerUrl: string;
+  polygonLabelField: string;
+  where?: string;
+  signal?: AbortSignal;
+}): Promise<{ group: string; value: number }[]> {
+  const { pointLayerUrl, polygonLayerUrl, polygonLabelField, where = "1=1", signal } = options;
+
+  const cacheKey = buildCacheKey("spatialcount", pointLayerUrl, {
+    polygonLayerUrl,
+    polygonLabelField,
+    where,
+  });
+  const cached = getCached<{ group: string; value: number }[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    // Step 1: Fetch polygon geometries with their labels
+    await acquireSlot();
+    let polygons: { label: string; geometry: unknown; sr: unknown }[];
+    try {
+      const polyParams = new URLSearchParams({
+        where: "1=1",
+        outFields: polygonLabelField,
+        returnGeometry: "true",
+        f: "json",
+      });
+      const polyRes = await fetch(`${polygonLayerUrl}/query?${polyParams}`, { signal });
+      if (!polyRes.ok) return [];
+      const polyData = await polyRes.json();
+      if (!Array.isArray(polyData.features)) return [];
+
+      polygons = polyData.features.map(
+        (f: { attributes: Record<string, unknown>; geometry: unknown }) => ({
+          label: String(f.attributes[polygonLabelField] ?? "Unknown"),
+          geometry: f.geometry,
+          sr: polyData.spatialReference,
+        }),
+      );
+    } finally {
+      releaseSlot();
+    }
+
+    // Step 2: For each polygon, count points that intersect it (POST to handle large geometries)
+    const results = await Promise.all(
+      polygons.map(async (poly) => {
+        await acquireSlot();
+        try {
+          const body = new URLSearchParams({
+            where,
+            geometry: JSON.stringify(poly.geometry),
+            geometryType: "esriGeometryPolygon",
+            spatialRel: "esriSpatialRelIntersects",
+            inSR: JSON.stringify(poly.sr),
+            returnCountOnly: "true",
+            f: "json",
+          });
+          const res = await fetch(`${pointLayerUrl}/query`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: body.toString(),
+            signal,
+          });
+          if (!res.ok) return { group: poly.label, value: 0 };
+          const data = await res.json();
+          return { group: poly.label, value: data.count ?? 0 };
+        } finally {
+          releaseSlot();
+        }
+      }),
+    );
+
+    setCache(cacheKey, results);
+    return results;
+  } catch (error) {
+    console.error("[arcgis-client] queryCountByPolygons failed:", error);
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
 // queryFeatureAttributes
 // ---------------------------------------------------------------------------
 

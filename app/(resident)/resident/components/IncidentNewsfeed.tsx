@@ -4,9 +4,16 @@ import { useCopilotReadable } from "@copilotkit/react-core";
 import {
   Activity,
   AlertCircle,
+  CalendarDays,
   CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Filter,
+  Hash,
+  MapPin,
+  Phone,
   Radio,
   RefreshCw,
   TrendingUp,
@@ -26,7 +33,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -36,6 +42,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ARCGIS_URLS, queryFeatureAttributes, queryFeatureStats } from "@/lib/arcgis-client";
+import { useYearFilter } from "@/lib/contexts/year-filter";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -141,9 +148,15 @@ function formatNumber(n: number): string {
   return n.toLocaleString();
 }
 
-/** Build a WHERE clause from the current filter state */
-function buildWhereClause(filters: FilterState): string {
+/** Build a WHERE clause from the current filter state and year range */
+function buildIncidentWhereClause(
+  filters: FilterState,
+  yearRange: { from: number; to: number },
+): string {
   const clauses: string[] = [];
+
+  // Always apply year filter
+  clauses.push(`Year >= ${yearRange.from} AND Year <= ${yearRange.to}`);
 
   if (filters.departments.length > 0) {
     const deptList = filters.departments.map((d) => `'${d.replace(/'/g, "''")}'`).join(",");
@@ -166,7 +179,7 @@ function buildWhereClause(filters: FilterState): string {
     clauses.push(`Request_Type = '${filters.requestType.replace(/'/g, "''")}'`);
   }
 
-  return clauses.length > 0 ? clauses.join(" AND ") : "1=1";
+  return clauses.join(" AND ");
 }
 
 const CHART_TOOLTIP_STYLE = {
@@ -201,6 +214,8 @@ const CHART_COLORS = [
 // ---------------------------------------------------------------------------
 
 export function IncidentNewsfeed() {
+  const { yearRange } = useYearFilter();
+
   // ── State ──────────────────────────────────────────────────────────────
   const [filters, setFilters] = useState<FilterState>({
     departments: [],
@@ -270,7 +285,7 @@ export function IncidentNewsfeed() {
   const fetchStats = useCallback(async () => {
     setIsLoadingStats(true);
     try {
-      const where = buildWhereClause(filters);
+      const where = buildIncidentWhereClause(filters, yearRange);
       const statusStats = await queryFeatureStats({
         url,
         where,
@@ -292,13 +307,13 @@ export function IncidentNewsfeed() {
     } finally {
       setIsLoadingStats(false);
     }
-  }, [url, filters]);
+  }, [url, filters, yearRange]);
 
   // ── Fetch feed items ──────────────────────────────────────────────────
   const fetchFeed = useCallback(async () => {
     setIsLoadingFeed(true);
     try {
-      const where = buildWhereClause(filters);
+      const where = buildIncidentWhereClause(filters, yearRange);
       const rows = await queryFeatureAttributes({
         url,
         where,
@@ -335,13 +350,13 @@ export function IncidentNewsfeed() {
     } finally {
       setIsLoadingFeed(false);
     }
-  }, [url, filters]);
+  }, [url, filters, yearRange]);
 
   // ── Fetch type breakdown chart ────────────────────────────────────────
   const fetchTypeBreakdown = useCallback(async () => {
     setIsLoadingChart(true);
     try {
-      const where = buildWhereClause(filters);
+      const where = buildIncidentWhereClause(filters, yearRange);
       const typeStats = await queryFeatureStats({
         url,
         where,
@@ -361,13 +376,17 @@ export function IncidentNewsfeed() {
     } finally {
       setIsLoadingChart(false);
     }
-  }, [url, filters]);
+  }, [url, filters, yearRange]);
 
   // ── Fetch year trend ──────────────────────────────────────────────────
   const fetchYearTrend = useCallback(async () => {
     setIsLoadingTrend(true);
     try {
-      const where = buildWhereClause(filters);
+      // Use a wide year range so the trend chart always shows all years,
+      // regardless of the selected year filter — otherwise it would only
+      // show a single data point for the currently selected year.
+      const allYearsRange = { from: 2018, to: new Date().getFullYear() };
+      const where = buildIncidentWhereClause(filters, allYearsRange);
       const yearStats = await queryFeatureStats({
         url,
         where,
@@ -480,12 +499,29 @@ export function IncidentNewsfeed() {
     }));
   }, []);
 
+  // ── Expandable items ────────────────────────────────────────────────
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // ── Pagination ──────────────────────────────────────────────────────
+  const PAGE_SIZE = 25;
+  const [currentPage, setCurrentPage] = useState(0);
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const pagedItems = useMemo(
+    () => items.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE),
+    [items, currentPage],
+  );
+
+  // Reset to page 0 when filters change
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [filters, yearRange]);
+
   // ── Render ─────────────────────────────────────────────────────────────
 
   return (
-    <div data-tour-step-id="resident-newsfeed" className="max-w-7xl mx-auto space-y-4">
-      {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
+    <div data-tour-step-id="resident-newsfeed" className="space-y-4">
+      {/* ── Header + Stats (compact row) ─────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2.5 w-2.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
@@ -493,10 +529,38 @@ export function IncidentNewsfeed() {
           </span>
           <h2 className="text-lg font-semibold">311 Service Requests</h2>
         </div>
+
+        {/* Inline stats */}
+        {!isLoadingStats && (
+          <div className="flex items-center gap-3 text-sm tabular-nums">
+            <span className="flex items-center gap-1">
+              <Activity className="h-3.5 w-3.5 text-blue-500" />
+              <span className="font-semibold">{formatNumber(stats.total)}</span>
+            </span>
+            <span className="flex items-center gap-1 text-red-600 dark:text-red-400">
+              <AlertCircle className="h-3.5 w-3.5" />
+              {formatNumber(stats.open)}
+            </span>
+            <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              {formatNumber(stats.closed)}
+            </span>
+            <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+              <Clock className="h-3.5 w-3.5" />
+              {formatNumber(stats.inProgress)}
+            </span>
+            {avgResolutionTime && !isLoadingFeed && (
+              <span className="flex items-center gap-1 text-muted-foreground text-xs">
+                Avg: {formatDuration(avgResolutionTime)}
+              </span>
+            )}
+          </div>
+        )}
+
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8"
+          className="ml-auto h-8 w-8"
           onClick={refreshAll}
           disabled={isLoading}
         >
@@ -505,413 +569,515 @@ export function IncidentNewsfeed() {
         </Button>
       </div>
 
-      {/* ── Section 1: Summary Stats Bar ──────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {isLoadingStats ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
-              <CardContent className="p-4">
-                <Skeleton className="mb-2 h-4 w-20" />
-                <Skeleton className="h-8 w-24" />
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <>
-            <Card className="border-l-4 border-l-blue-500">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Activity className="h-4 w-4" />
-                  Total Requests
-                </div>
-                <p className="mt-1 text-2xl font-bold tabular-nums">{formatNumber(stats.total)}</p>
-              </CardContent>
-            </Card>
-            <Card className="border-l-4 border-l-red-500">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <AlertCircle className="h-4 w-4 text-red-500" />
-                  Open
-                </div>
-                <p className="mt-1 text-2xl font-bold tabular-nums">{formatNumber(stats.open)}</p>
-                <Badge
-                  variant="outline"
-                  className="mt-1 bg-red-500/15 text-red-700 dark:text-red-400 border-red-300 dark:border-red-700 text-[10px]"
-                >
-                  {stats.total > 0 ? ((stats.open / stats.total) * 100).toFixed(1) : 0}%
-                </Badge>
-              </CardContent>
-            </Card>
-            <Card className="border-l-4 border-l-green-500">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  Closed
-                </div>
-                <p className="mt-1 text-2xl font-bold tabular-nums">{formatNumber(stats.closed)}</p>
-                <Badge
-                  variant="outline"
-                  className="mt-1 bg-green-500/15 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700 text-[10px]"
-                >
-                  {stats.total > 0 ? ((stats.closed / stats.total) * 100).toFixed(1) : 0}%
-                </Badge>
-              </CardContent>
-            </Card>
-            <Card className="border-l-4 border-l-amber-500">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4 text-amber-500" />
-                  In Progress
-                </div>
-                <p className="mt-1 text-2xl font-bold tabular-nums">
-                  {formatNumber(stats.inProgress)}
-                </p>
-                <Badge
-                  variant="outline"
-                  className="mt-1 bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700 text-[10px]"
-                >
-                  {stats.total > 0 ? ((stats.inProgress / stats.total) * 100).toFixed(1) : 0}%
-                </Badge>
-              </CardContent>
-            </Card>
-          </>
+      {/* ── Filter Bar ────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border bg-card p-2">
+        <Filter className="h-4 w-4 text-muted-foreground" />
+
+        <Select
+          value={filters.departments.length === 1 ? filters.departments[0] : "all"}
+          onValueChange={(val) => updateFilter("departments", val === "all" ? [] : [val])}
+          disabled={isLoadingFilters}
+        >
+          <SelectTrigger className="h-8 w-[180px] text-xs">
+            <SelectValue placeholder="All Departments" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Departments</SelectItem>
+            {departmentOptions.map((dept) => (
+              <SelectItem key={dept} value={dept}>
+                {dept}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <div className="flex rounded-md border">
+          {STATUS_OPTIONS.map((s) => (
+            <Button
+              key={s}
+              variant={filters.status === s ? "default" : "ghost"}
+              size="sm"
+              className="h-8 rounded-none px-3 text-xs first:rounded-l-md last:rounded-r-md"
+              onClick={() => updateFilter("status", s as FilterState["status"])}
+            >
+              {s}
+            </Button>
+          ))}
+        </div>
+
+        <Select value={filters.district} onValueChange={(val) => updateFilter("district", val)}>
+          <SelectTrigger className="h-8 w-[130px] text-xs">
+            <SelectValue placeholder="All Districts" />
+          </SelectTrigger>
+          <SelectContent>
+            {DISTRICTS.map((d) => (
+              <SelectItem key={d} value={d}>
+                {d === "all" ? "All Districts" : `District ${d}`}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={filters.origin}
+          onValueChange={(val) => updateFilter("origin", val)}
+          disabled={isLoadingFilters}
+        >
+          <SelectTrigger className="h-8 w-[140px] text-xs">
+            <SelectValue placeholder="All Origins" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Origins</SelectItem>
+            {originOptions.map((o) => (
+              <SelectItem key={o} value={o}>
+                {o}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {filters.requestType && (
+          <Badge
+            variant="secondary"
+            className="h-7 cursor-pointer gap-1 text-xs"
+            onClick={() => updateFilter("requestType", "")}
+          >
+            {filters.requestType}
+            <span className="ml-1 text-muted-foreground">&times;</span>
+          </Badge>
         )}
       </div>
 
-      {/* ── Section 2: Filter Bar ─────────────────────────────────────── */}
-      <Card>
-        <CardContent className="p-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
-
-            {/* Department filter */}
-            <Select
-              value={filters.departments.length === 1 ? filters.departments[0] : "all"}
-              onValueChange={(val) => updateFilter("departments", val === "all" ? [] : [val])}
-              disabled={isLoadingFilters}
-            >
-              <SelectTrigger className="h-8 w-[180px] text-xs">
-                <SelectValue placeholder="All Departments" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
-                {departmentOptions.map((dept) => (
-                  <SelectItem key={dept} value={dept}>
-                    {dept}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Status toggle */}
-            <div className="flex rounded-md border">
-              {STATUS_OPTIONS.map((s) => (
-                <Button
-                  key={s}
-                  variant={filters.status === s ? "default" : "ghost"}
-                  size="sm"
-                  className="h-8 rounded-none px-3 text-xs first:rounded-l-md last:rounded-r-md"
-                  onClick={() => updateFilter("status", s as FilterState["status"])}
-                >
-                  {s}
-                </Button>
-              ))}
-            </div>
-
-            {/* District picker */}
-            <Select value={filters.district} onValueChange={(val) => updateFilter("district", val)}>
-              <SelectTrigger className="h-8 w-[130px] text-xs">
-                <SelectValue placeholder="All Districts" />
-              </SelectTrigger>
-              <SelectContent>
-                {DISTRICTS.map((d) => (
-                  <SelectItem key={d} value={d}>
-                    {d === "all" ? "All Districts" : `District ${d}`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Origin filter */}
-            <Select
-              value={filters.origin}
-              onValueChange={(val) => updateFilter("origin", val)}
-              disabled={isLoadingFilters}
-            >
-              <SelectTrigger className="h-8 w-[140px] text-xs">
-                <SelectValue placeholder="All Origins" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Origins</SelectItem>
-                {originOptions.map((o) => (
-                  <SelectItem key={o} value={o}>
-                    {o}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Active request type filter indicator */}
-            {filters.requestType && (
+      {/* ── Feed List with Pagination ─────────────────────────────────── */}
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Radio className="h-4 w-4 text-blue-500" />
+            <span className="text-sm font-semibold">Recent Requests</span>
+            {!isLoadingFeed && (
               <Badge
                 variant="secondary"
-                className="h-7 cursor-pointer gap-1 text-xs"
-                onClick={() => updateFilter("requestType", "")}
+                className="h-5 min-w-[20px] justify-center px-1.5 text-[10px] font-bold tabular-nums"
               >
-                {filters.requestType}
-                <span className="ml-1 text-muted-foreground">&times;</span>
+                {items.length}
               </Badge>
             )}
-
-            {/* Average resolution time */}
-            {avgResolutionTime && !isLoadingFeed && (
-              <div className="ml-auto flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
-                Avg resolution: {formatDuration(avgResolutionTime)}
-              </div>
-            )}
           </div>
-        </CardContent>
-      </Card>
+          {/* Pagination controls */}
+          {!isLoadingFeed && items.length > PAGE_SIZE && (
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                disabled={currentPage === 0}
+                onClick={() => setCurrentPage((p) => p - 1)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="min-w-[60px] text-center text-xs tabular-nums text-muted-foreground">
+                {currentPage + 1} / {totalPages}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                disabled={currentPage >= totalPages - 1}
+                onClick={() => setCurrentPage((p) => p + 1)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
 
-      {/* ── Section 3: Feed + Type Breakdown ──────────────────────────── */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        {/* Feed — left 2/3 */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between p-3 pb-0">
-            <div className="flex items-center gap-2">
-              <Radio className="h-4 w-4 text-blue-500" />
-              <CardTitle className="text-sm font-semibold">Recent Requests</CardTitle>
-              {!isLoadingFeed && (
-                <Badge
-                  variant="secondary"
-                  className="h-5 min-w-[20px] justify-center px-1.5 text-[10px] font-bold tabular-nums"
+        {isLoadingFeed ? (
+          <div className="space-y-1.5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex gap-3 rounded-lg border border-l-4 border-l-muted p-2.5">
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-3.5 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-4 w-12 rounded-full" />
+                    <Skeleton className="h-4 w-16 rounded-full" />
+                    <Skeleton className="h-4 w-10 rounded-full" />
+                  </div>
+                </div>
+                <Skeleton className="h-3 w-10 shrink-0" />
+              </div>
+            ))}
+          </div>
+        ) : items.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            No requests found matching current filters.
+          </p>
+        ) : (
+          <div className="space-y-1.5">
+            {pagedItems.map((item) => {
+              const resolutionMs = item.closeDate
+                ? item.closeDate.getTime() - item.date.getTime()
+                : null;
+              const isExpanded = expandedId === item.id;
+
+              return (
+                <div
+                  key={item.id}
+                  className={`rounded-lg border border-l-4 ${statusBorderColor(item.status)} transition-colors hover:bg-muted/50 cursor-pointer`}
+                  onClick={() => setExpandedId(isExpanded ? null : item.id)}
                 >
-                  {items.length}
-                </Badge>
+                  {/* Collapsed summary row */}
+                  <div className="p-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-2 min-w-0">
+                        <ChevronDown
+                          className={`mt-0.5 h-4 w-4 shrink-0 text-muted-foreground transition-transform ${isExpanded ? "rotate-0" : "-rotate-90"}`}
+                        />
+                        <span className="text-sm font-medium leading-tight line-clamp-2">
+                          {item.type}
+                        </span>
+                      </div>
+                      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                        {relativeTime(item.date)}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 ml-6 text-xs text-muted-foreground">{item.address}</p>
+                    <div className="mt-1.5 ml-6 flex flex-wrap items-center gap-1.5">
+                      <Badge
+                        variant="outline"
+                        className={`h-5 px-1.5 text-[10px] ${statusColor(item.status)}`}
+                      >
+                        {item.status}
+                      </Badge>
+                      <Badge
+                        variant="secondary"
+                        className="h-5 gap-1 px-1.5 text-[10px] bg-blue-500/10 text-blue-700 dark:text-blue-400"
+                      >
+                        <Radio className="h-2.5 w-2.5" />
+                        311
+                      </Badge>
+                      {item.department && (
+                        <span className="truncate text-[10px] text-muted-foreground">
+                          {item.department}
+                        </span>
+                      )}
+                      {resolutionMs !== null && resolutionMs > 0 && (
+                        <Badge
+                          variant="outline"
+                          className="h-5 gap-1 px-1.5 text-[10px] bg-green-500/10 text-green-700 dark:text-green-400"
+                        >
+                          <CheckCircle2 className="h-2.5 w-2.5" />
+                          {formatDuration(resolutionMs)}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Expanded detail panel */}
+                  {isExpanded && (
+                    <div className="border-t bg-muted/30 px-4 py-3 space-y-3">
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Hash className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="text-muted-foreground">Request ID</span>
+                          <span className="ml-auto font-mono text-xs">{item.id}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="text-muted-foreground">Created</span>
+                          <span className="ml-auto text-xs">
+                            {item.date.toLocaleDateString("en-US", {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}{" "}
+                            {item.date.toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="text-muted-foreground">Address</span>
+                          <span className="ml-auto text-xs text-right max-w-[200px] truncate">
+                            {item.address}
+                          </span>
+                        </div>
+                        {item.district && item.district !== "0" && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-muted-foreground">District</span>
+                            <span className="ml-auto text-xs">District {item.district}</span>
+                          </div>
+                        )}
+                        {item.department && (
+                          <div className="flex items-center gap-2">
+                            <Activity className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-muted-foreground">Department</span>
+                            <span className="ml-auto text-xs">{item.department}</span>
+                          </div>
+                        )}
+                        {item.origin && (
+                          <div className="flex items-center gap-2">
+                            <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-muted-foreground">Origin</span>
+                            <span className="ml-auto text-xs">{item.origin}</span>
+                          </div>
+                        )}
+                        {item.closeDate && (
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
+                            <span className="text-muted-foreground">Closed</span>
+                            <span className="ml-auto text-xs">
+                              {item.closeDate.toLocaleDateString("en-US", {
+                                weekday: "short",
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        )}
+                        {resolutionMs !== null && resolutionMs > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="text-muted-foreground">Resolution Time</span>
+                            <span className="ml-auto text-xs font-semibold">
+                              {formatDuration(resolutionMs)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Quick filter button */}
+                      {item.type && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateFilter(
+                              "requestType",
+                              filters.requestType === item.type ? "" : item.type,
+                            );
+                          }}
+                        >
+                          <Filter className="mr-1.5 h-3 w-3" />
+                          {filters.requestType === item.type
+                            ? "Clear filter"
+                            : `Show all "${item.type}" requests`}
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Bottom pagination for long lists */}
+        {!isLoadingFeed && items.length > PAGE_SIZE && (
+          <div className="mt-3 flex items-center justify-center gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-3 text-xs"
+              disabled={currentPage === 0}
+              onClick={() => setCurrentPage(0)}
+            >
+              First
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-3 text-xs"
+              disabled={currentPage === 0}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              <ChevronLeft className="mr-1 h-3 w-3" /> Prev
+            </Button>
+            <span className="px-3 text-xs tabular-nums text-muted-foreground">
+              Page {currentPage + 1} of {totalPages} ({items.length} total)
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-3 text-xs"
+              disabled={currentPage >= totalPages - 1}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              Next <ChevronRight className="ml-1 h-3 w-3" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 px-3 text-xs"
+              disabled={currentPage >= totalPages - 1}
+              onClick={() => setCurrentPage(totalPages - 1)}
+            >
+              Last
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* ── Charts Row: Type Breakdown + Year Trend ───────────────────── */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Type Breakdown — horizontal bar chart */}
+        <Card>
+          <CardHeader className="p-4 pb-1">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold">Top Request Types</CardTitle>
+              {!isLoadingChart && typeBreakdown.length > 0 && (
+                <span className="text-[10px] text-muted-foreground">Click a bar to filter</span>
               )}
             </div>
           </CardHeader>
-          <CardContent className="p-3 pt-2">
-            {isLoadingFeed ? (
-              <div className="space-y-1.5">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex gap-3 rounded-lg border border-l-4 border-l-muted p-2.5"
-                  >
-                    <div className="flex-1 space-y-1.5">
-                      <Skeleton className="h-3.5 w-3/4" />
-                      <Skeleton className="h-3 w-1/2" />
-                      <div className="flex gap-2">
-                        <Skeleton className="h-4 w-12 rounded-full" />
-                        <Skeleton className="h-4 w-16 rounded-full" />
-                        <Skeleton className="h-4 w-10 rounded-full" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-3 w-10 shrink-0" />
-                  </div>
-                ))}
-              </div>
-            ) : items.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                No requests found matching current filters.
-              </p>
-            ) : (
-              <ScrollArea className="max-h-[500px]">
-                <div className="space-y-1.5">
-                  {items.map((item) => {
-                    const resolutionMs = item.closeDate
-                      ? item.closeDate.getTime() - item.date.getTime()
-                      : null;
-
-                    return (
-                      <div
-                        key={item.id}
-                        className={`rounded-lg border border-l-4 ${statusBorderColor(item.status)} p-2.5 transition-colors hover:bg-muted/50`}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="text-sm font-medium leading-tight line-clamp-2">
-                            {item.type}
-                          </span>
-                          <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                            {relativeTime(item.date)}
-                          </span>
-                        </div>
-                        <p className="mt-0.5 text-xs text-muted-foreground">{item.address}</p>
-                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                          <Badge
-                            variant="outline"
-                            className={`h-5 px-1.5 text-[10px] ${statusColor(item.status)}`}
-                          >
-                            {item.status}
-                          </Badge>
-                          <Badge
-                            variant="secondary"
-                            className="h-5 gap-1 px-1.5 text-[10px] bg-blue-500/10 text-blue-700 dark:text-blue-400"
-                          >
-                            <Radio className="h-2.5 w-2.5" />
-                            311
-                          </Badge>
-                          {item.department && (
-                            <span className="truncate text-[10px] text-muted-foreground">
-                              {item.department}
-                            </span>
-                          )}
-                          {item.district && item.district !== "0" && (
-                            <span className="text-[10px] text-muted-foreground">
-                              D{item.district}
-                            </span>
-                          )}
-                          {item.origin && (
-                            <span className="text-[10px] text-muted-foreground">
-                              via {item.origin}
-                            </span>
-                          )}
-                          {resolutionMs !== null && resolutionMs > 0 && (
-                            <Badge
-                              variant="outline"
-                              className="h-5 gap-1 px-1.5 text-[10px] bg-green-500/10 text-green-700 dark:text-green-400"
-                            >
-                              <CheckCircle2 className="h-2.5 w-2.5" />
-                              {formatDuration(resolutionMs)}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </ScrollArea>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Type Breakdown Chart — right 1/3 */}
-        <Card>
-          <CardHeader className="p-3 pb-0">
-            <CardTitle className="text-sm font-semibold">Top Request Types</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 pt-2">
+          <CardContent className="p-4 pt-2">
             {isLoadingChart ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <Skeleton className="h-3 w-20" />
-                    <Skeleton className="h-5 flex-1" />
+                  <div key={i} className="flex items-center gap-3">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-6 flex-1 rounded" />
                   </div>
                 ))}
               </div>
             ) : typeBreakdown.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">No data available.</p>
             ) : (
-              <ResponsiveContainer width="100%" height={420}>
-                <BarChart
-                  data={typeBreakdown}
-                  layout="vertical"
-                  margin={{ top: 0, right: 10, bottom: 0, left: 0 }}
-                >
+              <div className="space-y-1.5">
+                {typeBreakdown.map((item, index) => {
+                  const maxVal = typeBreakdown[0]?.value ?? 1;
+                  const pct = (item.value / maxVal) * 100;
+                  const isActive = filters.requestType === item.name;
+                  return (
+                    <button
+                      key={item.name}
+                      type="button"
+                      className={`group flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors ${
+                        isActive ? "bg-primary/10 ring-1 ring-primary/30" : "hover:bg-muted/60"
+                      }`}
+                      onClick={() => handleBarClick(item)}
+                    >
+                      <span
+                        className="w-[110px] shrink-0 truncate text-xs text-muted-foreground group-hover:text-foreground"
+                        title={item.name}
+                      >
+                        {item.name}
+                      </span>
+                      <div className="relative flex-1 h-6 rounded bg-muted/40 overflow-hidden">
+                        <div
+                          className="absolute inset-y-0 left-0 rounded transition-all duration-300"
+                          style={{
+                            width: `${Math.max(pct, 2)}%`,
+                            backgroundColor: CHART_COLORS[index % CHART_COLORS.length],
+                            opacity: isActive ? 1 : 0.75,
+                          }}
+                        />
+                        <span className="relative z-10 flex h-full items-center px-2 text-[11px] font-semibold tabular-nums text-foreground">
+                          {formatNumber(item.value)}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Year Trend — area chart */}
+        <Card>
+          <CardHeader className="flex flex-row items-center gap-2 p-4 pb-1">
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-semibold">Request Volume by Year</CardTitle>
+            {!isLoadingTrend && yearTrend.length > 1 && (
+              <Badge variant="outline" className="ml-auto text-[10px] font-normal tabular-nums">
+                {(() => {
+                  const last = yearTrend[yearTrend.length - 1];
+                  const prev = yearTrend[yearTrend.length - 2];
+                  if (!last || !prev || prev.count === 0) return null;
+                  const change = ((last.count - prev.count) / prev.count) * 100;
+                  return (
+                    <span
+                      className={
+                        change >= 0
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-green-600 dark:text-green-400"
+                      }
+                    >
+                      {change >= 0 ? "+" : ""}
+                      {change.toFixed(1)}% vs {prev.year}
+                    </span>
+                  );
+                })()}
+              </Badge>
+            )}
+          </CardHeader>
+          <CardContent className="p-4 pt-2">
+            {isLoadingTrend ? (
+              <Skeleton className="h-[300px] w-full rounded" />
+            ) : yearTrend.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">
+                No trend data available.
+              </p>
+            ) : (
+              <ResponsiveContainer width="100%" height={350}>
+                <AreaChart data={yearTrend} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
+                  <defs>
+                    <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.25} />
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    horizontal={false}
+                    vertical={false}
                     stroke="hsl(var(--border))"
+                    strokeOpacity={0.5}
                   />
                   <XAxis
-                    type="number"
-                    tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                    tickFormatter={(v: number) => formatNumber(v)}
+                    dataKey="year"
+                    tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                    tickFormatter={(v: number) => String(v)}
+                    axisLine={{ stroke: "hsl(var(--border))" }}
+                    tickLine={false}
                   />
                   <YAxis
-                    dataKey="name"
-                    type="category"
-                    width={110}
-                    tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                    tickFormatter={(v: string) => (v.length > 16 ? v.slice(0, 14) + "..." : v)}
+                    tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                    tickFormatter={(v: number) => formatNumber(v)}
+                    width={50}
+                    axisLine={false}
+                    tickLine={false}
                   />
                   <Tooltip
-                    contentStyle={CHART_TOOLTIP_STYLE}
-                    formatter={(value: number) => [formatNumber(value), "Requests"]}
-                  />
-                  <Bar
-                    dataKey="value"
-                    radius={[0, 4, 4, 0]}
-                    cursor="pointer"
-                    onClick={(_: unknown, index: number) => {
-                      if (typeBreakdown[index]) {
-                        handleBarClick(typeBreakdown[index]);
-                      }
+                    contentStyle={{
+                      ...CHART_TOOLTIP_STYLE,
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                     }}
-                  >
-                    {typeBreakdown.map((_, index) => (
-                      <rect
-                        key={`cell-${index}`}
-                        fill={CHART_COLORS[index % CHART_COLORS.length]}
-                        className="transition-opacity hover:opacity-80"
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
+                    formatter={(value: number) => [formatNumber(value), "Requests"]}
+                    labelFormatter={(label: number) => `Year ${label}`}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#3b82f6"
+                    strokeWidth={2.5}
+                    fill="url(#trendGradient)"
+                    dot={{ r: 3, fill: "#3b82f6", strokeWidth: 0 }}
+                    activeDot={{ r: 5, fill: "#3b82f6", stroke: "#fff", strokeWidth: 2 }}
+                  />
+                </AreaChart>
               </ResponsiveContainer>
-            )}
-            {!isLoadingChart && typeBreakdown.length > 0 && (
-              <p className="mt-2 text-center text-[10px] text-muted-foreground">
-                Click a bar to filter the feed by that type
-              </p>
             )}
           </CardContent>
         </Card>
       </div>
-
-      {/* ── Section 4: Year Trend Sparkline ───────────────────────────── */}
-      <Card>
-        <CardHeader className="flex flex-row items-center gap-2 p-3 pb-0">
-          <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          <CardTitle className="text-sm font-semibold">Request Volume by Year</CardTitle>
-        </CardHeader>
-        <CardContent className="p-3 pt-2">
-          {isLoadingTrend ? (
-            <Skeleton className="h-[140px] w-full" />
-          ) : yearTrend.length === 0 ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              No trend data available.
-            </p>
-          ) : (
-            <ResponsiveContainer width="100%" height={140}>
-              <AreaChart data={yearTrend} margin={{ top: 5, right: 10, bottom: 0, left: 10 }}>
-                <defs>
-                  <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="year"
-                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                  tickFormatter={(v: number) => String(v)}
-                />
-                <YAxis
-                  tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                  tickFormatter={(v: number) => formatNumber(v)}
-                  width={45}
-                />
-                <Tooltip
-                  contentStyle={CHART_TOOLTIP_STYLE}
-                  formatter={(value: number) => [formatNumber(value), "Requests"]}
-                  labelFormatter={(label: number) => `Year ${label}`}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="count"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  fill="url(#trendGradient)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 }

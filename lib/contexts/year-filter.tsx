@@ -21,7 +21,7 @@ interface YearFilterContextValue {
 const CURRENT_YEAR = new Date().getFullYear();
 const MIN_YEAR = 2018;
 
-const defaultRange: YearRange = { from: MIN_YEAR, to: CURRENT_YEAR };
+const defaultRange: YearRange = { from: CURRENT_YEAR, to: CURRENT_YEAR };
 
 const YearFilterContext = createContext<YearFilterContextValue | null>(null);
 

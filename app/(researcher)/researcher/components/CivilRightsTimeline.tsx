@@ -65,7 +65,7 @@ interface TimelineLandmark {
 }
 
 interface CivilRightsTimelineProps {
-  onSelectLandmark: (landmark: TimelineLandmark) => void;
+  onSelectLandmark?: (landmark: TimelineLandmark) => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -854,7 +854,7 @@ export function CivilRightsTimeline({ onSelectLandmark }: CivilRightsTimelinePro
   const handleSelect = useCallback(
     (landmark: TimelineLandmark) => {
       setSelectedName((prev) => (prev === landmark.name ? null : landmark.name));
-      onSelectLandmark(landmark);
+      onSelectLandmark?.(landmark);
     },
     [onSelectLandmark],
   );
