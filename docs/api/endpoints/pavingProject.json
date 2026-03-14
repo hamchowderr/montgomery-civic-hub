@@ -1,0 +1,213 @@
+{
+  "key": "pavingProject",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Paving_Project/FeatureServer/0",
+  "geometryType": "esriGeometryPolyline",
+  "maxRecordCount": 2000,
+  "totalRecords": 960,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 17181
+    },
+    {
+      "name": "FULLNAME",
+      "type": "esriFieldTypeString",
+      "alias": "FULLNAME",
+      "length": 68,
+      "sampleValue": "9TH ST"
+    },
+    {
+      "name": "DistrictCode",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "DistrictCode",
+      "length": null,
+      "sampleValue": 3
+    },
+    {
+      "name": "DistrictDesc",
+      "type": "esriFieldTypeString",
+      "alias": "DistrictDesc",
+      "length": 15,
+      "sampleValue": "District 3"
+    },
+    {
+      "name": "StreetName",
+      "type": "esriFieldTypeString",
+      "alias": "StreetName",
+      "length": 80,
+      "sampleValue": "9TH ST"
+    },
+    {
+      "name": "From_",
+      "type": "esriFieldTypeString",
+      "alias": "From_",
+      "length": 80,
+      "sampleValue": "N Court St"
+    },
+    {
+      "name": "To_",
+      "type": "esriFieldTypeString",
+      "alias": "To_",
+      "length": 80,
+      "sampleValue": "Cross St"
+    },
+    {
+      "name": "AsphaltEst",
+      "type": "esriFieldTypeDouble",
+      "alias": "AsphaltEst",
+      "length": null,
+      "sampleValue": 20133.12
+    },
+    {
+      "name": "EstTons",
+      "type": "esriFieldTypeDouble",
+      "alias": "EstTons",
+      "length": null,
+      "sampleValue": 280
+    },
+    {
+      "name": "Width_ft",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Width_ft",
+      "length": null,
+      "sampleValue": 24
+    },
+    {
+      "name": "Length_ft",
+      "type": "esriFieldTypeDouble",
+      "alias": "Length_ft",
+      "length": null,
+      "sampleValue": 1199.48448012
+    },
+    {
+      "name": "Length_Miles",
+      "type": "esriFieldTypeDouble",
+      "alias": "Length_Miles",
+      "length": null,
+      "sampleValue": 0.22717509
+    },
+    {
+      "name": "Status",
+      "type": "esriFieldTypeString",
+      "alias": "Status",
+      "length": 50,
+      "sampleValue": "Completed"
+    },
+    {
+      "name": "Year",
+      "type": "esriFieldTypeString",
+      "alias": "Year",
+      "length": 4,
+      "sampleValue": "2020"
+    },
+    {
+      "name": "CompletionDate",
+      "type": "esriFieldTypeDate",
+      "alias": "CompletionDate",
+      "length": 8,
+      "sampleValue": 1598918400000
+    },
+    {
+      "name": "Class",
+      "type": "esriFieldTypeString",
+      "alias": "Class",
+      "length": 50,
+      "sampleValue": "HISTORY"
+    },
+    {
+      "name": "Class2",
+      "type": "esriFieldTypeString",
+      "alias": "Class2",
+      "length": 50,
+      "sampleValue": "City"
+    },
+    {
+      "name": "Contractor",
+      "type": "esriFieldTypeString",
+      "alias": "Contractor",
+      "length": 150,
+      "sampleValue": null
+    },
+    {
+      "name": "RB_Rating",
+      "type": "esriFieldTypeDouble",
+      "alias": "RB_Rating",
+      "length": null,
+      "sampleValue": 3
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "ABENEFIELD"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1753374039000
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{58B6CF60-1F4C-4D05-A92C-F88CF8FACDEF}"
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 1199.4844801158256
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 17181,
+    "FULLNAME": "9TH ST",
+    "DistrictCode": 3,
+    "DistrictDesc": "District 3",
+    "StreetName": "9TH ST",
+    "From_": "N Court St",
+    "To_": "Cross St",
+    "AsphaltEst": 20133.12,
+    "EstTons": 280,
+    "Width_ft": 24,
+    "Length_ft": 1199.48448012,
+    "Length_Miles": 0.22717509,
+    "Status": "Completed",
+    "Year": "2020",
+    "CompletionDate": 1598918400000,
+    "Class": "HISTORY",
+    "Class2": "City",
+    "Contractor": null,
+    "RB_Rating": 3,
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": "ABENEFIELD",
+    "last_edited_date": 1753374039000,
+    "GlobalID": "{58B6CF60-1F4C-4D05-A92C-F88CF8FACDEF}",
+    "Shape__Length": 1199.4844801158256
+  },
+  "probedAt": "2026-03-13T20:21:22.346Z",
+  "error": null
+}

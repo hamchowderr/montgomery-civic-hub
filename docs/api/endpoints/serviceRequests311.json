@@ -1,0 +1,157 @@
+{
+  "key": "serviceRequests311",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Received_311_Service_Request/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 207630,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Request_ID",
+      "type": "esriFieldTypeInteger",
+      "alias": "Request ID",
+      "length": null,
+      "sampleValue": 317646
+    },
+    {
+      "name": "Create_Date",
+      "type": "esriFieldTypeDate",
+      "alias": "Create Date",
+      "length": 8,
+      "sampleValue": 1609459560000
+    },
+    {
+      "name": "Department",
+      "type": "esriFieldTypeString",
+      "alias": "Department",
+      "length": 8000,
+      "sampleValue": "Street Maintenance"
+    },
+    {
+      "name": "Request_Type",
+      "type": "esriFieldTypeString",
+      "alias": "Request Type",
+      "length": 8000,
+      "sampleValue": "Drains"
+    },
+    {
+      "name": "Address",
+      "type": "esriFieldTypeString",
+      "alias": "Address",
+      "length": 8000,
+      "sampleValue": "WARES FERRY RD"
+    },
+    {
+      "name": "District",
+      "type": "esriFieldTypeInteger",
+      "alias": "District",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Status",
+      "type": "esriFieldTypeString",
+      "alias": "Status",
+      "length": 8000,
+      "sampleValue": "Closed"
+    },
+    {
+      "name": "Close_Date",
+      "type": "esriFieldTypeDate",
+      "alias": "Close Date",
+      "length": 8,
+      "sampleValue": 1643834160000
+    },
+    {
+      "name": "Origin",
+      "type": "esriFieldTypeString",
+      "alias": "Origin",
+      "length": 8000,
+      "sampleValue": "Website"
+    },
+    {
+      "name": "Latitude",
+      "type": "esriFieldTypeDouble",
+      "alias": "Latitude",
+      "length": null,
+      "sampleValue": 32.387676
+    },
+    {
+      "name": "Longitude",
+      "type": "esriFieldTypeDouble",
+      "alias": "Longitude",
+      "length": null,
+      "sampleValue": -86.232888
+    },
+    {
+      "name": "Year",
+      "type": "esriFieldTypeInteger",
+      "alias": "Year",
+      "length": null,
+      "sampleValue": 2021
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{3FD41E46-D4C9-4A5D-B1DD-7F054B2A4B2E}"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": null
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "Request_ID": 317646,
+    "Create_Date": 1609459560000,
+    "Department": "Street Maintenance",
+    "Request_Type": "Drains",
+    "Address": "WARES FERRY RD",
+    "District": 1,
+    "Status": "Closed",
+    "Close_Date": 1643834160000,
+    "Origin": "Website",
+    "Latitude": 32.387676,
+    "Longitude": -86.232888,
+    "Year": 2021,
+    "GlobalID": "{3FD41E46-D4C9-4A5D-B1DD-7F054B2A4B2E}",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": null,
+    "last_edited_date": null
+  },
+  "probedAt": "2026-03-13T20:21:22.273Z",
+  "error": null
+}

@@ -1,0 +1,388 @@
+{
+  "key": "pavementAssessment",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/PublicWorks/Pavement_Assessment_2025/MapServer/0",
+  "geometryType": "esriGeometryPolyline",
+  "maxRecordCount": 2000,
+  "totalRecords": 11568,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Street_Nam",
+      "type": "esriFieldTypeString",
+      "alias": "Street_Nam",
+      "length": 254,
+      "sampleValue": "N BAINBRIDGE ST"
+    },
+    {
+      "name": "Alt_Name",
+      "type": "esriFieldTypeString",
+      "alias": "Alt_Name",
+      "length": 254,
+      "sampleValue": "BAINBRIDGE"
+    },
+    {
+      "name": "District",
+      "type": "esriFieldTypeInteger",
+      "alias": "District",
+      "length": null,
+      "sampleValue": 3
+    },
+    {
+      "name": "Owner",
+      "type": "esriFieldTypeString",
+      "alias": "Owner",
+      "length": 254,
+      "sampleValue": "Montgomery"
+    },
+    {
+      "name": "Surf_Type",
+      "type": "esriFieldTypeString",
+      "alias": "Surf_Type",
+      "length": 254,
+      "sampleValue": "Hard Surface"
+    },
+    {
+      "name": "Length__mi",
+      "type": "esriFieldTypeDouble",
+      "alias": "Length__mi",
+      "length": null,
+      "sampleValue": 0.03910552
+    },
+    {
+      "name": "Length__ft",
+      "type": "esriFieldTypeDouble",
+      "alias": "Length__ft",
+      "length": null,
+      "sampleValue": 206.4771614
+    },
+    {
+      "name": "Width__ft_",
+      "type": "esriFieldTypeInteger",
+      "alias": "Width__ft_",
+      "length": null,
+      "sampleValue": 20
+    },
+    {
+      "name": "Area__sq_f",
+      "type": "esriFieldTypeDouble",
+      "alias": "Area__sq_f",
+      "length": null,
+      "sampleValue": 4129.543229
+    },
+    {
+      "name": "Area__sq_y",
+      "type": "esriFieldTypeDouble",
+      "alias": "Area__sq_y",
+      "length": null,
+      "sampleValue": 458.8381365
+    },
+    {
+      "name": "Lanes",
+      "type": "esriFieldTypeInteger",
+      "alias": "Lanes",
+      "length": null,
+      "sampleValue": 2
+    },
+    {
+      "name": "Priority",
+      "type": "esriFieldTypeString",
+      "alias": "Priority",
+      "length": 254,
+      "sampleValue": "LOCAL"
+    },
+    {
+      "name": "ADT",
+      "type": "esriFieldTypeString",
+      "alias": "ADT",
+      "length": 254,
+      "sampleValue": "___"
+    },
+    {
+      "name": "Priority2",
+      "type": "esriFieldTypeString",
+      "alias": "Priority2",
+      "length": 254,
+      "sampleValue": "___"
+    },
+    {
+      "name": "EXCELLENT_",
+      "type": "esriFieldTypeDouble",
+      "alias": "EXCELLENT_",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "GOOD_",
+      "type": "esriFieldTypeDouble",
+      "alias": "GOOD_",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "FAIR_",
+      "type": "esriFieldTypeDouble",
+      "alias": "FAIR_",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "CRITICAL_",
+      "type": "esriFieldTypeDouble",
+      "alias": "CRITICAL_",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "LOST_",
+      "type": "esriFieldTypeDouble",
+      "alias": "LOST_",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "TOTAL_",
+      "type": "esriFieldTypeInteger",
+      "alias": "TOTAL_",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "EXCELLENT",
+      "type": "esriFieldTypeDouble",
+      "alias": "EXCELLENT",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "GOOD",
+      "type": "esriFieldTypeDouble",
+      "alias": "GOOD",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "FAIR",
+      "type": "esriFieldTypeDouble",
+      "alias": "FAIR",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "CRITICAL",
+      "type": "esriFieldTypeDouble",
+      "alias": "CRITICAL",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "LOST",
+      "type": "esriFieldTypeDouble",
+      "alias": "LOST",
+      "length": null,
+      "sampleValue": 363.9820906
+    },
+    {
+      "name": "PCI",
+      "type": "esriFieldTypeDouble",
+      "alias": "PCI",
+      "length": null,
+      "sampleValue": 25
+    },
+    {
+      "name": "Project",
+      "type": "esriFieldTypeInteger",
+      "alias": "Project",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Pothole01",
+      "type": "esriFieldTypeInteger",
+      "alias": "Pothole01",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Pothole02",
+      "type": "esriFieldTypeInteger",
+      "alias": "Pothole02",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "Pothole_Rt",
+      "type": "esriFieldTypeDouble",
+      "alias": "Pothole_Rt",
+      "length": null,
+      "sampleValue": 10.15434577
+    },
+    {
+      "name": "MassStruct",
+      "type": "esriFieldTypeInteger",
+      "alias": "MassStruct",
+      "length": null,
+      "sampleValue": 3
+    },
+    {
+      "name": "Structural",
+      "type": "esriFieldTypeInteger",
+      "alias": "Structural",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "Structure",
+      "type": "esriFieldTypeDouble",
+      "alias": "Structure",
+      "length": null,
+      "sampleValue": 30.4630373
+    },
+    {
+      "name": "SurfaceM",
+      "type": "esriFieldTypeInteger",
+      "alias": "SurfaceM",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "SurfaceL",
+      "type": "esriFieldTypeInteger",
+      "alias": "SurfaceL",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "Crack_Rtg",
+      "type": "esriFieldTypeDouble",
+      "alias": "Crack_Rtg",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "Crack_Inde",
+      "type": "esriFieldTypeDouble",
+      "alias": "Crack_Inde",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "Drain",
+      "type": "esriFieldTypeInteger",
+      "alias": "Drain",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "FSCond25",
+      "type": "esriFieldTypeString",
+      "alias": "FSCond25",
+      "length": 10,
+      "sampleValue": "LOST"
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{37556622-E4E5-40D5-BE62-C2A6461ADD35}"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 206.47361148948283
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "Street_Nam": "N BAINBRIDGE ST",
+    "Alt_Name": "BAINBRIDGE",
+    "District": 3,
+    "Owner": "Montgomery",
+    "Surf_Type": "Hard Surface",
+    "Length__mi": 0.03910552,
+    "Length__ft": 206.4771614,
+    "Width__ft_": 20,
+    "Area__sq_f": 4129.543229,
+    "Area__sq_y": 458.8381365,
+    "Lanes": 2,
+    "Priority": "LOCAL",
+    "ADT": "___",
+    "Priority2": "___",
+    "EXCELLENT_": 0,
+    "GOOD_": 0,
+    "FAIR_": 0,
+    "CRITICAL_": 0,
+    "LOST_": 1,
+    "TOTAL_": 1,
+    "EXCELLENT": 0,
+    "GOOD": 0,
+    "FAIR": 0,
+    "CRITICAL": 0,
+    "LOST": 363.9820906,
+    "PCI": 25,
+    "Project": 1,
+    "Pothole01": 1,
+    "Pothole02": 0,
+    "Pothole_Rt": 10.15434577,
+    "MassStruct": 3,
+    "Structural": 0,
+    "Structure": 30.4630373,
+    "SurfaceM": 0,
+    "SurfaceL": 0,
+    "Crack_Rtg": 0,
+    "Crack_Inde": 0,
+    "Drain": 0,
+    "FSCond25": "LOST",
+    "GlobalID": "{37556622-E4E5-40D5-BE62-C2A6461ADD35}",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": null,
+    "last_edited_date": null,
+    "Shape.STLength()": 206.47361148948283
+  },
+  "probedAt": "2026-03-13T20:21:27.337Z",
+  "error": null
+}

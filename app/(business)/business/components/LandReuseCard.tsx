@@ -1,7 +1,7 @@
 "use client";
 
 import { useCopilotAction } from "@copilotkit/react-core";
-import { Lightbulb } from "lucide-react";
+import { LandPlot, Lightbulb, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,51 @@ function getZoningDescription(code: string): string {
     if (upper.startsWith(prefix)) return desc;
   }
   return "Mixed Use / Special District";
+}
+
+/** Color for zoning badge based on category */
+function zoningBadgeClasses(zoning: string): string {
+  const upper = zoning.toUpperCase().trim();
+  if (upper.startsWith("R"))
+    return "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30";
+  if (upper.startsWith("C"))
+    return "bg-blue-500/10 text-blue-700 border-blue-500/20 dark:text-blue-400 dark:border-blue-500/30";
+  if (upper.startsWith("M"))
+    return "bg-amber-500/10 text-amber-700 border-amber-500/20 dark:text-amber-400 dark:border-amber-500/30";
+  return "bg-muted text-muted-foreground";
+}
+
+/** Parse the suggestion string into structured parts */
+function parseSuggestions(raw: string): {
+  ideas: string[];
+  planNote: string | null;
+} {
+  // Format: "Reuse ideas for ADDRESS (ZONING, ACRES): idea1, idea2, idea3. Montgomery's 2040..."
+  const colonIndex = raw.indexOf(":");
+  if (colonIndex === -1) return { ideas: [raw], planNote: null };
+
+  const afterColon = raw.slice(colonIndex + 1).trim();
+
+  // Split at the first sentence that starts with "Montgomery's"
+  const montgomeryIndex = afterColon.indexOf("Montgomery's");
+  let ideasPart: string;
+  let planNote: string | null = null;
+
+  if (montgomeryIndex !== -1) {
+    ideasPart = afterColon.slice(0, montgomeryIndex).trim();
+    planNote = afterColon.slice(montgomeryIndex).trim();
+    // Remove trailing period from ideas part
+    if (ideasPart.endsWith(".")) ideasPart = ideasPart.slice(0, -1);
+  } else {
+    ideasPart = afterColon;
+  }
+
+  const ideas = ideasPart
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  return { ideas, planNote };
 }
 
 /** Generate reuse suggestions based on property attributes */
@@ -110,7 +155,11 @@ export function LandReuseCard({ property }: LandReuseCardProps) {
         acreage,
         use: currentUse,
         owner: "City of Montgomery",
-        district: 0,
+        neighborhood: "Unknown",
+        maintainedBy: "Unknown",
+        appraised: 0,
+        location: "",
+        notes: "",
       };
       const result = generateReuseSuggestions(tempProperty);
       setSuggestion(result);
@@ -128,40 +177,95 @@ export function LandReuseCard({ property }: LandReuseCardProps) {
     }, 500);
   }
 
+  const parsed = suggestion ? parseSuggestions(suggestion) : null;
+
   return (
     <Card>
-      <CardHeader className="p-3 pb-2">
-        <CardTitle className="text-sm">Selected Property</CardTitle>
+      <CardHeader className="p-4 pb-3">
+        <CardTitle className="text-base font-semibold leading-tight">{property.address}</CardTitle>
       </CardHeader>
-      <CardContent className="p-3 pt-0 space-y-3">
-        <div className="space-y-1">
-          <p className="text-sm font-medium">{property.address}</p>
-          <div className="flex flex-wrap gap-1">
-            <Badge variant="secondary" className="text-[10px]">
-              {property.zoning}
-            </Badge>
-            <Badge variant="outline" className="text-[10px]">
-              {getZoningDescription(property.zoning)}
-            </Badge>
+      <CardContent className="p-4 pt-0 space-y-4">
+        {/* Property info grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Zoning
+            </p>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Badge
+                variant="outline"
+                className={`text-[10px] font-medium ${zoningBadgeClasses(property.zoning)}`}
+              >
+                {property.zoning}
+              </Badge>
+              <span className="text-xs text-muted-foreground">
+                {getZoningDescription(property.zoning)}
+              </span>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground">{property.acreage.toFixed(2)} acres</p>
-          <p className="text-xs text-muted-foreground">Current use: {property.use}</p>
+          <div className="space-y-1">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Acreage
+            </p>
+            <div className="flex items-center gap-1.5">
+              <LandPlot className="size-3.5 text-muted-foreground" />
+              <span className="text-sm font-medium">{property.acreage.toFixed(2)} acres</span>
+            </div>
+          </div>
+          <div className="space-y-1">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Current Use
+            </p>
+            <p className="text-xs text-foreground">{property.use}</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              Owner
+            </p>
+            <p className="text-xs text-foreground">{property.owner}</p>
+          </div>
         </div>
 
+        <div className="h-px bg-border" />
+
+        {/* Generate button — prominent */}
         <Button
           variant="default"
           size="sm"
-          className="w-full gap-1.5"
+          className="w-full gap-2 h-9"
           onClick={handleGenerateIdeas}
           disabled={isGenerating}
         >
-          {isGenerating ? <Spinner className="size-3.5" /> : <Lightbulb className="size-3.5" />}
+          {isGenerating ? <Spinner className="size-4" /> : <Lightbulb className="size-4" />}
           Generate Reuse Ideas
         </Button>
 
-        {suggestion && (
-          <div className="rounded-md border bg-muted/50 p-2.5">
-            <p className="text-xs leading-relaxed">{suggestion}</p>
+        {/* AI Suggestions panel */}
+        {parsed && (
+          <div className="rounded-lg border bg-muted/30 p-3 space-y-3">
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="size-3.5 text-amber-500 dark:text-amber-400" />
+              <span className="text-xs font-semibold text-foreground">Reuse Ideas</span>
+            </div>
+
+            {/* Individual idea pills */}
+            <div className="flex flex-wrap gap-2">
+              {parsed.ideas.map((idea, index) => (
+                <div
+                  key={index}
+                  className="rounded-md border bg-background px-2.5 py-1.5 text-xs font-medium text-foreground shadow-sm capitalize"
+                >
+                  {idea}
+                </div>
+              ))}
+            </div>
+
+            {/* Montgomery plan footer note */}
+            {parsed.planNote && (
+              <p className="text-[11px] leading-relaxed text-muted-foreground border-t pt-2">
+                {parsed.planNote}
+              </p>
+            )}
           </div>
         )}
       </CardContent>

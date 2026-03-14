@@ -32,6 +32,10 @@ interface PortalMapFetcher {
   yearFilterField?: string;
   /** If true, the year field should be quoted in queries */
   yearQuoted?: boolean;
+  /** Max features to fetch (safety cap for heavy polygon layers) */
+  maxRecords?: number;
+  /** If true, layer starts hidden and data is fetched only when toggled on */
+  defaultHidden?: boolean;
   layer: MapLayer;
 }
 
@@ -179,7 +183,7 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           },
           {
             url: ARCGIS_URLS.cityParks,
-            outFields: "*",
+            outFields: "PARK_NAME,NAME,ADDRESS",
             layer: {
               id: "parks",
               label: "City Parks",
@@ -190,6 +194,8 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           {
             url: ARCGIS_URLS.garbageSchedule,
             outFields: "Day_1,Day_2",
+            defaultHidden: true,
+            maxRecords: 2000,
             layer: {
               id: "garbage-schedule",
               label: "Garbage Schedule",
@@ -200,6 +206,8 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           {
             url: ARCGIS_URLS.curbsideTrash,
             outFields: "TDAY",
+            defaultHidden: true,
+            maxRecords: 2000,
             layer: {
               id: "curbside-trash",
               label: "Curbside Pickup",
@@ -210,6 +218,8 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           {
             url: ARCGIS_URLS.floodHazardAreas,
             outFields: "FLD_ZONE,FLOODWAY,SFHA_TF",
+            defaultHidden: true,
+            maxRecords: 2000,
             layer: {
               id: "flood-zones",
               label: "Flood Hazard Areas",
@@ -267,6 +277,8 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           {
             url: ARCGIS_URLS.zoning,
             outFields: "ZoningCode,ZoningDesc,Ordinance,Ord_Date",
+            defaultHidden: true,
+            maxRecords: 2000,
             layer: {
               id: "zoning",
               label: "Zoning Districts",
@@ -277,6 +289,8 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           {
             url: ARCGIS_URLS.floodHazardAreas,
             outFields: "FLD_ZONE,FLOODWAY,SFHA_TF",
+            defaultHidden: true,
+            maxRecords: 2000,
             layer: {
               id: "flood-zones",
               label: "Flood Hazard Areas",
@@ -455,7 +469,9 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           },
           {
             url: ARCGIS_URLS.neighborhoods,
-            outFields: "*",
+            outFields: "NAME,OBJECTID",
+            defaultHidden: true,
+            maxRecords: 2000,
             layer: {
               id: "neighborhoods",
               label: "Neighborhoods",
@@ -466,6 +482,8 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
           {
             url: ARCGIS_URLS.censusTract,
             outFields: "GEOID20,NAME20",
+            defaultHidden: true,
+            maxRecords: 2000,
             layer: {
               id: "census-tracts",
               label: "Census Tracts",
@@ -479,6 +497,20 @@ function getPortalMapConfig(portal: string): PortalMapConfig | null {
       return null;
   }
 }
+
+/** Run async tasks in batches to limit concurrency */
+async function runInBatches<T>(tasks: (() => Promise<T>)[], batchSize: number): Promise<T[]> {
+  const results: T[] = [];
+  for (let i = 0; i < tasks.length; i += batchSize) {
+    const batch = tasks.slice(i, i + batchSize);
+    const batchResults = await Promise.all(batch.map((fn) => fn()));
+    results.push(...batchResults);
+  }
+  return results;
+}
+
+/** Max concurrent ArcGIS requests */
+const CONCURRENCY = 4;
 
 export function useMapData(portal: string): UseMapDataReturn {
   const [geojson, setGeojson] = useState<GeoJSON.FeatureCollection | null>(null);
@@ -496,51 +528,41 @@ export function useMapData(portal: string): UseMapDataReturn {
         return;
       }
 
-      // Set layers immediately from config (populates filter UI)
+      // Set layers immediately so the layer filter UI is ready
       setLayers(config.fetchers.map((f) => f.layer));
-      // Start with empty features
-      setGeojson(EMPTY_FC);
-      setIsLoading(true);
 
-      const promises = config.fetchers.map(async (fetcher) => {
-        let where = fetcher.where ?? "1=1";
-        if (fetcher.yearFilterField) {
-          const yw = yearWhere(yearRange, fetcher.yearFilterField, fetcher.yearQuoted ?? false);
-          where = where === "1=1" ? yw : `(${where}) AND ${yw}`;
-        }
+      try {
+        // Only fetch non-hidden layers on initial load
+        const activeFetchers = config.fetchers.filter((f) => !f.defaultHidden);
 
-        const fc = await queryFeaturesAsGeoJSON({
-          url: fetcher.url,
-          outFields: fetcher.outFields,
-          where,
-          signal,
+        const tasks = activeFetchers.map((fetcher) => async () => {
+          let where = fetcher.where ?? "1=1";
+          if (fetcher.yearFilterField) {
+            const yw = yearWhere(yearRange, fetcher.yearFilterField, fetcher.yearQuoted ?? false);
+            where = where === "1=1" ? yw : `(${where}) AND ${yw}`;
+          }
+
+          const fc = await queryFeaturesAsGeoJSON({
+            url: fetcher.url,
+            outFields: fetcher.outFields,
+            where,
+            maxRecords: fetcher.maxRecords,
+          });
+          for (const feature of fc.features) {
+            if (feature.properties) {
+              feature.properties._layerId = fetcher.layer.id;
+            }
+          }
+          return { fc, layer: fetcher.layer };
         });
 
-        // Tag features with layer ID
-        for (const feature of fc.features) {
-          if (feature.properties) {
-            feature.properties._layerId = fetcher.layer.id;
-          }
-        }
+        const results = await runInBatches(tasks, CONCURRENCY);
 
-        // Append features incrementally
-        if (!signal?.aborted) {
-          setGeojson((prev) => ({
-            type: "FeatureCollection",
-            features: [...(prev?.features ?? []), ...fc.features],
-          }));
-        }
-      });
-
-      const results = await Promise.allSettled(promises);
-
-      if (!signal?.aborted) {
-        // Log any failures
-        for (const r of results) {
-          if (r.status === "rejected" && !(r.reason?.name === "AbortError")) {
-            console.error("[use-map-data] Layer fetch failed:", r.reason);
-          }
-        }
+        const mergedFeatures = results.flatMap((r) => r.fc.features);
+        setGeojson({ type: "FeatureCollection", features: mergedFeatures });
+      } catch {
+        setGeojson(EMPTY_FC);
+      } finally {
         setIsLoading(false);
       }
     },

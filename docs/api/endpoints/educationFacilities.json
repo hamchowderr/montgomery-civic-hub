@@ -1,0 +1,205 @@
+{
+  "key": "educationFacilities",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Education_Facilities/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 90,
+  "fields": [
+    {
+      "name": "OBJECTID_1",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID_1",
+      "length": null,
+      "sampleValue": 1973
+    },
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeInteger",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 9437210
+    },
+    {
+      "name": "NAME",
+      "type": "esriFieldTypeString",
+      "alias": "NAME",
+      "length": 70,
+      "sampleValue": "Bear Exploration Center School"
+    },
+    {
+      "name": "FIPS",
+      "type": "esriFieldTypeString",
+      "alias": "FIPS",
+      "length": 5,
+      "sampleValue": "01101"
+    },
+    {
+      "name": "ENRLMT",
+      "type": "esriFieldTypeDouble",
+      "alias": "ENRLMT",
+      "length": null,
+      "sampleValue": 561
+    },
+    {
+      "name": "SCH_ENRL",
+      "type": "esriFieldTypeDouble",
+      "alias": "SCH_ENRL",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "enr",
+      "type": "esriFieldTypeString",
+      "alias": "enr",
+      "length": 50,
+      "sampleValue": "561"
+    },
+    {
+      "name": "Address",
+      "type": "esriFieldTypeString",
+      "alias": "Address",
+      "length": 40,
+      "sampleValue": "2525 Churchill Drive"
+    },
+    {
+      "name": "City",
+      "type": "esriFieldTypeString",
+      "alias": "City",
+      "length": 15,
+      "sampleValue": "Montgomery"
+    },
+    {
+      "name": "TELEPHONE",
+      "type": "esriFieldTypeString",
+      "alias": "TELEPHONE",
+      "length": 15,
+      "sampleValue": "(334) 284-8014"
+    },
+    {
+      "name": "ZIP",
+      "type": "esriFieldTypeString",
+      "alias": "ZIP",
+      "length": 10,
+      "sampleValue": "36111"
+    },
+    {
+      "name": "TAZ_2035LR",
+      "type": "esriFieldTypeString",
+      "alias": "TAZ_2035LR",
+      "length": 20,
+      "sampleValue": "121"
+    },
+    {
+      "name": "TAZ_2030LR",
+      "type": "esriFieldTypeString",
+      "alias": "TAZ_2030LR",
+      "length": 10,
+      "sampleValue": "121"
+    },
+    {
+      "name": "EMPLOY",
+      "type": "esriFieldTypeInteger",
+      "alias": "EMPLOY",
+      "length": null,
+      "sampleValue": 43
+    },
+    {
+      "name": "Enroll",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Enroll",
+      "length": null,
+      "sampleValue": 520
+    },
+    {
+      "name": "Level_",
+      "type": "esriFieldTypeString",
+      "alias": "Level_",
+      "length": 25,
+      "sampleValue": "Elementary"
+    },
+    {
+      "name": "BUFF_DIST",
+      "type": "esriFieldTypeDouble",
+      "alias": "BUFF_DIST",
+      "length": null,
+      "sampleValue": 2640
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeString",
+      "alias": "LASTUPDATE",
+      "length": 50,
+      "sampleValue": "6/29/2022 - JA - Verified"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": "ISAAC.MURRAY"
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": 1740769781000
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "NPJACKSON"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1745937750000
+    },
+    {
+      "name": "TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "TYPE",
+      "length": 15,
+      "sampleValue": "PUBLIC School"
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{FA16F41C-D061-4598-8CE6-DA5670B72102}"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID_1": 1973,
+    "OBJECTID": 9437210,
+    "NAME": "Bear Exploration Center School",
+    "FIPS": "01101",
+    "ENRLMT": 561,
+    "SCH_ENRL": 0,
+    "enr": "561",
+    "Address": "2525 Churchill Drive",
+    "City": "Montgomery",
+    "TELEPHONE": "(334) 284-8014",
+    "ZIP": "36111",
+    "TAZ_2035LR": "121",
+    "TAZ_2030LR": "121",
+    "EMPLOY": 43,
+    "Enroll": 520,
+    "Level_": "Elementary",
+    "BUFF_DIST": 2640,
+    "LASTUPDATE": "6/29/2022 - JA - Verified",
+    "created_user": "ISAAC.MURRAY",
+    "created_date": 1740769781000,
+    "last_edited_user": "NPJACKSON",
+    "last_edited_date": 1745937750000,
+    "TYPE": "PUBLIC School",
+    "GlobalID": "{FA16F41C-D061-4598-8CE6-DA5670B72102}"
+  },
+  "probedAt": "2026-03-13T20:21:24.555Z",
+  "error": null
+}

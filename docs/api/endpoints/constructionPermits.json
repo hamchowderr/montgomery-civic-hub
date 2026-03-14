@@ -1,0 +1,285 @@
+{
+  "key": "constructionPermits",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Construction_Permits/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 43419,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "ObjectID",
+      "length": null,
+      "sampleValue": 58957
+    },
+    {
+      "name": "PermitNo",
+      "type": "esriFieldTypeString",
+      "alias": "PermitNo",
+      "length": 255,
+      "sampleValue": "BD250476"
+    },
+    {
+      "name": "ParcelNo",
+      "type": "esriFieldTypeString",
+      "alias": "ParcelNo",
+      "length": 255,
+      "sampleValue": "09 06 23 2 000 003.001"
+    },
+    {
+      "name": "IssuedDate",
+      "type": "esriFieldTypeDateOnly",
+      "alias": "IssuedDate",
+      "length": 8,
+      "sampleValue": "2025-03-10"
+    },
+    {
+      "name": "ExpiredDate",
+      "type": "esriFieldTypeDateOnly",
+      "alias": "ExpiredDate",
+      "length": 8,
+      "sampleValue": "2024-07-13"
+    },
+    {
+      "name": "PermitStatus",
+      "type": "esriFieldTypeString",
+      "alias": "PermitStatus",
+      "length": 255,
+      "sampleValue": "ISSUED"
+    },
+    {
+      "name": "PermitCode",
+      "type": "esriFieldTypeString",
+      "alias": "PermitCode",
+      "length": 255,
+      "sampleValue": "B105"
+    },
+    {
+      "name": "Zoning",
+      "type": "esriFieldTypeString",
+      "alias": "Zoning",
+      "length": 255,
+      "sampleValue": "R-65-M"
+    },
+    {
+      "name": "FloodZone",
+      "type": "esriFieldTypeString",
+      "alias": "FloodZone",
+      "length": 255,
+      "sampleValue": "AE       / 0232 - H"
+    },
+    {
+      "name": "PermitDescription",
+      "type": "esriFieldTypeString",
+      "alias": "PermitDescription",
+      "length": 255,
+      "sampleValue": "Five or More Family Apartments - Master Permit"
+    },
+    {
+      "name": "ProjectType",
+      "type": "esriFieldTypeString",
+      "alias": "ProjectType",
+      "length": 255,
+      "sampleValue": "New"
+    },
+    {
+      "name": "EstimatedCost",
+      "type": "esriFieldTypeDouble",
+      "alias": "EstimatedCost",
+      "length": null,
+      "sampleValue": 17625000
+    },
+    {
+      "name": "Building_Fee",
+      "type": "esriFieldTypeDouble",
+      "alias": "Building_Fee",
+      "length": null,
+      "sampleValue": 44062.5
+    },
+    {
+      "name": "Licence_Fee",
+      "type": "esriFieldTypeDouble",
+      "alias": "Licence_Fee",
+      "length": null,
+      "sampleValue": 44062.5
+    },
+    {
+      "name": "Base_Permit_Fee",
+      "type": "esriFieldTypeDouble",
+      "alias": "Base_Permit_Fee",
+      "length": null,
+      "sampleValue": 75
+    },
+    {
+      "name": "Total_Fee",
+      "type": "esriFieldTypeDouble",
+      "alias": "Total_Fee",
+      "length": null,
+      "sampleValue": 106325
+    },
+    {
+      "name": "OwnerName",
+      "type": "esriFieldTypeString",
+      "alias": "OwnerName",
+      "length": 255,
+      "sampleValue": "OREI MONTGOMERY 28.32 ACRES PROPERTY OWNER, LLC"
+    },
+    {
+      "name": "OwnerAddress",
+      "type": "esriFieldTypeString",
+      "alias": "OwnerAddress",
+      "length": 255,
+      "sampleValue": " MOORESVILLE NC 28117"
+    },
+    {
+      "name": "UseType",
+      "type": "esriFieldTypeString",
+      "alias": "UseType",
+      "length": 255,
+      "sampleValue": "Commercial"
+    },
+    {
+      "name": "FinalValue",
+      "type": "esriFieldTypeDouble",
+      "alias": "FinalValue",
+      "length": null,
+      "sampleValue": 1309600
+    },
+    {
+      "name": "JobDescription",
+      "type": "esriFieldTypeString",
+      "alias": "JobDescription",
+      "length": 1073741822,
+      "sampleValue": "ERECT A NEW MULTI-FAMILYCOMPLEX TO BE USED FOR APARTMENTS. APT BLDG 1 - 24 UNITS 3 STORIES 32,531 SQ FT (BD250480). APT BLDG 2 - 24 UNITS 3 STORIES, 28,041 SQ FT (BD250481). APT BLDG 3 - 24 UNITS 3 STORIES, 32,531 SQ FT (BD2504790). APT BLDG 4 - 24 UNITS 3 STORIES, 32,531 SQ FT  (BD250483). APT BLDG 5 - 24 UNITS 3 STORIES, 32531 SQ FT (BD2504823). APT BLDG 6 -24 UNITS 3 STORIES, 32,531 SQ FT (BD250484). APT BLDG 7 - 24 UNITS 3 STORIES, 28,041 SQ FT (BD250485). APT BLDG 8 - 24 UNITS 3 STORIES, 32,531 SQ FT (BD250486). APT BLDG 9 - 24 UNITS 3 STORIES, 28,041 SQ FT (BD250487). APT BLDG 10 - 24 UNITS 3 STORIES, 28041 SQ FT (BD250488). APT BLDG 11 - 24 UNITS 3 STORIES, 32531 SQ FT (BD250489). STORAGE GARAGE 1 STORIES, 2629 SQ FT (BD250490). TYPICAL GARAGE 1 STORIES, 1870 SQ FT (BD250491). ACCESS GARAGE 1 STORIES, 1871 SQ FT (BD250492). MAINT GARAGE 1 STORIES, 2605 SQ FT (BD250493). CLUBHOUSE 1 STORIES, 6970 SQ FT (BD250495). CABANA 1 STORIES, 1937 SQ FT (BD240496). A SET OF STAMPED PLANS WITH REVIEW LETTER MUST BE KEPT ON THE JOB SITE AT ALL TIMES. ALL INSPECTION REQUIRED BY ALL APPLIABLE DEPTS. TO MEET ALL APPLCABLE CODES."
+    },
+    {
+      "name": "CodeDetail",
+      "type": "esriFieldTypeString",
+      "alias": "CodeDetail",
+      "length": 1073741822,
+      "sampleValue": "Building"
+    },
+    {
+      "name": "Year",
+      "type": "esriFieldTypeString",
+      "alias": "Year",
+      "length": 1073741822,
+      "sampleValue": "2025"
+    },
+    {
+      "name": "Month",
+      "type": "esriFieldTypeString",
+      "alias": "Month",
+      "length": 1073741822,
+      "sampleValue": "3"
+    },
+    {
+      "name": "DistrictCouncil",
+      "type": "esriFieldTypeInteger",
+      "alias": "DistrictCouncil",
+      "length": null,
+      "sampleValue": 9
+    },
+    {
+      "name": "Boundary",
+      "type": "esriFieldTypeString",
+      "alias": "Boundary",
+      "length": 50,
+      "sampleValue": null
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{39CB553C-B2AA-4298-BAA3-3A3D347967BD}"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": "HNAM"
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": 1752158830000
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "HNAM"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1752158830000
+    },
+    {
+      "name": "ContractorName",
+      "type": "esriFieldTypeString",
+      "alias": "ContractorName",
+      "length": 255,
+      "sampleValue": "COURTNEY BURROWS"
+    },
+    {
+      "name": "Address",
+      "type": "esriFieldTypeString",
+      "alias": "Address",
+      "length": 255,
+      "sampleValue": "1200 BRICKELL AVE MIAMI FL 33131-3257"
+    },
+    {
+      "name": "PhysicalAddress",
+      "type": "esriFieldTypeString",
+      "alias": "PhysicalAddress",
+      "length": 255,
+      "sampleValue": "10510 CHANTILLY PKWY  MONTGOMERY AL 36117"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 58957,
+    "PermitNo": "BD250476",
+    "ParcelNo": "09 06 23 2 000 003.001",
+    "IssuedDate": "2025-03-10",
+    "ExpiredDate": "2024-07-13",
+    "PermitStatus": "ISSUED",
+    "PermitCode": "B105",
+    "Zoning": "R-65-M",
+    "FloodZone": "AE       / 0232 - H",
+    "PermitDescription": "Five or More Family Apartments - Master Permit",
+    "ProjectType": "New",
+    "EstimatedCost": 17625000,
+    "Building_Fee": 44062.5,
+    "Licence_Fee": 44062.5,
+    "Base_Permit_Fee": 75,
+    "Total_Fee": 106325,
+    "OwnerName": "OREI MONTGOMERY 28.32 ACRES PROPERTY OWNER, LLC",
+    "OwnerAddress": " MOORESVILLE NC 28117",
+    "UseType": "Commercial",
+    "FinalValue": 1309600,
+    "JobDescription": "ERECT A NEW MULTI-FAMILYCOMPLEX TO BE USED FOR APARTMENTS. APT BLDG 1 - 24 UNITS 3 STORIES 32,531 SQ FT (BD250480). APT BLDG 2 - 24 UNITS 3 STORIES, 28,041 SQ FT (BD250481). APT BLDG 3 - 24 UNITS 3 STORIES, 32,531 SQ FT (BD2504790). APT BLDG 4 - 24 UNITS 3 STORIES, 32,531 SQ FT  (BD250483). APT BLDG 5 - 24 UNITS 3 STORIES, 32531 SQ FT (BD2504823). APT BLDG 6 -24 UNITS 3 STORIES, 32,531 SQ FT (BD250484). APT BLDG 7 - 24 UNITS 3 STORIES, 28,041 SQ FT (BD250485). APT BLDG 8 - 24 UNITS 3 STORIES, 32,531 SQ FT (BD250486). APT BLDG 9 - 24 UNITS 3 STORIES, 28,041 SQ FT (BD250487). APT BLDG 10 - 24 UNITS 3 STORIES, 28041 SQ FT (BD250488). APT BLDG 11 - 24 UNITS 3 STORIES, 32531 SQ FT (BD250489). STORAGE GARAGE 1 STORIES, 2629 SQ FT (BD250490). TYPICAL GARAGE 1 STORIES, 1870 SQ FT (BD250491). ACCESS GARAGE 1 STORIES, 1871 SQ FT (BD250492). MAINT GARAGE 1 STORIES, 2605 SQ FT (BD250493). CLUBHOUSE 1 STORIES, 6970 SQ FT (BD250495). CABANA 1 STORIES, 1937 SQ FT (BD240496). A SET OF STAMPED PLANS WITH REVIEW LETTER MUST BE KEPT ON THE JOB SITE AT ALL TIMES. ALL INSPECTION REQUIRED BY ALL APPLIABLE DEPTS. TO MEET ALL APPLCABLE CODES.",
+    "CodeDetail": "Building",
+    "Year": "2025",
+    "Month": "3",
+    "DistrictCouncil": 9,
+    "Boundary": null,
+    "GlobalID": "{39CB553C-B2AA-4298-BAA3-3A3D347967BD}",
+    "created_user": "HNAM",
+    "created_date": 1752158830000,
+    "last_edited_user": "HNAM",
+    "last_edited_date": 1752158830000,
+    "ContractorName": "COURTNEY BURROWS",
+    "Address": "1200 BRICKELL AVE MIAMI FL 33131-3257",
+    "PhysicalAddress": "10510 CHANTILLY PKWY  MONTGOMERY AL 36117"
+  },
+  "probedAt": "2026-03-13T20:21:22.343Z",
+  "error": null
+}

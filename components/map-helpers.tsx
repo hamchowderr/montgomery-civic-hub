@@ -1,8 +1,8 @@
 "use client";
 
+import type MapLibreGL from "maplibre-gl";
 import { useEffect, useId } from "react";
 import { useMap } from "@/components/ui/map";
-import type MapLibreGL from "maplibre-gl";
 
 // ── Shared types ────────────────────────────────────────────────────────────
 
@@ -63,10 +63,7 @@ export function PointCircleLayer({
     ) => {
       if (!e.features?.length) return;
       const feature = e.features[0];
-      const coords = (feature.geometry as GeoJSON.Point).coordinates as [
-        number,
-        number,
-      ];
+      const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
       onSelect({ coordinates: coords, properties: feature.properties ?? {} });
     };
 
@@ -111,10 +108,7 @@ export function PointCircleLayer({
 export function polygonCentroid(
   geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon,
 ): [number, number] {
-  const ring =
-    geometry.type === "Polygon"
-      ? geometry.coordinates[0]
-      : geometry.coordinates[0][0];
+  const ring = geometry.type === "Polygon" ? geometry.coordinates[0] : geometry.coordinates[0][0];
   const cx = ring.reduce((s, c) => s + c[0], 0) / ring.length;
   const cy = ring.reduce((s, c) => s + c[1], 0) / ring.length;
   return [cx, cy];

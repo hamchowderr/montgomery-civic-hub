@@ -1,0 +1,341 @@
+{
+  "key": "cityOwnedProperties",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/City_Owned_Properities/FeatureServer/0",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 597,
+  "fields": [
+    {
+      "name": "OBJECTID_1",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID_1",
+      "length": null,
+      "sampleValue": 20418
+    },
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeDouble",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 10932
+    },
+    {
+      "name": "CALC_ACRE",
+      "type": "esriFieldTypeDouble",
+      "alias": "CALC_ACRE",
+      "length": null,
+      "sampleValue": 8.57378837
+    },
+    {
+      "name": "TAX_MAP",
+      "type": "esriFieldTypeString",
+      "alias": "TAX_MAP",
+      "length": 32,
+      "sampleValue": "09 01 11 4 000 002.000"
+    },
+    {
+      "name": "PARCEL_NUM",
+      "type": "esriFieldTypeString",
+      "alias": "PARCEL_NUM",
+      "length": 32,
+      "sampleValue": "0901114000002000"
+    },
+    {
+      "name": "OWNER1_1",
+      "type": "esriFieldTypeString",
+      "alias": "OWNER1_1",
+      "length": 80,
+      "sampleValue": "CITY OF MONTGOMERY"
+    },
+    {
+      "name": "OWNER1_2",
+      "type": "esriFieldTypeString",
+      "alias": "OWNER1_2",
+      "length": 80,
+      "sampleValue": " "
+    },
+    {
+      "name": "MAIL_ST_NU",
+      "type": "esriFieldTypeString",
+      "alias": "MAIL_ST_NU",
+      "length": 10,
+      "sampleValue": "103"
+    },
+    {
+      "name": "MAIL_ST_NA",
+      "type": "esriFieldTypeString",
+      "alias": "MAIL_ST_NA",
+      "length": 30,
+      "sampleValue": "N PERRY ST"
+    },
+    {
+      "name": "MAIL_EXTRA",
+      "type": "esriFieldTypeString",
+      "alias": "MAIL_EXTRA",
+      "length": 30,
+      "sampleValue": " "
+    },
+    {
+      "name": "MAIL_CITY",
+      "type": "esriFieldTypeString",
+      "alias": "MAIL_CITY",
+      "length": 20,
+      "sampleValue": "MONTGOMERY"
+    },
+    {
+      "name": "MAIL_ST",
+      "type": "esriFieldTypeString",
+      "alias": "MAIL_ST",
+      "length": 2,
+      "sampleValue": "AL"
+    },
+    {
+      "name": "ZIP_5",
+      "type": "esriFieldTypeString",
+      "alias": "ZIP_5",
+      "length": 5,
+      "sampleValue": "36101"
+    },
+    {
+      "name": "ZIP_4",
+      "type": "esriFieldTypeString",
+      "alias": "ZIP_4",
+      "length": 4,
+      "sampleValue": "1111"
+    },
+    {
+      "name": "CARE_OF",
+      "type": "esriFieldTypeString",
+      "alias": "CARE_OF",
+      "length": 30,
+      "sampleValue": " "
+    },
+    {
+      "name": "PROP_ADDRE",
+      "type": "esriFieldTypeString",
+      "alias": "PROP_ADDRE",
+      "length": 50,
+      "sampleValue": "HWY 80"
+    },
+    {
+      "name": "STREET_NUM",
+      "type": "esriFieldTypeString",
+      "alias": "STREET_NUM",
+      "length": 7,
+      "sampleValue": " "
+    },
+    {
+      "name": "STREET_NAM",
+      "type": "esriFieldTypeString",
+      "alias": "STREET_NAM",
+      "length": 40,
+      "sampleValue": "HWY 80"
+    },
+    {
+      "name": "DEED_BOOK_",
+      "type": "esriFieldTypeString",
+      "alias": "DEED_BOOK_",
+      "length": 12,
+      "sampleValue": "1559"
+    },
+    {
+      "name": "DEED_PAGE_",
+      "type": "esriFieldTypeString",
+      "alias": "DEED_PAGE_",
+      "length": 10,
+      "sampleValue": "424"
+    },
+    {
+      "name": "DEED_DATE_",
+      "type": "esriFieldTypeDate",
+      "alias": "DEED_DATE_",
+      "length": 8,
+      "sampleValue": 797558400000
+    },
+    {
+      "name": "NBHD",
+      "type": "esriFieldTypeString",
+      "alias": "NBHD",
+      "length": 25,
+      "sampleValue": "THE ORCHARDS"
+    },
+    {
+      "name": "ZONING",
+      "type": "esriFieldTypeString",
+      "alias": "ZONING",
+      "length": 15,
+      "sampleValue": "O-2"
+    },
+    {
+      "name": "APPRAISED_",
+      "type": "esriFieldTypeDouble",
+      "alias": "APPRAISED_",
+      "length": null,
+      "sampleValue": 250000
+    },
+    {
+      "name": "Use_",
+      "type": "esriFieldTypeString",
+      "alias": "Use_",
+      "length": 30,
+      "sampleValue": "USE"
+    },
+    {
+      "name": "Dev_Area",
+      "type": "esriFieldTypeString",
+      "alias": "Dev_Area",
+      "length": 25,
+      "sampleValue": null
+    },
+    {
+      "name": "Maint_By",
+      "type": "esriFieldTypeString",
+      "alias": "Maint_By",
+      "length": 50,
+      "sampleValue": "VACANT LOT CREW"
+    },
+    {
+      "name": "Maint_Phas",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Maint_Phas",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "Map_Class",
+      "type": "esriFieldTypeString",
+      "alias": "Map_Class",
+      "length": 50,
+      "sampleValue": " "
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "LASTUPDATE",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "LASTEDITOR",
+      "type": "esriFieldTypeString",
+      "alias": "LASTEDITOR",
+      "length": 50,
+      "sampleValue": null
+    },
+    {
+      "name": "NOTES",
+      "type": "esriFieldTypeString",
+      "alias": "NOTES",
+      "length": 50,
+      "sampleValue": "DONATED FOR PARK; USACE REQUIRES WETLAND"
+    },
+    {
+      "name": "DEVEL_AREA",
+      "type": "esriFieldTypeString",
+      "alias": "DEVEL_AREA",
+      "length": 30,
+      "sampleValue": null
+    },
+    {
+      "name": "LOCATION",
+      "type": "esriFieldTypeString",
+      "alias": "LOCATION",
+      "length": 50,
+      "sampleValue": "Pond/woods NE of Alsbury Pl in Towne Lake"
+    },
+    {
+      "name": "MAP_INDEX",
+      "type": "esriFieldTypeString",
+      "alias": "MAP_INDEX",
+      "length": 50,
+      "sampleValue": "M-7-J"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": "ISAAC.MURRAY"
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": 1740684970000
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "CHRIS.WILLIAMS"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1765403155000
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 373474.22128470225
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 3344.3752316204686
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID_1": 20418,
+    "OBJECTID": 10932,
+    "CALC_ACRE": 8.57378837,
+    "TAX_MAP": "09 01 11 4 000 002.000",
+    "PARCEL_NUM": "0901114000002000",
+    "OWNER1_1": "CITY OF MONTGOMERY",
+    "OWNER1_2": " ",
+    "MAIL_ST_NU": "103",
+    "MAIL_ST_NA": "N PERRY ST",
+    "MAIL_EXTRA": " ",
+    "MAIL_CITY": "MONTGOMERY",
+    "MAIL_ST": "AL",
+    "ZIP_5": "36101",
+    "ZIP_4": "1111",
+    "CARE_OF": " ",
+    "PROP_ADDRE": "HWY 80",
+    "STREET_NUM": " ",
+    "STREET_NAM": "HWY 80",
+    "DEED_BOOK_": "1559",
+    "DEED_PAGE_": "424",
+    "DEED_DATE_": 797558400000,
+    "NBHD": "THE ORCHARDS",
+    "ZONING": "O-2",
+    "APPRAISED_": 250000,
+    "Use_": "USE",
+    "Dev_Area": null,
+    "Maint_By": "VACANT LOT CREW",
+    "Maint_Phas": 0,
+    "Map_Class": " ",
+    "LASTUPDATE": null,
+    "LASTEDITOR": null,
+    "NOTES": "DONATED FOR PARK; USACE REQUIRES WETLAND",
+    "DEVEL_AREA": null,
+    "LOCATION": "Pond/woods NE of Alsbury Pl in Towne Lake",
+    "MAP_INDEX": "M-7-J",
+    "created_user": "ISAAC.MURRAY",
+    "created_date": 1740684970000,
+    "last_edited_user": "CHRIS.WILLIAMS",
+    "last_edited_date": 1765403155000,
+    "Shape__Area": 373474.22128470225,
+    "Shape__Length": 3344.3752316204686
+  },
+  "probedAt": "2026-03-13T20:21:27.337Z",
+  "error": null
+}

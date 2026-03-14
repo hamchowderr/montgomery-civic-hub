@@ -1,0 +1,93 @@
+{
+  "key": "libraries",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Libraries/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 12,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "BRANCH_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "BRANCH_NAME",
+      "length": 50,
+      "sampleValue": "Juliette Hampton Morgan Memorial Library"
+    },
+    {
+      "name": "ADDRESS",
+      "type": "esriFieldTypeString",
+      "alias": "ADDRESS",
+      "length": 50,
+      "sampleValue": "245 High St"
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "LASTUPDATE",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "LASTEDITOR",
+      "type": "esriFieldTypeString",
+      "alias": "LASTEDITOR",
+      "length": 50,
+      "sampleValue": null
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{4A9626AA-B26C-4602-AB9E-361DC00BE5D0}"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "BRANCH_NAME": "Juliette Hampton Morgan Memorial Library",
+    "ADDRESS": "245 High St",
+    "LASTUPDATE": null,
+    "LASTEDITOR": null,
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": null,
+    "last_edited_date": null,
+    "GlobalID": "{4A9626AA-B26C-4602-AB9E-361DC00BE5D0}"
+  },
+  "probedAt": "2026-03-13T20:21:24.554Z",
+  "error": null
+}

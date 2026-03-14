@@ -2,6 +2,11 @@
 
 import MapLibreGL, { type MarkerOptions, type PopupOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+
+// Use pre-built worker to avoid Turbopack SWC helper issues (_define_property)
+// The worker file is copied from node_modules/maplibre-gl/dist/ to public/
+MapLibreGL.setWorkerUrl("/maplibre-gl-csp-worker.js");
+
 import {
   ChevronRight,
   Eye,
@@ -1549,6 +1554,11 @@ function MapPolygonLayer({
       },
     ) => {
       if (!onClick) return;
+
+      // Skip if a circle (point) layer was also clicked — points take priority
+      const allAtPoint = map.queryRenderedFeatures(e.point);
+      const pointHit = allAtPoint.some((f) => f.layer?.type === "circle");
+      if (pointHit) return;
 
       const features = map.queryRenderedFeatures(e.point, {
         layers: [fillLayerId],

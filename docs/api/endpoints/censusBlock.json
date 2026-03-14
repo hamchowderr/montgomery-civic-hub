@@ -1,0 +1,468 @@
+{
+  "key": "censusBlock",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/Census_Boundaries/MapServer/2",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 4793,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "STATEFP20",
+      "type": "esriFieldTypeString",
+      "alias": "STATEFP20",
+      "length": 2,
+      "sampleValue": "01"
+    },
+    {
+      "name": "COUNTYFP20",
+      "type": "esriFieldTypeString",
+      "alias": "COUNTYFP20",
+      "length": 3,
+      "sampleValue": "101"
+    },
+    {
+      "name": "TRACTCE20",
+      "type": "esriFieldTypeString",
+      "alias": "TRACTCE20",
+      "length": 6,
+      "sampleValue": "002000"
+    },
+    {
+      "name": "BLOCKCE20",
+      "type": "esriFieldTypeString",
+      "alias": "BLOCKCE20",
+      "length": 4,
+      "sampleValue": "3005"
+    },
+    {
+      "name": "GEOID20",
+      "type": "esriFieldTypeString",
+      "alias": "GEOID20",
+      "length": 15,
+      "sampleValue": "011010020003005"
+    },
+    {
+      "name": "NAME20",
+      "type": "esriFieldTypeString",
+      "alias": "NAME20",
+      "length": 10,
+      "sampleValue": "Block 3005"
+    },
+    {
+      "name": "MTFCC20",
+      "type": "esriFieldTypeString",
+      "alias": "MTFCC20",
+      "length": 5,
+      "sampleValue": "G5040"
+    },
+    {
+      "name": "UR20",
+      "type": "esriFieldTypeString",
+      "alias": "UR20",
+      "length": 1,
+      "sampleValue": " "
+    },
+    {
+      "name": "UACE20",
+      "type": "esriFieldTypeString",
+      "alias": "UACE20",
+      "length": 5,
+      "sampleValue": " "
+    },
+    {
+      "name": "UATYPE20",
+      "type": "esriFieldTypeString",
+      "alias": "UATYPE20",
+      "length": 1,
+      "sampleValue": " "
+    },
+    {
+      "name": "FUNCSTAT20",
+      "type": "esriFieldTypeString",
+      "alias": "FUNCSTAT20",
+      "length": 1,
+      "sampleValue": "S"
+    },
+    {
+      "name": "ALAND20",
+      "type": "esriFieldTypeDouble",
+      "alias": "ALAND20",
+      "length": null,
+      "sampleValue": 126595
+    },
+    {
+      "name": "AWATER20",
+      "type": "esriFieldTypeDouble",
+      "alias": "AWATER20",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "INTPTLAT20",
+      "type": "esriFieldTypeString",
+      "alias": "INTPTLAT20",
+      "length": 11,
+      "sampleValue": "+32.3500305"
+    },
+    {
+      "name": "INTPTLON20",
+      "type": "esriFieldTypeString",
+      "alias": "INTPTLON20",
+      "length": 12,
+      "sampleValue": "-086.2743358"
+    },
+    {
+      "name": "GEOID20_1",
+      "type": "esriFieldTypeString",
+      "alias": "GEOID20_1",
+      "length": 254,
+      "sampleValue": "011010020003005"
+    },
+    {
+      "name": "GEOID_B20",
+      "type": "esriFieldTypeString",
+      "alias": "GEOID_B20",
+      "length": 254,
+      "sampleValue": "011010020003005"
+    },
+    {
+      "name": "TOT_HH",
+      "type": "esriFieldTypeDouble",
+      "alias": "TOT_HH",
+      "length": null,
+      "sampleValue": 34
+    },
+    {
+      "name": "OCC_HH",
+      "type": "esriFieldTypeDouble",
+      "alias": "OCC_HH",
+      "length": null,
+      "sampleValue": 34
+    },
+    {
+      "name": "VAC_HH",
+      "type": "esriFieldTypeDouble",
+      "alias": "VAC_HH",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P1_001N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_001N",
+      "length": null,
+      "sampleValue": 82
+    },
+    {
+      "name": "P1_002N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_002N",
+      "length": null,
+      "sampleValue": 82
+    },
+    {
+      "name": "P1_003N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_003N",
+      "length": null,
+      "sampleValue": 79
+    },
+    {
+      "name": "P1_004N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_004N",
+      "length": null,
+      "sampleValue": 3
+    },
+    {
+      "name": "P1_005N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_005N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P1_006N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_006N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P1_007N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_007N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P1_008N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_008N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P1_009N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P1_009N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P2_002N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P2_002N",
+      "length": null,
+      "sampleValue": 2
+    },
+    {
+      "name": "P2_003N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P2_003N",
+      "length": null,
+      "sampleValue": 80
+    },
+    {
+      "name": "P3_001N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_001N",
+      "length": null,
+      "sampleValue": 65
+    },
+    {
+      "name": "P3_002N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_002N",
+      "length": null,
+      "sampleValue": 65
+    },
+    {
+      "name": "P3_003N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_003N",
+      "length": null,
+      "sampleValue": 62
+    },
+    {
+      "name": "P3_004N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_004N",
+      "length": null,
+      "sampleValue": 3
+    },
+    {
+      "name": "P3_005N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_005N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P3_006N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_006N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P3_007N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_007N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P3_008N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_008N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P3_009N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P3_009N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P4_001N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P4_001N",
+      "length": null,
+      "sampleValue": 65
+    },
+    {
+      "name": "P4_002N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P4_002N",
+      "length": null,
+      "sampleValue": 2
+    },
+    {
+      "name": "P4_003N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P4_003N",
+      "length": null,
+      "sampleValue": 63
+    },
+    {
+      "name": "P5_001N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_001N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_002N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_002N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_003N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_003N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_004N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_004N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_005N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_005N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_006N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_006N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_007N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_007N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_008N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_008N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_009N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_009N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "P5_010N",
+      "type": "esriFieldTypeDouble",
+      "alias": "P5_010N",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 0.000012127581511573469
+    },
+    {
+      "name": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 0.023095839174230748
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "STATEFP20": "01",
+    "COUNTYFP20": "101",
+    "TRACTCE20": "002000",
+    "BLOCKCE20": "3005",
+    "GEOID20": "011010020003005",
+    "NAME20": "Block 3005",
+    "MTFCC20": "G5040",
+    "UR20": " ",
+    "UACE20": " ",
+    "UATYPE20": " ",
+    "FUNCSTAT20": "S",
+    "ALAND20": 126595,
+    "AWATER20": 0,
+    "INTPTLAT20": "+32.3500305",
+    "INTPTLON20": "-086.2743358",
+    "GEOID20_1": "011010020003005",
+    "GEOID_B20": "011010020003005",
+    "TOT_HH": 34,
+    "OCC_HH": 34,
+    "VAC_HH": 0,
+    "P1_001N": 82,
+    "P1_002N": 82,
+    "P1_003N": 79,
+    "P1_004N": 3,
+    "P1_005N": 0,
+    "P1_006N": 0,
+    "P1_007N": 0,
+    "P1_008N": 0,
+    "P1_009N": 0,
+    "P2_002N": 2,
+    "P2_003N": 80,
+    "P3_001N": 65,
+    "P3_002N": 65,
+    "P3_003N": 62,
+    "P3_004N": 3,
+    "P3_005N": 0,
+    "P3_006N": 0,
+    "P3_007N": 0,
+    "P3_008N": 0,
+    "P3_009N": 0,
+    "P4_001N": 65,
+    "P4_002N": 2,
+    "P4_003N": 63,
+    "P5_001N": 0,
+    "P5_002N": 0,
+    "P5_003N": 0,
+    "P5_004N": 0,
+    "P5_005N": 0,
+    "P5_006N": 0,
+    "P5_007N": 0,
+    "P5_008N": 0,
+    "P5_009N": 0,
+    "P5_010N": 0,
+    "Shape_Area": 0.000012127581511573469,
+    "Shape_Length": 0.023095839174230748
+  },
+  "probedAt": "2026-03-13T20:21:32.350Z",
+  "error": null
+}

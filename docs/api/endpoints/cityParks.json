@@ -1,0 +1,332 @@
+{
+  "key": "cityParks",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/OneView/City_Parks/MapServer/7",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 94,
+  "fields": [
+    {
+      "name": "OBJECTID_1",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID_1",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeInteger",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 88
+    },
+    {
+      "name": "FACILITYID",
+      "type": "esriFieldTypeString",
+      "alias": "Facility Identifier",
+      "length": 50,
+      "sampleValue": "Armory Learning Arts Center"
+    },
+    {
+      "name": "FULLADDR",
+      "type": "esriFieldTypeString",
+      "alias": "Physical Address",
+      "length": 68,
+      "sampleValue": "1018 MADISON AVE"
+    },
+    {
+      "name": "OPERDAYS",
+      "type": "esriFieldTypeString",
+      "alias": "Operational Days",
+      "length": 50,
+      "sampleValue": "Mon-Fri"
+    },
+    {
+      "name": "OPERHOURS",
+      "type": "esriFieldTypeString",
+      "alias": "Operational Hours",
+      "length": 50,
+      "sampleValue": "8:00AM-5:00PM"
+    },
+    {
+      "name": "PARKAREA",
+      "type": "esriFieldTypeDouble",
+      "alias": "Size of Park",
+      "length": null,
+      "sampleValue": 2.24812956
+    },
+    {
+      "name": "PARKURL",
+      "type": "esriFieldTypeString",
+      "alias": "Website",
+      "length": 254,
+      "sampleValue": "http://www.funinmontgomery.com/parks-items/Armory"
+    },
+    {
+      "name": "NUMPARKING",
+      "type": "esriFieldTypeDouble",
+      "alias": "Number of Parking Spaces",
+      "length": null,
+      "sampleValue": 70
+    },
+    {
+      "name": "RESTROOM",
+      "type": "esriFieldTypeString",
+      "alias": "Restrooms Available",
+      "length": 5,
+      "sampleValue": "Y"
+    },
+    {
+      "name": "ADACOMPLY",
+      "type": "esriFieldTypeString",
+      "alias": "ADA Compliant",
+      "length": 5,
+      "sampleValue": "Y"
+    },
+    {
+      "name": "CAMPING",
+      "type": "esriFieldTypeString",
+      "alias": "Camping Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "SWIMMING",
+      "type": "esriFieldTypeString",
+      "alias": "Swimming Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "HIKING",
+      "type": "esriFieldTypeString",
+      "alias": "Hiking Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "FISHING",
+      "type": "esriFieldTypeString",
+      "alias": "Fishing Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "PICNIC",
+      "type": "esriFieldTypeString",
+      "alias": "Picnicing Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "BOATING",
+      "type": "esriFieldTypeString",
+      "alias": "Boating Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "HUNTING",
+      "type": "esriFieldTypeString",
+      "alias": "Hunting Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "ROADCYCLE",
+      "type": "esriFieldTypeString",
+      "alias": "Cycling Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "MTBCYCLE",
+      "type": "esriFieldTypeString",
+      "alias": "MTB Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "PLAYGROUND",
+      "type": "esriFieldTypeString",
+      "alias": "Playgrounds Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "GOLF",
+      "type": "esriFieldTypeString",
+      "alias": "Golf Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "SKI",
+      "type": "esriFieldTypeString",
+      "alias": "Skiing Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "SOCCER",
+      "type": "esriFieldTypeString",
+      "alias": "Soccer Fields Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "BASEBALL",
+      "type": "esriFieldTypeString",
+      "alias": "Baseball Fields Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "SOFTBALL",
+      "type": "esriFieldTypeString",
+      "alias": "Softball Fields Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "BASKETBALL",
+      "type": "esriFieldTypeString",
+      "alias": "Basketball Courts Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "TENNIS",
+      "type": "esriFieldTypeString",
+      "alias": "Tennis Courts Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "SKATEBOARD",
+      "type": "esriFieldTypeString",
+      "alias": "Skateboarding Available",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "INFORMATION",
+      "type": "esriFieldTypeString",
+      "alias": "Information Center Available",
+      "length": 5,
+      "sampleValue": "Y"
+    },
+    {
+      "name": "PETS",
+      "type": "esriFieldTypeString",
+      "alias": "Pets Allowed",
+      "length": 5,
+      "sampleValue": "N"
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Last Update Date",
+      "length": 8,
+      "sampleValue": 1509667200000
+    },
+    {
+      "name": "LASTEDITOR",
+      "type": "esriFieldTypeString",
+      "alias": "Last Editor",
+      "length": 50,
+      "sampleValue": "SLH"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "ABOWEN"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1638463196000
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 97928.13177401136
+    },
+    {
+      "name": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 1484.23777967355
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID_1": 1,
+    "OBJECTID": 88,
+    "FACILITYID": "Armory Learning Arts Center",
+    "FULLADDR": "1018 MADISON AVE",
+    "OPERDAYS": "Mon-Fri",
+    "OPERHOURS": "8:00AM-5:00PM",
+    "PARKAREA": 2.24812956,
+    "PARKURL": "http://www.funinmontgomery.com/parks-items/Armory",
+    "NUMPARKING": 70,
+    "RESTROOM": "Y",
+    "ADACOMPLY": "Y",
+    "CAMPING": "N",
+    "SWIMMING": "N",
+    "HIKING": "N",
+    "FISHING": "N",
+    "PICNIC": "N",
+    "BOATING": "N",
+    "HUNTING": "N",
+    "ROADCYCLE": "N",
+    "MTBCYCLE": "N",
+    "PLAYGROUND": "N",
+    "GOLF": "N",
+    "SKI": "N",
+    "SOCCER": "N",
+    "BASEBALL": "N",
+    "SOFTBALL": "N",
+    "BASKETBALL": "N",
+    "TENNIS": "N",
+    "SKATEBOARD": "N",
+    "INFORMATION": "Y",
+    "PETS": "N",
+    "LASTUPDATE": 1509667200000,
+    "LASTEDITOR": "SLH",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": "ABOWEN",
+    "last_edited_date": 1638463196000,
+    "Shape.STArea()": 97928.13177401136,
+    "Shape.STLength()": 1484.23777967355
+  },
+  "probedAt": "2026-03-13T20:21:34.592Z",
+  "error": null
+}

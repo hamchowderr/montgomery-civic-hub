@@ -14,7 +14,7 @@ import { ResearcherTable } from "./components/ResearcherTable";
 function ResearcherContent() {
   useCopilotReadable({
     description: "Current portal context",
-    value: { portal: "researcher", availableViews: ["map", "table", "chart"] },
+    value: { portal: "researcher", availableViews: ["map", "table", "chart", "timeline"] },
   });
 
   return (
@@ -30,7 +30,7 @@ function ResearcherContent() {
           mapContent={<ResearcherMap />}
           tableContent={<ResearcherTable />}
           chartContent={<ResearcherChart />}
-          civilRightsContent={<CivilRightsTimeline />}
+          timelineContent={<CivilRightsTimeline />}
         />
       </PortalLayout>
     </main>

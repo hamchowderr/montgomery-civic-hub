@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently --names next,convex -c blue,magenta \"next dev\" \"convex dev\"",
-    "dev:next": "next dev",
+    "dev": "concurrently --names next,convex -c blue,magenta \"next dev --turbopack\" \"convex dev\"",
+    "dev:next": "next dev --turbopack",
     "build": "npx convex deploy --cmd \"next build\"",
     "start": "next start",
     "lint": "biome check .",

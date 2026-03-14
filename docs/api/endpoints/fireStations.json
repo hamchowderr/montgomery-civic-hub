@@ -1,0 +1,85 @@
+{
+  "key": "fireStations",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Fire_Stations/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 15,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Id",
+      "type": "esriFieldTypeInteger",
+      "alias": "Id",
+      "length": null,
+      "sampleValue": 14
+    },
+    {
+      "name": "Name",
+      "type": "esriFieldTypeString",
+      "alias": "Name",
+      "length": 50,
+      "sampleValue": "14"
+    },
+    {
+      "name": "Address",
+      "type": "esriFieldTypeString",
+      "alias": "Address",
+      "length": 50,
+      "sampleValue": "2801 Selma Hwy"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "NPJACKSON"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1752156143000
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{943B56D8-8A03-4E04-A7BE-E98401460940}"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "Id": 14,
+    "Name": "14",
+    "Address": "2801 Selma Hwy",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": "NPJACKSON",
+    "last_edited_date": 1752156143000,
+    "GlobalID": "{943B56D8-8A03-4E04-A7BE-E98401460940}"
+  },
+  "probedAt": "2026-03-13T20:21:24.554Z",
+  "error": null
+}

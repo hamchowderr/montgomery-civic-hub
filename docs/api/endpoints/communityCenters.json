@@ -1,0 +1,141 @@
+{
+  "key": "communityCenters",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Community_Centers/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 23,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 24
+    },
+    {
+      "name": "Status",
+      "type": "esriFieldTypeString",
+      "alias": "Status",
+      "length": 1,
+      "sampleValue": "U"
+    },
+    {
+      "name": "Score",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Score",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Match_addr",
+      "type": "esriFieldTypeString",
+      "alias": "Match_addr",
+      "length": 33,
+      "sampleValue": "Placed"
+    },
+    {
+      "name": "ARC_KeyFie",
+      "type": "esriFieldTypeString",
+      "alias": "ARC_KeyFie",
+      "length": 30,
+      "sampleValue": "1018 Madison Avenue"
+    },
+    {
+      "name": "FACILITY_N",
+      "type": "esriFieldTypeString",
+      "alias": "FACILITY_N",
+      "length": 31,
+      "sampleValue": "Armory Learning Arts Center"
+    },
+    {
+      "name": "TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "TYPE",
+      "length": 21,
+      "sampleValue": "Community Center"
+    },
+    {
+      "name": "ADDRESS",
+      "type": "esriFieldTypeString",
+      "alias": "ADDRESS",
+      "length": 31,
+      "sampleValue": "1018 MADISON AVE"
+    },
+    {
+      "name": "ZIP",
+      "type": "esriFieldTypeInteger",
+      "alias": "ZIP",
+      "length": null,
+      "sampleValue": 36104
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "LASTUPDATE",
+      "length": 8,
+      "sampleValue": 1385078400000
+    },
+    {
+      "name": "LASTEDITOR",
+      "type": "esriFieldTypeString",
+      "alias": "LASTEDITOR",
+      "length": 50,
+      "sampleValue": "BWR"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": "brandolph"
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": 1385150757000
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "NPJACKSON"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1633554850000
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{8B6EE1CB-5A2C-493F-B83A-BDBD5278FF24}"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 24,
+    "Status": "U",
+    "Score": 1,
+    "Match_addr": "Placed",
+    "ARC_KeyFie": "1018 Madison Avenue",
+    "FACILITY_N": "Armory Learning Arts Center",
+    "TYPE": "Community Center",
+    "ADDRESS": "1018 MADISON AVE",
+    "ZIP": 36104,
+    "LASTUPDATE": 1385078400000,
+    "LASTEDITOR": "BWR",
+    "created_user": "brandolph",
+    "created_date": 1385150757000,
+    "last_edited_user": "NPJACKSON",
+    "last_edited_date": 1633554850000,
+    "GlobalID": "{8B6EE1CB-5A2C-493F-B83A-BDBD5278FF24}"
+  },
+  "probedAt": "2026-03-13T20:21:24.554Z",
+  "error": null
+}

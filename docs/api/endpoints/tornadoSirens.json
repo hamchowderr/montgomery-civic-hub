@@ -1,0 +1,165 @@
+{
+  "key": "tornadoSirens",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Tornado_Sirens/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 76,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Id",
+      "type": "esriFieldTypeInteger",
+      "alias": "Id",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "Adress_Cod",
+      "type": "esriFieldTypeInteger",
+      "alias": "Adress_Cod",
+      "length": null,
+      "sampleValue": 5301101
+    },
+    {
+      "name": "Brand",
+      "type": "esriFieldTypeString",
+      "alias": "Brand",
+      "length": 50,
+      "sampleValue": "Whelen"
+    },
+    {
+      "name": "Location_A",
+      "type": "esriFieldTypeString",
+      "alias": "Location_A",
+      "length": 50,
+      "sampleValue": "375 Hunter Loop Rd (Asphalt Paving Company)"
+    },
+    {
+      "name": "Number_",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Number_",
+      "length": null,
+      "sampleValue": 31
+    },
+    {
+      "name": "Date_Insta",
+      "type": "esriFieldTypeDate",
+      "alias": "Date_Insta",
+      "length": 8,
+      "sampleValue": 859939200000
+    },
+    {
+      "name": "Average_Es",
+      "type": "esriFieldTypeDouble",
+      "alias": "Average_Es",
+      "length": null,
+      "sampleValue": 0.98059156
+    },
+    {
+      "name": "Worst_Est_",
+      "type": "esriFieldTypeDouble",
+      "alias": "Worst_Est_",
+      "length": null,
+      "sampleValue": 0.98059156
+    },
+    {
+      "name": "Lat",
+      "type": "esriFieldTypeDouble",
+      "alias": "Lat",
+      "length": null,
+      "sampleValue": -86.38746047
+    },
+    {
+      "name": "Long",
+      "type": "esriFieldTypeDouble",
+      "alias": "Long",
+      "length": null,
+      "sampleValue": 32.3535026
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "LASTUPDATE",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "LASTEDITOR",
+      "type": "esriFieldTypeString",
+      "alias": "LASTEDITOR",
+      "length": 50,
+      "sampleValue": "HTUITE"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "HNAM"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1749667147000
+    },
+    {
+      "name": "Group_",
+      "type": "esriFieldTypeInteger",
+      "alias": "Group_",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{5643956C-7D03-432B-9197-27C1F1993BBE}"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "Id": 0,
+    "Adress_Cod": 5301101,
+    "Brand": "Whelen",
+    "Location_A": "375 Hunter Loop Rd (Asphalt Paving Company)",
+    "Number_": 31,
+    "Date_Insta": 859939200000,
+    "Average_Es": 0.98059156,
+    "Worst_Est_": 0.98059156,
+    "Lat": -86.38746047,
+    "Long": 32.3535026,
+    "LASTUPDATE": null,
+    "LASTEDITOR": "HTUITE",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": "HNAM",
+    "last_edited_date": 1749667147000,
+    "Group_": null,
+    "GlobalID": "{5643956C-7D03-432B-9197-27C1F1993BBE}"
+  },
+  "probedAt": "2026-03-13T20:21:27.337Z",
+  "error": null
+}

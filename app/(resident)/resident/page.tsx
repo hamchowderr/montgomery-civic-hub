@@ -15,7 +15,10 @@ import { ResidentTable } from "./components/ResidentTable";
 function ResidentContent() {
   useCopilotReadable({
     description: "Current portal context",
-    value: { portal: "resident", availableViews: ["map", "table", "chart"] },
+    value: {
+      portal: "resident",
+      availableViews: ["map", "table", "chart", "emergency", "newsfeed"],
+    },
   });
 
   return (
@@ -31,8 +34,8 @@ function ResidentContent() {
           mapContent={<ResidentMap />}
           tableContent={<ResidentTable />}
           chartContent={<ResidentChart />}
-          newsfeedContent={<IncidentNewsfeed />}
           emergencyContent={<EmergencyContact />}
+          newsfeedContent={<IncidentNewsfeed />}
         />
       </PortalLayout>
     </main>

@@ -1,0 +1,124 @@
+{
+  "key": "recyclingLocations",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/QAlert/QAlert_311/MapServer/4",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 19,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "LOCATION",
+      "type": "esriFieldTypeString",
+      "alias": "LOCATION",
+      "length": 50,
+      "sampleValue": "REPOWER SOUTH"
+    },
+    {
+      "name": "ADDRESS",
+      "type": "esriFieldTypeString",
+      "alias": "ADDRESS",
+      "length": 100,
+      "sampleValue": "1551 LOUISVILLE ST"
+    },
+    {
+      "name": "HOURS",
+      "type": "esriFieldTypeString",
+      "alias": "HOURS",
+      "length": 100,
+      "sampleValue": " "
+    },
+    {
+      "name": "PRODUCTS",
+      "type": "esriFieldTypeString",
+      "alias": "PRODUCTS",
+      "length": 100,
+      "sampleValue": "PAPER, CARDBOARD, ALUMINUM & TIN CANS, #1 & #2 PLASTICS"
+    },
+    {
+      "name": "NOTES",
+      "type": "esriFieldTypeString",
+      "alias": "NOTES",
+      "length": 100,
+      "sampleValue": " "
+    },
+    {
+      "name": "LOC_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "LOC_TYPE",
+      "length": 50,
+      "sampleValue": "RECYCLING FACILITY"
+    },
+    {
+      "name": "ST_VIEW",
+      "type": "esriFieldTypeString",
+      "alias": "ST_VIEW",
+      "length": 254,
+      "sampleValue": "https://www.google.com/maps/@32.3969831,-86.3172894,3a,75y,341.48h,90t/data=!3m6!1e1!3m4!1sN7pH6Rfj9NtPOyPF_k51Lg!2e0!7i13312!8i6656?hl=en&authuser=0"
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{79FF7637-D9DB-4788-A0C7-365CCC6A5CC8}"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": null
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "LOCATION": "REPOWER SOUTH",
+    "ADDRESS": "1551 LOUISVILLE ST",
+    "HOURS": " ",
+    "PRODUCTS": "PAPER, CARDBOARD, ALUMINUM & TIN CANS, #1 & #2 PLASTICS",
+    "NOTES": " ",
+    "LOC_TYPE": "RECYCLING FACILITY",
+    "ST_VIEW": "https://www.google.com/maps/@32.3969831,-86.3172894,3a,75y,341.48h,90t/data=!3m6!1e1!3m4!1sN7pH6Rfj9NtPOyPF_k51Lg!2e0!7i13312!8i6656?hl=en&authuser=0",
+    "GlobalID": "{79FF7637-D9DB-4788-A0C7-365CCC6A5CC8}",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": null,
+    "last_edited_date": null
+  },
+  "probedAt": "2026-03-13T20:21:30.159Z",
+  "error": null
+}
