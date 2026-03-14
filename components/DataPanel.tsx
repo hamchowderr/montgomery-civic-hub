@@ -166,13 +166,13 @@ export function DataPanel({
         onValueChange={handleTabChange}
         className="flex min-h-0 w-full flex-1 flex-col"
       >
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b px-3 py-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 border-b px-2 py-1.5 sm:px-3 sm:py-2">
           {/* Tabs — compact on narrow containers, labeled when space allows */}
-          <TabsList className="gap-1 shrink-0">
+          <TabsList className="gap-0.5 sm:gap-1 shrink-0">
             <TabsTrigger
               value="map"
               data-tour-step-id={`${portalId}-map-view`}
-              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
             >
               <MapPin size={16} />
               <span className="hidden @[440px]:inline">Map</span>
@@ -180,7 +180,7 @@ export function DataPanel({
             <TabsTrigger
               value="table"
               data-tour-step-id={`${portalId}-table-view`}
-              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
             >
               <Table2 className="size-4" />
               <span className="hidden @[440px]:inline">Table</span>
@@ -188,7 +188,7 @@ export function DataPanel({
             <TabsTrigger
               value="chart"
               data-tour-step-id={`${portalId}-chart-view`}
-              className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
             >
               <BarChart3 size={16} />
               <span className="hidden @[440px]:inline">Chart</span>
@@ -197,7 +197,7 @@ export function DataPanel({
               <TabsTrigger
                 value="land"
                 data-tour-step-id="business-land-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
               >
                 <Building2 className="size-4" />
                 <span className="hidden @[440px]:inline">Properties</span>
@@ -207,7 +207,7 @@ export function DataPanel({
               <TabsTrigger
                 value="staffing"
                 data-tour-step-id="citystaff-staffing-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
               >
                 <Users className="size-4" />
                 <span className="hidden @[440px]:inline">Staffing</span>
@@ -217,7 +217,7 @@ export function DataPanel({
               <TabsTrigger
                 value="emergency"
                 data-tour-step-id="resident-emergency-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
               >
                 <Phone className="size-4" />
                 <span className="hidden @[440px]:inline">Emergency</span>
@@ -227,7 +227,7 @@ export function DataPanel({
               <TabsTrigger
                 value="newsfeed"
                 data-tour-step-id="resident-newsfeed-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
               >
                 <Radio className="size-4" />
                 <span className="hidden @[440px]:inline">Incidents</span>
@@ -237,7 +237,7 @@ export function DataPanel({
               <TabsTrigger
                 value="timeline"
                 data-tour-step-id="researcher-timeline-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
               >
                 <Landmark className="size-4" />
                 <span className="hidden @[440px]:inline">Civil Rights</span>
@@ -247,7 +247,7 @@ export function DataPanel({
               <TabsTrigger
                 value="workforce"
                 data-tour-step-id="business-workforce-tab"
-                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
               >
                 <Briefcase className="size-4" />
                 <span className="hidden @[440px]:inline">Workforce</span>
@@ -256,14 +256,14 @@ export function DataPanel({
           </TabsList>
 
           {/* Year filter + portal slot — wraps naturally when space is tight */}
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2 ml-auto">
             <div
-              className="flex items-center gap-1.5"
+              className="flex items-center gap-1 sm:gap-1.5"
               data-tour-step-id={`${portalId}-year-filter`}
             >
-              <CalendarRange className="size-3.5 shrink-0 text-muted-foreground" />
+              <CalendarRange className="size-3.5 shrink-0 text-muted-foreground hidden @[360px]:block" />
               <Select value={String(yearRange.from)} onValueChange={(v) => setFrom(Number(v))}>
-                <SelectTrigger className="h-7 w-[76px] text-xs">
+                <SelectTrigger className="h-7 w-[68px] sm:w-[76px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -276,7 +276,7 @@ export function DataPanel({
               </Select>
               <span className="text-xs text-muted-foreground">to</span>
               <Select value={String(yearRange.to)} onValueChange={(v) => setTo(Number(v))}>
-                <SelectTrigger className="h-7 w-[76px] text-xs">
+                <SelectTrigger className="h-7 w-[68px] sm:w-[76px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -291,7 +291,7 @@ export function DataPanel({
             {/* Slot where map layer filter portals into */}
             <div
               ref={slotRef}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5 sm:gap-2"
               data-tour-step-id={`${portalId}-layers`}
             />
           </div>
