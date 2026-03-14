@@ -14,7 +14,10 @@ import { StaffingDashboard } from "./components/StaffingDashboard";
 function CityStaffContent() {
   useCopilotReadable({
     description: "Current portal context",
-    value: { portal: "citystaff", availableViews: ["map", "table", "chart"] },
+    value: {
+      portal: "citystaff",
+      availableViews: ["map", "table", "chart", "staffing"],
+    },
   });
 
   return (

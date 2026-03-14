@@ -1,7 +1,7 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { Briefcase, Building2 } from "lucide-react";
+import { Briefcase, Building2, LayoutDashboard, Lightbulb } from "lucide-react";
 import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import {
@@ -23,6 +23,8 @@ const portalIcons: Record<string, ComponentType<{ size?: number; className?: str
   business: Briefcase,
   citystaff: Building2,
   researcher: FlaskConical,
+  executive: LayoutDashboard,
+  insights: Lightbulb,
 };
 
 interface PortalLayoutProps {

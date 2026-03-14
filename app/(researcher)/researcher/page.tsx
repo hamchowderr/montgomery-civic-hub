@@ -14,7 +14,10 @@ import { ResearcherTable } from "./components/ResearcherTable";
 function ResearcherContent() {
   useCopilotReadable({
     description: "Current portal context",
-    value: { portal: "researcher", availableViews: ["map", "table", "chart", "timeline"] },
+    value: {
+      portal: "researcher",
+      availableViews: ["map", "table", "chart", "timeline"],
+    },
   });
 
   return (

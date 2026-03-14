@@ -12,13 +12,17 @@ import { BusinessMap } from "./components/BusinessMap";
 import { BusinessTable } from "./components/BusinessTable";
 import { LandReuseCard } from "./components/LandReuseCard";
 import { VacantLandExplorer, type VacantProperty } from "./components/VacantLandExplorer";
+import { WorkforcePulse } from "./components/WorkforcePulse";
 
 function BusinessContent() {
   const [selectedProperty, setSelectedProperty] = useState<VacantProperty | null>(null);
 
   useCopilotReadable({
     description: "Current portal context",
-    value: { portal: "business", availableViews: ["map", "table", "chart"] },
+    value: {
+      portal: "business",
+      availableViews: ["map", "table", "chart", "land", "workforce"],
+    },
   });
 
   return (
@@ -40,6 +44,7 @@ function BusinessContent() {
               {selectedProperty && <LandReuseCard property={selectedProperty} />}
             </div>
           }
+          workforceContent={<WorkforcePulse />}
         />
       </PortalLayout>
     </main>

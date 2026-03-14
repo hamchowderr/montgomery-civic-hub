@@ -2,7 +2,7 @@
 
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { Briefcase, Building2 } from "lucide-react";
+import { Briefcase, Building2, Gauge, Scale } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -40,6 +40,21 @@ const portals = [
     label: "Researcher",
     icon: GraduationCap,
     color: "bg-portal-researcher",
+  },
+];
+
+const dashboards = [
+  {
+    href: "/insights",
+    label: "Insights",
+    icon: Scale,
+    color: "bg-primary",
+  },
+  {
+    href: "/executive",
+    label: "Executive",
+    icon: Gauge,
+    color: "bg-primary",
   },
 ];
 
@@ -103,6 +118,29 @@ export function PortalNav() {
               >
                 <portal.icon size={14} />
                 <span className="hidden sm:inline">{portal.label}</span>
+              </Button>
+            </Link>
+          );
+        })}
+
+        {/* Divider */}
+        <div className="mx-1.5 h-5 w-px bg-border" />
+
+        {dashboards.map((dash) => {
+          const isActive = pathname.startsWith(dash.href);
+          return (
+            <Link key={dash.href} href={dash.href}>
+              <Button
+                variant={isActive ? "default" : "ghost"}
+                size="sm"
+                className={cn(
+                  "gap-1.5 text-sm min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0",
+                  isActive && "pointer-events-none",
+                  !isActive && "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                <dash.icon size={14} />
+                <span className="hidden sm:inline">{dash.label}</span>
               </Button>
             </Link>
           );

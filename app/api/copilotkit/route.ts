@@ -1,7 +1,7 @@
 import {
   CopilotRuntime,
-  ExperimentalEmptyAdapter,
   copilotRuntimeNextJSAppRouterEndpoint,
+  ExperimentalEmptyAdapter,
 } from "@copilotkit/runtime";
 import { CivicAgent } from "@/lib/ai/civic-agent";
 
@@ -12,6 +12,8 @@ export const POST = async (req: Request) => {
       business: new CivicAgent("business"),
       citystaff: new CivicAgent("citystaff"),
       researcher: new CivicAgent("researcher"),
+      executive: new CivicAgent("executive"),
+      insights: new CivicAgent("insights"),
     },
   });
 

@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ARCGIS_URLS, queryFeatureAttributes, queryFeatureStats } from "@/lib/arcgis-client";
+import { useYearFilter } from "@/lib/contexts/year-filter";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -141,9 +142,15 @@ function formatNumber(n: number): string {
   return n.toLocaleString();
 }
 
-/** Build a WHERE clause from the current filter state */
-function buildWhereClause(filters: FilterState): string {
+/** Build a WHERE clause from the current filter state and year range */
+function buildIncidentWhereClause(
+  filters: FilterState,
+  yearRange: { from: number; to: number },
+): string {
   const clauses: string[] = [];
+
+  // Always apply year filter
+  clauses.push(`Year >= ${yearRange.from} AND Year <= ${yearRange.to}`);
 
   if (filters.departments.length > 0) {
     const deptList = filters.departments.map((d) => `'${d.replace(/'/g, "''")}'`).join(",");
@@ -166,7 +173,7 @@ function buildWhereClause(filters: FilterState): string {
     clauses.push(`Request_Type = '${filters.requestType.replace(/'/g, "''")}'`);
   }
 
-  return clauses.length > 0 ? clauses.join(" AND ") : "1=1";
+  return clauses.join(" AND ");
 }
 
 const CHART_TOOLTIP_STYLE = {
@@ -201,6 +208,8 @@ const CHART_COLORS = [
 // ---------------------------------------------------------------------------
 
 export function IncidentNewsfeed() {
+  const { yearRange } = useYearFilter();
+
   // ── State ──────────────────────────────────────────────────────────────
   const [filters, setFilters] = useState<FilterState>({
     departments: [],
@@ -270,7 +279,7 @@ export function IncidentNewsfeed() {
   const fetchStats = useCallback(async () => {
     setIsLoadingStats(true);
     try {
-      const where = buildWhereClause(filters);
+      const where = buildIncidentWhereClause(filters, yearRange);
       const statusStats = await queryFeatureStats({
         url,
         where,
@@ -292,13 +301,13 @@ export function IncidentNewsfeed() {
     } finally {
       setIsLoadingStats(false);
     }
-  }, [url, filters]);
+  }, [url, filters, yearRange]);
 
   // ── Fetch feed items ──────────────────────────────────────────────────
   const fetchFeed = useCallback(async () => {
     setIsLoadingFeed(true);
     try {
-      const where = buildWhereClause(filters);
+      const where = buildIncidentWhereClause(filters, yearRange);
       const rows = await queryFeatureAttributes({
         url,
         where,
@@ -335,13 +344,13 @@ export function IncidentNewsfeed() {
     } finally {
       setIsLoadingFeed(false);
     }
-  }, [url, filters]);
+  }, [url, filters, yearRange]);
 
   // ── Fetch type breakdown chart ────────────────────────────────────────
   const fetchTypeBreakdown = useCallback(async () => {
     setIsLoadingChart(true);
     try {
-      const where = buildWhereClause(filters);
+      const where = buildIncidentWhereClause(filters, yearRange);
       const typeStats = await queryFeatureStats({
         url,
         where,
@@ -361,13 +370,13 @@ export function IncidentNewsfeed() {
     } finally {
       setIsLoadingChart(false);
     }
-  }, [url, filters]);
+  }, [url, filters, yearRange]);
 
   // ── Fetch year trend ──────────────────────────────────────────────────
   const fetchYearTrend = useCallback(async () => {
     setIsLoadingTrend(true);
     try {
-      const where = buildWhereClause(filters);
+      const where = buildIncidentWhereClause(filters, yearRange);
       const yearStats = await queryFeatureStats({
         url,
         where,
@@ -388,7 +397,7 @@ export function IncidentNewsfeed() {
     } finally {
       setIsLoadingTrend(false);
     }
-  }, [url, filters]);
+  }, [url, filters, yearRange]);
 
   // ── Effects ────────────────────────────────────────────────────────────
 

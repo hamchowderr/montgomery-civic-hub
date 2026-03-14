@@ -1,7 +1,16 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { Building2, CalendarRange, Landmark, Phone, Radio, Table2, Users } from "lucide-react";
+import {
+  Briefcase,
+  Building2,
+  CalendarRange,
+  Landmark,
+  Phone,
+  Radio,
+  Table2,
+  Users,
+} from "lucide-react";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { BarChart3, MapPin } from "@/components/icons";
@@ -42,6 +51,7 @@ interface DataPanelProps {
   emergencyContent?: React.ReactNode;
   newsfeedContent?: React.ReactNode;
   timelineContent?: React.ReactNode;
+  workforceContent?: React.ReactNode;
   defaultTab?:
     | "map"
     | "table"
@@ -50,7 +60,8 @@ interface DataPanelProps {
     | "staffing"
     | "emergency"
     | "newsfeed"
-    | "timeline";
+    | "timeline"
+    | "workforce";
 }
 
 export function DataPanel({
@@ -63,6 +74,7 @@ export function DataPanel({
   emergencyContent,
   newsfeedContent,
   timelineContent,
+  workforceContent,
   defaultTab = "map",
 }: DataPanelProps) {
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
@@ -112,6 +124,7 @@ export function DataPanel({
           ...(emergencyContent ? ["emergency"] : []),
           ...(newsfeedContent ? ["newsfeed"] : []),
           ...(timelineContent ? ["timeline"] : []),
+          ...(workforceContent ? ["workforce"] : []),
         ],
       },
     ],
@@ -230,6 +243,16 @@ export function DataPanel({
                 <span className="hidden @[440px]:inline">Civil Rights</span>
               </TabsTrigger>
             )}
+            {workforceContent && (
+              <TabsTrigger
+                value="workforce"
+                data-tour-step-id="business-workforce-tab"
+                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              >
+                <Briefcase className="size-4" />
+                <span className="hidden @[440px]:inline">Workforce</span>
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Year filter + portal slot — wraps naturally when space is tight */}
@@ -283,7 +306,7 @@ export function DataPanel({
         <TabsContent
           value="table"
           forceMount
-          className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
         >
           {mountedTabs.has("table") ? tableContent : null}
         </TabsContent>
@@ -294,7 +317,7 @@ export function DataPanel({
           <TabsContent
             value="land"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {landContent}
           </TabsContent>
@@ -303,7 +326,7 @@ export function DataPanel({
           <TabsContent
             value="staffing"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {staffingContent}
           </TabsContent>
@@ -312,7 +335,7 @@ export function DataPanel({
           <TabsContent
             value="emergency"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {emergencyContent}
           </TabsContent>
@@ -321,7 +344,7 @@ export function DataPanel({
           <TabsContent
             value="newsfeed"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden"
           >
             {newsfeedContent}
           </TabsContent>
@@ -330,9 +353,18 @@ export function DataPanel({
           <TabsContent
             value="timeline"
             forceMount
-            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
           >
             {timelineContent}
+          </TabsContent>
+        )}
+        {workforceContent && (
+          <TabsContent
+            value="workforce"
+            forceMount
+            className="min-h-0 flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {workforceContent}
           </TabsContent>
         )}
       </Tabs>
