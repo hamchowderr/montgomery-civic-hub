@@ -182,7 +182,7 @@ export function PortalLayout({
   if (isMobile) {
     return (
       <div className="min-h-0 flex-1">
-        <div className="h-full">{children}</div>
+        <div className="h-full overflow-hidden rounded-lg border bg-card">{children}</div>
 
         <Button
           onClick={() => setChatOpen(true)}
