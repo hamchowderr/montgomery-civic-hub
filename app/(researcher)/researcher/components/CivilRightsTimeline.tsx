@@ -65,7 +65,7 @@ interface TimelineLandmark {
 }
 
 interface CivilRightsTimelineProps {
-  onSelectLandmark: (landmark: TimelineLandmark) => void;
+  onSelectLandmark?: (landmark: TimelineLandmark) => void;
 }
 
 // ---------------------------------------------------------------------------
