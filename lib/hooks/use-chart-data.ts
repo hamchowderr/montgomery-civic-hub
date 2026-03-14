@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   ARCGIS_URLS,
+  queryCountByPolygons,
   queryFeatureAttributes,
   queryFeatureCount,
   queryFeatureStats,
@@ -456,12 +457,11 @@ async function fetchCrossDistrictInsights(yr: YearRange): Promise<any[]> {
         statisticField: "PermitNo",
         statisticType: "count",
       }),
-      queryFeatureStats({
-        url: ARCGIS_URLS.businessLicense,
+      queryCountByPolygons({
+        pointLayerUrl: ARCGIS_URLS.businessLicense,
+        polygonLayerUrl: ARCGIS_URLS.councilDistricts,
+        polygonLabelField: "District",
         where: yearWhere(yr, "pvYEAR"),
-        groupByField: "pvYEAR",
-        statisticField: "pvYEAR",
-        statisticType: "count",
       }).catch(() => []),
       queryFeatureStats({
         url: ARCGIS_URLS.nuisance,
@@ -515,8 +515,11 @@ async function fetchCrossDistrictInsights(yr: YearRange): Promise<any[]> {
     const key = normalizeDistrict(s.group);
     ensure(key).permits += s.value;
   }
-  // Business licenses don't have a district field — distribute evenly as a total signal
-  // (the groupBy on pvYEAR gives yearly counts, not district). Skip district merge.
+  // Business licenses use spatial join (point-in-polygon) against council districts
+  for (const s of licenseStats) {
+    const key = normalizeDistrict(s.group);
+    ensure(key).licenses += s.value;
+  }
   for (const s of nuisanceStats) {
     const key = normalizeDistrict(s.group);
     ensure(key).nuisance += s.value;
@@ -524,16 +527,6 @@ async function fetchCrossDistrictInsights(yr: YearRange): Promise<any[]> {
   for (const s of pavingStats) {
     const key = normalizeDistrict(s.group);
     ensure(key).paving += s.value;
-  }
-
-  // Distribute total license count evenly across districts as a proxy
-  const totalLicenses = licenseStats.reduce((sum, s) => sum + s.value, 0);
-  const districtKeys = Array.from(districtData.keys()).filter((k) => k.startsWith("D"));
-  if (districtKeys.length > 0) {
-    const perDistrict = Math.round(totalLicenses / districtKeys.length);
-    for (const key of districtKeys) {
-      ensure(key).licenses = perDistrict;
-    }
   }
 
   return Array.from(districtData.entries())

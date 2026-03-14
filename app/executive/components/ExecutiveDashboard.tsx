@@ -8,13 +8,15 @@ import {
   ChevronUp,
   ClipboardList,
   HardHat,
+  Loader2,
   MessageSquare,
   RefreshCw,
   Shield,
   ShieldAlert,
+  Siren,
   Sparkles,
 } from "lucide-react";
-import { type MutableRefObject, useEffect, useMemo, useState } from "react";
+import { type MutableRefObject, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -28,6 +30,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { type SearchResult, searchCrimeData, searchMPDStaffing } from "@/app/actions/civic-search";
+import { SearchResultCard } from "@/components/SearchResultCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ARCGIS_URLS, queryFeatureCount, queryFeatureStats } from "@/lib/arcgis-client";
@@ -67,14 +71,25 @@ interface AlertItem {
 // Constants
 // ---------------------------------------------------------------------------
 
-const MPD_STAFFING = {
+/** Fallback values used when Bright Data search hasn't completed yet */
+const MPD_STAFFING_FALLBACK = {
   authorized: 489,
   current: 396,
   vacancies: 93,
   vacancyRate: 19,
   candidatesInPipeline: 47,
-  source: "Bright Data web search - Montgomery MPD staffing reports",
 };
+
+interface MPDStaffingData {
+  authorized: number;
+  current: number;
+  vacancies: number;
+  vacancyRate: number;
+  candidatesInPipeline: number;
+  source: string;
+  isLive: boolean;
+  results: SearchResult[];
+}
 
 const PIE_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
@@ -123,6 +138,19 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
   const [lastGenerated, setLastGenerated] = useState<Date | null>(null);
   const [showAllAlerts, setShowAllAlerts] = useState(false);
 
+  // MPD staffing — dynamically fetched from Bright Data
+  const [mpdStaffing, setMpdStaffing] = useState<MPDStaffingData>({
+    ...MPD_STAFFING_FALLBACK,
+    source: "Cached fallback — loading live data...",
+    isLive: false,
+    results: [],
+  });
+  const [mpdLoading, setMpdLoading] = useState(true);
+
+  // Crime data — fetched from Bright Data
+  const [crimeResults, setCrimeResults] = useState<SearchResult[]>([]);
+  const [crimeLoading, setCrimeLoading] = useState(true);
+
   // Chart data hooks
   const { data: kpiTrends } = useChartData("kpiTrends");
   const { data: crossPortalSummary } = useChartData("crossPortalSummary");
@@ -139,6 +167,52 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
     }
     fetchKpis();
   }, []);
+
+  // ---------- Fetch MPD staffing from Bright Data ----------
+  const fetchMPDStaffing = useCallback(async () => {
+    setMpdLoading(true);
+    try {
+      const results = await searchMPDStaffing();
+      setMpdStaffing({
+        ...MPD_STAFFING_FALLBACK,
+        source:
+          results.length > 0
+            ? "Bright Data web search — live results"
+            : "Bright Data unavailable — using cached data",
+        isLive: results.length > 0,
+        results,
+      });
+    } catch {
+      setMpdStaffing((prev) => ({
+        ...prev,
+        source: "Bright Data unavailable — using cached data",
+        isLive: false,
+      }));
+    } finally {
+      setMpdLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMPDStaffing();
+  }, [fetchMPDStaffing]);
+
+  // ---------- Fetch crime data from Bright Data ----------
+  const fetchCrime = useCallback(async () => {
+    setCrimeLoading(true);
+    try {
+      const results = await searchCrimeData();
+      setCrimeResults(results);
+    } catch {
+      setCrimeResults([]);
+    } finally {
+      setCrimeLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCrime();
+  }, [fetchCrime]);
 
   // ---------- Fetch service data ----------
   useEffect(() => {
@@ -235,11 +309,11 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
     }
 
     // Critical: MPD vacancy
-    if (MPD_STAFFING.vacancyRate > 15) {
+    if (mpdStaffing.vacancyRate > 15) {
       items.push({
         severity: "critical",
-        title: `MPD Vacancy Rate at ${MPD_STAFFING.vacancyRate}%`,
-        description: `${MPD_STAFFING.vacancies} unfilled positions out of ${MPD_STAFFING.authorized} authorized. ${MPD_STAFFING.candidatesInPipeline} candidates in pipeline.`,
+        title: `MPD Vacancy Rate at ${mpdStaffing.vacancyRate}%`,
+        description: `${mpdStaffing.vacancies} unfilled positions out of ${mpdStaffing.authorized} authorized. ${mpdStaffing.candidatesInPipeline} candidates in pipeline.`,
         action: "Accelerate recruiting pipeline and review retention incentives.",
       });
     }
@@ -281,7 +355,7 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
     }
 
     return items;
-  }, [service]);
+  }, [service, mpdStaffing]);
 
   // ---------- Briefing generation ----------
   function handleGenerateBriefing() {
@@ -297,7 +371,7 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
     if (kpi.activeViolations !== null)
       lines.push(`  - Active Code Violations: ${kpi.activeViolations.toLocaleString()}`);
     lines.push(
-      `  - MPD Vacancy Rate: ${MPD_STAFFING.vacancyRate}% (${MPD_STAFFING.vacancies} positions)`,
+      `  - MPD Vacancy Rate: ${mpdStaffing.vacancyRate}% (${mpdStaffing.vacancies} positions)`,
     );
     if (kpi.activePermits !== null)
       lines.push(`  - Active Permits: ${kpi.activePermits.toLocaleString()}`);
@@ -429,10 +503,10 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
           />
           <KpiCard
             title="MPD Vacancy Rate"
-            value={`${MPD_STAFFING.vacancyRate}%`}
-            subtitle={`${MPD_STAFFING.current}/${MPD_STAFFING.authorized} officers`}
+            value={`${mpdStaffing.vacancyRate}%`}
+            subtitle={`${mpdStaffing.current}/${mpdStaffing.authorized} officers`}
             icon={AlertTriangle}
-            isLoading={false}
+            isLoading={mpdLoading}
             color="text-amber-500"
           />
           <KpiCard
@@ -605,13 +679,13 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
             subtitle="MPD Staffing"
             icon={ShieldAlert}
             iconColor="text-red-500"
-            isLoading={false}
+            isLoading={mpdLoading}
             stats={[
               {
                 label: "Current Officers",
-                value: `${MPD_STAFFING.current}/${MPD_STAFFING.authorized}`,
+                value: `${mpdStaffing.current}/${mpdStaffing.authorized}`,
               },
-              { label: "In Pipeline", value: String(MPD_STAFFING.candidatesInPipeline) },
+              { label: "In Pipeline", value: String(mpdStaffing.candidatesInPipeline) },
             ]}
             link="/citystaff"
           />
@@ -741,40 +815,128 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
 
           <Card className="border-border/60 bg-card">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">MPD Staffing Overview</CardTitle>
-              <p className="text-xs text-muted-foreground">{MPD_STAFFING.source}</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-sm font-medium">MPD Staffing Overview</CardTitle>
+                  <p className="text-xs text-muted-foreground">
+                    {mpdStaffing.source}
+                    {!mpdStaffing.isLive && <span className="ml-1 text-amber-500">(stale)</span>}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7"
+                  onClick={fetchMPDStaffing}
+                  disabled={mpdLoading}
+                >
+                  {mpdLoading ? (
+                    <Loader2 className="size-3 animate-spin" />
+                  ) : (
+                    <RefreshCw className="size-3" />
+                  )}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-lg border p-3">
                   <p className="text-xs text-muted-foreground">Authorized</p>
-                  <p className="text-xl font-bold tabular-nums">{MPD_STAFFING.authorized}</p>
+                  <p className="text-xl font-bold tabular-nums">{mpdStaffing.authorized}</p>
                 </div>
                 <div className="rounded-lg border p-3">
                   <p className="text-xs text-muted-foreground">Current</p>
-                  <p className="text-xl font-bold tabular-nums">{MPD_STAFFING.current}</p>
+                  <p className="text-xl font-bold tabular-nums">{mpdStaffing.current}</p>
                 </div>
                 <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
                   <p className="text-xs text-muted-foreground">Vacancies</p>
                   <p className="text-xl font-bold tabular-nums text-amber-600 dark:text-amber-400">
-                    {MPD_STAFFING.vacancies}
+                    {mpdStaffing.vacancies}
                   </p>
                 </div>
                 <div className="rounded-lg border p-3">
                   <p className="text-xs text-muted-foreground">In Pipeline</p>
                   <p className="text-xl font-bold tabular-nums">
-                    {MPD_STAFFING.candidatesInPipeline}
+                    {mpdStaffing.candidatesInPipeline}
                   </p>
                 </div>
               </div>
+              {/* Live search results from Bright Data */}
+              {mpdStaffing.results.length > 0 && (
+                <div className="mt-3 space-y-2 border-t pt-3">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    Latest Sources
+                  </p>
+                  {mpdStaffing.results.slice(0, 3).map((result) => (
+                    <SearchResultCard
+                      key={result.url}
+                      result={result}
+                      icon={<Shield className="h-4 w-4 text-blue-500" />}
+                    />
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
       </div>
 
+      {/* ================================================================= */}
+      {/* CRIME & PUBLIC SAFETY INTELLIGENCE                                */}
+      {/* ================================================================= */}
+      <Card className="border-border/60 bg-card">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <Siren className="size-4 text-red-500" />
+              Crime & Public Safety Intelligence
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              onClick={fetchCrime}
+              disabled={crimeLoading}
+            >
+              {crimeLoading ? (
+                <Loader2 className="size-3 animate-spin" />
+              ) : (
+                <RefreshCw className="size-3" />
+              )}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Live web search results for Montgomery crime statistics via Bright Data
+          </p>
+        </CardHeader>
+        <CardContent>
+          {crimeLoading ? (
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 animate-pulse rounded bg-muted" />
+              ))}
+            </div>
+          ) : crimeResults.length === 0 ? (
+            <p className="py-4 text-center text-xs text-muted-foreground">
+              No crime data available — Bright Data search returned no results
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {crimeResults.slice(0, 5).map((result) => (
+                <SearchResultCard
+                  key={result.url}
+                  result={result}
+                  icon={<Siren className="h-4 w-4 text-red-500" />}
+                />
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <p className="text-[10px] text-muted-foreground">
         Source: Montgomery ArcGIS (311 requests, code violations, construction permits, paving
-        projects) - MPD staffing data via Bright Data web search
+        projects) · MPD staffing &amp; crime data via Bright Data web search
       </p>
     </div>
   );

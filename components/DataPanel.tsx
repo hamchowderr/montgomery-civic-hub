@@ -160,7 +160,7 @@ export function DataPanel({
   });
 
   return (
-    <div className="@container flex h-full flex-col overflow-hidden bg-card">
+    <div className="flex h-full flex-col overflow-hidden bg-card">
       <Tabs
         value={activeTab}
         onValueChange={handleTabChange}
@@ -172,85 +172,85 @@ export function DataPanel({
             <TabsTrigger
               value="map"
               data-tour-step-id={`${portalId}-map-view`}
-              className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 sm:gap-2 sm:px-4"
             >
               <MapPin size={16} />
-              <span className="hidden @[440px]:inline">Map</span>
+              <span className="hidden sm:inline">Map</span>
             </TabsTrigger>
             <TabsTrigger
               value="table"
               data-tour-step-id={`${portalId}-table-view`}
-              className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 sm:gap-2 sm:px-4"
             >
               <Table2 className="size-4" />
-              <span className="hidden @[440px]:inline">Table</span>
+              <span className="hidden sm:inline">Table</span>
             </TabsTrigger>
             <TabsTrigger
               value="chart"
               data-tour-step-id={`${portalId}-chart-view`}
-              className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+              className="gap-1 px-2 sm:gap-2 sm:px-4"
             >
               <BarChart3 size={16} />
-              <span className="hidden @[440px]:inline">Chart</span>
+              <span className="hidden sm:inline">Chart</span>
             </TabsTrigger>
             {landContent && (
               <TabsTrigger
                 value="land"
                 data-tour-step-id="business-land-tab"
-                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Building2 className="size-4" />
-                <span className="hidden @[440px]:inline">Properties</span>
+                <span className="hidden sm:inline">Properties</span>
               </TabsTrigger>
             )}
             {staffingContent && (
               <TabsTrigger
                 value="staffing"
                 data-tour-step-id="citystaff-staffing-tab"
-                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Users className="size-4" />
-                <span className="hidden @[440px]:inline">Staffing</span>
+                <span className="hidden sm:inline">Staffing</span>
               </TabsTrigger>
             )}
             {emergencyContent && (
               <TabsTrigger
                 value="emergency"
                 data-tour-step-id="resident-emergency-tab"
-                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Phone className="size-4" />
-                <span className="hidden @[440px]:inline">Emergency</span>
+                <span className="hidden sm:inline">Emergency</span>
               </TabsTrigger>
             )}
             {newsfeedContent && (
               <TabsTrigger
                 value="newsfeed"
                 data-tour-step-id="resident-newsfeed-tab"
-                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Radio className="size-4" />
-                <span className="hidden @[440px]:inline">Incidents</span>
+                <span className="hidden sm:inline">Incidents</span>
               </TabsTrigger>
             )}
             {timelineContent && (
               <TabsTrigger
                 value="timeline"
                 data-tour-step-id="researcher-timeline-tab"
-                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Landmark className="size-4" />
-                <span className="hidden @[440px]:inline">Civil Rights</span>
+                <span className="hidden sm:inline">Civil Rights</span>
               </TabsTrigger>
             )}
             {workforceContent && (
               <TabsTrigger
                 value="workforce"
                 data-tour-step-id="business-workforce-tab"
-                className="gap-1 px-2 @[440px]:gap-2 @[440px]:px-4"
+                className="gap-1 px-2 sm:gap-2 sm:px-4"
               >
                 <Briefcase className="size-4" />
-                <span className="hidden @[440px]:inline">Workforce</span>
+                <span className="hidden sm:inline">Workforce</span>
               </TabsTrigger>
             )}
           </TabsList>
@@ -261,7 +261,7 @@ export function DataPanel({
               className="flex items-center gap-1 sm:gap-1.5"
               data-tour-step-id={`${portalId}-year-filter`}
             >
-              <CalendarRange className="size-3.5 shrink-0 text-muted-foreground hidden @[360px]:block" />
+              <CalendarRange className="size-3.5 shrink-0 text-muted-foreground hidden sm:block" />
               <Select value={String(yearRange.from)} onValueChange={(v) => setFrom(Number(v))}>
                 <SelectTrigger className="h-7 w-[68px] sm:w-[76px] text-xs">
                   <SelectValue />

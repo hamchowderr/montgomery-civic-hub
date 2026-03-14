@@ -9,14 +9,13 @@ import { YearFilterProvider } from "@/lib/contexts/year-filter";
 import { CityStaffChart } from "./components/CityStaffChart";
 import { CityStaffMap } from "./components/CityStaffMap";
 import { CityStaffTable } from "./components/CityStaffTable";
-import { StaffingDashboard } from "./components/StaffingDashboard";
 
 function CityStaffContent() {
   useCopilotReadable({
     description: "Current portal context",
     value: {
       portal: "citystaff",
-      availableViews: ["map", "table", "chart", "staffing"],
+      availableViews: ["map", "table", "chart"],
     },
   });
 
@@ -33,7 +32,6 @@ function CityStaffContent() {
           mapContent={<CityStaffMap />}
           tableContent={<CityStaffTable />}
           chartContent={<CityStaffChart />}
-          staffingContent={<StaffingDashboard />}
         />
       </PortalLayout>
     </main>

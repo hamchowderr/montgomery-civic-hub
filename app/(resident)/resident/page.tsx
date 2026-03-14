@@ -6,8 +6,6 @@ import { DataPanel } from "@/components/DataPanel";
 import { PortalLayout } from "@/components/PortalLayout";
 import { PortalNav } from "@/components/PortalNav";
 import { YearFilterProvider } from "@/lib/contexts/year-filter";
-import { EmergencyContact } from "./components/EmergencyContact";
-import { IncidentNewsfeed } from "./components/IncidentNewsfeed";
 import { ResidentChart } from "./components/ResidentChart";
 import { ResidentMap } from "./components/ResidentMap";
 import { ResidentTable } from "./components/ResidentTable";
@@ -17,7 +15,7 @@ function ResidentContent() {
     description: "Current portal context",
     value: {
       portal: "resident",
-      availableViews: ["map", "table", "chart", "emergency", "newsfeed"],
+      availableViews: ["map", "table", "chart"],
     },
   });
 
@@ -34,8 +32,6 @@ function ResidentContent() {
           mapContent={<ResidentMap />}
           tableContent={<ResidentTable />}
           chartContent={<ResidentChart />}
-          emergencyContent={<EmergencyContact />}
-          newsfeedContent={<IncidentNewsfeed />}
         />
       </PortalLayout>
     </main>

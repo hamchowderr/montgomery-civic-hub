@@ -6,11 +6,13 @@ import {
   BarChart3,
   BookOpen,
   Info,
+  Loader2,
   RefreshCw,
   Scale,
   TrendingUp,
+  Users,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -28,6 +30,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { type SearchResult, searchDemographics } from "@/app/actions/civic-search";
+import { SearchResultCard } from "@/components/SearchResultCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -268,6 +272,26 @@ export function InsightsDashboard({
     error: crossError,
   } = useChartData("crossDistrictInsights");
   const { data: trendData, isLoading: trendLoading } = useChartData("multiMetricTrends");
+
+  // Demographics — fetched from Bright Data for equity context
+  const [demoResults, setDemoResults] = useState<SearchResult[]>([]);
+  const [demoLoading, setDemoLoading] = useState(true);
+
+  const fetchDemographics = useCallback(async () => {
+    setDemoLoading(true);
+    try {
+      const results = await searchDemographics();
+      setDemoResults(results);
+    } catch {
+      setDemoResults([]);
+    } finally {
+      setDemoLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDemographics();
+  }, [fetchDemographics]);
 
   // Stories tab state
   const [story, setStory] = useState<string | null>(null);
@@ -707,10 +731,61 @@ export function InsightsDashboard({
               </CardContent>
             </Card>
 
+            {/* Demographic Context */}
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                    <Users className="size-4 text-indigo-500" />
+                    Demographic Context
+                  </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-7"
+                    onClick={fetchDemographics}
+                    disabled={demoLoading}
+                  >
+                    {demoLoading ? (
+                      <Loader2 className="size-3 animate-spin" />
+                    ) : (
+                      <RefreshCw className="size-3" />
+                    )}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Population, income, and demographic data for equity analysis via Bright Data
+                </p>
+              </CardHeader>
+              <CardContent>
+                {demoLoading ? (
+                  <div className="space-y-2">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="h-14 animate-pulse rounded bg-muted" />
+                    ))}
+                  </div>
+                ) : demoResults.length === 0 ? (
+                  <p className="py-4 text-center text-xs text-muted-foreground">
+                    No demographic data available — Bright Data search returned no results
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {demoResults.slice(0, 5).map((result) => (
+                      <SearchResultCard
+                        key={result.url}
+                        result={result}
+                        icon={<Users className="h-4 w-4 text-indigo-500" />}
+                      />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             <p className="text-[10px] text-muted-foreground">
               Equity score = (investment z-score) - (demand z-score). Demand includes 311 requests,
               code violations, and nuisance complaints. Investment includes construction permits and
-              paving projects.
+              paving projects. Demographic data sourced via Bright Data web search.
             </p>
           </div>
         </TabsContent>

@@ -4,7 +4,6 @@ import {
   Briefcase,
   ChevronDown,
   ChevronUp,
-  ExternalLink,
   Factory,
   Loader2,
   Search,
@@ -12,21 +11,15 @@ import {
 } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { SearchResultCard, type SearchResultItem } from "@/components/SearchResultCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useChartData } from "@/lib/hooks/use-chart-data";
 import { searchWorkforceData } from "../actions";
 
-interface SearchResult {
-  title: string;
-  snippet: string;
-  url: string;
-  source: string;
-}
-
 const INITIAL_COUNT = 5;
 
-function SearchResultList({ results, label }: { results: SearchResult[]; label: string }) {
+function SearchResultList({ results, label }: { results: SearchResultItem[]; label: string }) {
   const [expanded, setExpanded] = useState(false);
   const hasMore = results.length > INITIAL_COUNT;
   const visible = expanded ? results : results.slice(0, INITIAL_COUNT);
@@ -37,9 +30,9 @@ function SearchResultList({ results, label }: { results: SearchResult[]; label: 
 
   return (
     <>
-      <div className="space-y-3">
-        {visible.map((r, i) => (
-          <SearchResultCard key={i} result={r} />
+      <div className="space-y-2">
+        {visible.map((r) => (
+          <SearchResultCard key={r.url} result={r} />
         ))}
       </div>
       {hasMore && (
@@ -65,9 +58,9 @@ function SearchResultList({ results, label }: { results: SearchResult[]; label: 
 }
 
 export function WorkforcePulse() {
-  const [workforceResults, setWorkforceResults] = useState<SearchResult[]>([]);
-  const [jobResults, setJobResults] = useState<SearchResult[]>([]);
-  const [dataCenterResults, setDataCenterResults] = useState<SearchResult[]>([]);
+  const [workforceResults, setWorkforceResults] = useState<SearchResultItem[]>([]);
+  const [jobResults, setJobResults] = useState<SearchResultItem[]>([]);
+  const [dataCenterResults, setDataCenterResults] = useState<SearchResultItem[]>([]);
   const [isPending, startTransition] = useTransition();
 
   const { data: licenseData, isLoading: licensesLoading } = useChartData("licensesByYear");
@@ -231,34 +224,6 @@ export function WorkforcePulse() {
           </p>
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-function SearchResultCard({ result }: { result: SearchResult }) {
-  return (
-    <div className="rounded-lg border p-3">
-      <div className="flex items-start gap-2">
-        <div className="min-w-0 flex-1">
-          {result.url ? (
-            <a
-              href={result.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium hover:underline inline-flex items-center gap-1"
-            >
-              {result.title}
-              <ExternalLink className="size-3 shrink-0" />
-            </a>
-          ) : (
-            <p className="text-sm font-medium">{result.title}</p>
-          )}
-          <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">{result.snippet}</p>
-          {result.source && result.source !== "System" && (
-            <p className="mt-1 text-[10px] text-muted-foreground">{result.source}</p>
-          )}
-        </div>
-      </div>
     </div>
   );
 }

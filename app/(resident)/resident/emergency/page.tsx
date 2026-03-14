@@ -1,17 +1,16 @@
 "use client";
 
-import { ArrowLeft, Phone } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { CopilotProvider } from "@/components/CopilotProvider";
 import { PortalNav } from "@/components/PortalNav";
-import { EmergencyContact } from "../components/EmergencyContact";
+import { EmergencyContact } from "../components/emergency/EmergencyContact";
 
 function EmergencyContent() {
   return (
-    <main className="flex min-h-0 flex-1 flex-col overflow-auto">
-      <div className="mx-auto w-full max-w-4xl space-y-6 p-4 sm:p-6 md:p-8">
-        {/* Header */}
-        <div className="space-y-3">
+    <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="border-b px-4 py-2 sm:px-6">
           <Link
             href="/resident"
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -19,21 +18,11 @@ function EmergencyContent() {
             <ArrowLeft className="size-3.5" />
             Back to Resident Dashboard
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-red-500/10">
-              <Phone className="size-5 text-red-600" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Emergency Contacts</h1>
-              <p className="text-sm text-muted-foreground">
-                Montgomery emergency numbers, precinct finder, and MPD response context
-              </p>
-            </div>
-          </div>
         </div>
 
-        {/* Full-page component */}
-        <EmergencyContact />
+        <div className="min-h-0 flex-1">
+          <EmergencyContact />
+        </div>
       </div>
     </main>
   );
