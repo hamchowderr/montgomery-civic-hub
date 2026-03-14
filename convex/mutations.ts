@@ -1,25 +1,5 @@
-import { mutation } from "./_generated/server";
 import { v } from "convex/values";
-
-export const insertMessage = mutation({
-  args: {
-    portalId: v.string(),
-    sessionId: v.string(),
-    role: v.union(
-      v.literal("user"),
-      v.literal("assistant"),
-      v.literal("system"),
-    ),
-    content: v.string(),
-    toolCalls: v.optional(v.any()),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("chat_messages", {
-      ...args,
-      createdAt: Date.now(),
-    });
-  },
-});
+import { mutation } from "./_generated/server";
 
 export const upsertScrapeCache = mutation({
   args: { url: v.string(), content: v.string() },
@@ -44,9 +24,7 @@ export const upsertArcGISCache = mutation({
   handler: async (ctx, args) => {
     const existing = await ctx.db
       .query("arcgis_cache")
-      .withIndex("by_dataset_where", (q) =>
-        q.eq("dataset", args.dataset).eq("where", args.where),
-      )
+      .withIndex("by_dataset_where", (q) => q.eq("dataset", args.dataset).eq("where", args.where))
       .first();
     if (existing) {
       await ctx.db.patch(existing._id, {

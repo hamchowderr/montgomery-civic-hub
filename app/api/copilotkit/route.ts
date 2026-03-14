@@ -1,19 +1,18 @@
+import { getLocalAgents } from "@ag-ui/mastra";
 import {
   CopilotRuntime,
-  ExperimentalEmptyAdapter,
   copilotRuntimeNextJSAppRouterEndpoint,
+  ExperimentalEmptyAdapter,
 } from "@copilotkit/runtime";
-import { CivicAgent } from "@/lib/ai/civic-agent";
+import { mastra } from "@/src/mastra";
+
+const agents = getLocalAgents({
+  mastra,
+  resourceId: "montgomery-civic-hub",
+});
 
 export const POST = async (req: Request) => {
-  const runtime = new CopilotRuntime({
-    agents: {
-      resident: new CivicAgent("resident"),
-      business: new CivicAgent("business"),
-      citystaff: new CivicAgent("citystaff"),
-      researcher: new CivicAgent("researcher"),
-    },
-  });
+  const runtime = new CopilotRuntime({ agents });
 
   const { handleRequest } = copilotRuntimeNextJSAppRouterEndpoint({
     runtime,
