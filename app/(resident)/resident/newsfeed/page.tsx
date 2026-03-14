@@ -4,6 +4,7 @@ import { ArrowLeft, Radio } from "lucide-react";
 import Link from "next/link";
 import { CopilotProvider } from "@/components/CopilotProvider";
 import { PortalNav } from "@/components/PortalNav";
+import { YearFilterProvider } from "@/lib/contexts/year-filter";
 import { IncidentNewsfeed } from "../components/IncidentNewsfeed";
 
 function NewsfeedContent() {
@@ -44,7 +45,9 @@ export default function NewsfeedPage() {
     <CopilotProvider agent="resident">
       <div className="flex h-screen flex-col overflow-hidden bg-background">
         <PortalNav />
-        <NewsfeedContent />
+        <YearFilterProvider>
+          <NewsfeedContent />
+        </YearFilterProvider>
       </div>
     </CopilotProvider>
   );
