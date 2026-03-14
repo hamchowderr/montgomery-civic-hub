@@ -31,6 +31,12 @@ import {
 import { ThemeCustomizerPanel } from "@/components/theme-customizer/panel";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator as UISeparator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useTour } from "@/components/ui/tour";
@@ -129,64 +135,74 @@ export function PortalNav() {
       >
         {portals.map((portal) => {
           const isActive = pathname.startsWith(portal.href);
-          return (
-            <div key={portal.href} className="group relative">
-              <Link
-                href={portal.href}
-                aria-current={isActive ? "page" : undefined}
-                onClick={isActive ? (e) => e.preventDefault() : undefined}
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "relative gap-1.5 text-sm min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0",
-                    isActive &&
-                      "text-foreground font-medium bg-[hsl(var(--portal-hue)/0.1)] hover:bg-[hsl(var(--portal-hue)/0.15)] after:absolute after:bottom-0 after:inset-x-1 after:h-0.5 after:rounded-full after:bg-[hsl(var(--portal-hue))]",
-                    !isActive && "text-muted-foreground hover:text-foreground",
-                  )}
-                  style={
-                    isActive
-                      ? ({
-                          "--portal-hue": `var(--portal-${portal.href.slice(1)})`,
-                        } as React.CSSProperties)
-                      : undefined
-                  }
-                >
-                  <portal.icon size={14} />
-                  <span className="hidden sm:inline">{portal.label}</span>
-                </Button>
-              </Link>
+          const hasSubPages = portal.subPages.length > 0;
 
-              {/* Hover dropdown — desktop only */}
-              {portal.subPages.length > 0 && (
-                <div className="absolute left-0 top-full z-50 pt-1 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150 hidden sm:block">
-                  <div className="rounded-md border bg-popover p-1 shadow-lg min-w-[160px]">
-                    {portal.subPages.map((sub) => {
-                      const isSubActive = pathname === sub.href;
-                      return (
-                        <Link
-                          key={sub.href}
-                          href={sub.href}
-                          className={cn(
-                            "flex items-center gap-2 rounded-sm px-3 py-1.5 text-sm transition-colors",
-                            isSubActive
-                              ? "bg-muted text-foreground font-medium"
-                              : "text-popover-foreground hover:bg-muted/60",
-                          )}
-                        >
-                          <sub.icon
-                            size={14}
-                            className={isSubActive ? "text-foreground" : "text-muted-foreground"}
-                          />
-                          {sub.label}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
+          const portalButton = (
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "relative gap-1.5 text-sm min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0",
+                isActive &&
+                  "text-foreground font-medium bg-[hsl(var(--portal-hue)/0.1)] hover:bg-[hsl(var(--portal-hue)/0.15)] after:absolute after:bottom-0 after:inset-x-1 after:h-0.5 after:rounded-full after:bg-[hsl(var(--portal-hue))]",
+                !isActive && "text-muted-foreground hover:text-foreground",
               )}
-            </div>
+              style={
+                isActive
+                  ? ({
+                      "--portal-hue": `var(--portal-${portal.href.slice(1)})`,
+                    } as React.CSSProperties)
+                  : undefined
+              }
+            >
+              <portal.icon size={14} />
+              <span className="hidden sm:inline">{portal.label}</span>
+              {hasSubPages && isActive && (
+                <ChevronDown size={12} className="hidden sm:inline text-muted-foreground" />
+              )}
+            </Button>
+          );
+
+          // Active portal with sub-pages: click dropdown
+          if (hasSubPages && isActive) {
+            return (
+              <DropdownMenu key={portal.href}>
+                <DropdownMenuTrigger asChild className="hidden sm:inline-flex">
+                  {portalButton}
+                </DropdownMenuTrigger>
+                {/* Mobile: just show the button without dropdown (mobile sheet handles nav) */}
+                <div className="sm:hidden">
+                  <Link href={portal.href} aria-current="page">
+                    {portalButton}
+                  </Link>
+                </div>
+                <DropdownMenuContent align="start" className="min-w-[160px]">
+                  {portal.subPages.map((sub) => {
+                    const isSubActive = pathname === sub.href;
+                    return (
+                      <DropdownMenuItem
+                        key={sub.href}
+                        className={cn("gap-2", isSubActive && "bg-muted font-medium")}
+                        onClick={() => router.push(sub.href)}
+                      >
+                        <sub.icon
+                          size={14}
+                          className={isSubActive ? "text-foreground" : "text-muted-foreground"}
+                        />
+                        {sub.label}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            );
+          }
+
+          // Non-active portal or no sub-pages: plain link
+          return (
+            <Link key={portal.href} href={portal.href} aria-current={isActive ? "page" : undefined}>
+              {portalButton}
+            </Link>
           );
         })}
 

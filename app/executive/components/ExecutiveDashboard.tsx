@@ -7,6 +7,7 @@ import {
   ChevronDown,
   ChevronUp,
   ClipboardList,
+  Download,
   HardHat,
   Loader2,
   MessageSquare,
@@ -16,7 +17,7 @@ import {
   Siren,
   Sparkles,
 } from "lucide-react";
-import { type MutableRefObject, useCallback, useEffect, useMemo, useState } from "react";
+import { type MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -415,6 +416,31 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
   // Cross-portal summary
   const summary = crossPortalSummary?.[0] ?? null;
 
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  async function handleExportPDF() {
+    if (!dashboardRef.current) return;
+    setIsExporting(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const html2pdf = (await import("html2pdf.js")).default as any;
+      const opt = {
+        margin: [0.3, 0.3, 0.3, 0.3],
+        filename: `Montgomery-Executive-Briefing-${new Date().toISOString().slice(0, 10)}.pdf`,
+        image: { type: "jpeg", quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+      };
+      await html2pdf().set(opt).from(dashboardRef.current).save();
+    } catch (err) {
+      console.error("[executive] PDF export failed:", err);
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   const visibleAlerts = showAllAlerts ? alerts : alerts.slice(0, 6);
 
   // Time since last generated
@@ -423,7 +449,7 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
     : null;
 
   return (
-    <div className="flex flex-col gap-4 overflow-auto p-4">
+    <div ref={dashboardRef} className="flex flex-col gap-4 overflow-auto scrollbar-thin p-4">
       {/* ================================================================= */}
       {/* MORNING BRIEFING                                                  */}
       {/* ================================================================= */}
@@ -454,6 +480,20 @@ export function ExecutiveDashboard({ highlightedAlert, sectionRefs }: ExecutiveD
                 >
                   {briefing ? <RefreshCw className="size-3" /> : <Sparkles className="size-3" />}
                   {briefing ? "Refresh" : "Generate"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleExportPDF}
+                  disabled={isExporting || kpi.isLoading}
+                  className="h-7 gap-1.5 text-xs"
+                >
+                  {isExporting ? (
+                    <Loader2 className="size-3 animate-spin" />
+                  ) : (
+                    <Download className="size-3" />
+                  )}
+                  Export PDF
                 </Button>
               </div>
             </div>
