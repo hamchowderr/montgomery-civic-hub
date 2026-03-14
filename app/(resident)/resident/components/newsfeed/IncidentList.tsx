@@ -146,10 +146,10 @@ export function IncidentList({
       </div>
 
       {isLoadingFeed ? (
-        <div className="space-y-1.5">
+        <div className="space-y-3">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="flex gap-3 rounded-lg border border-l-4 border-l-muted p-2.5">
-              <div className="flex-1 space-y-1.5">
+              <div className="flex-1 space-y-3">
                 <Skeleton className="h-3.5 w-3/4" />
                 <Skeleton className="h-3 w-1/2" />
                 <div className="flex gap-2">
@@ -167,7 +167,7 @@ export function IncidentList({
           No requests found matching current filters.
         </p>
       ) : (
-        <div className="space-y-1.5">
+        <div className="space-y-3">
           {pagedItems.map((item) => (
             <IncidentCard
               key={item.id}
