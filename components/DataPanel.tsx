@@ -1,7 +1,7 @@
 "use client";
 
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
-import { CalendarRange, Table2 } from "lucide-react";
+import { Building2, CalendarRange, Landmark, Phone, Radio, Table2, Users } from "lucide-react";
 import { createContext, type ReactNode, useCallback, useContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { BarChart3, MapPin } from "@/components/icons";
@@ -37,7 +37,20 @@ interface DataPanelProps {
   mapContent: React.ReactNode;
   tableContent: React.ReactNode;
   chartContent: React.ReactNode;
-  defaultTab?: "map" | "table" | "chart";
+  landContent?: React.ReactNode;
+  staffingContent?: React.ReactNode;
+  emergencyContent?: React.ReactNode;
+  newsfeedContent?: React.ReactNode;
+  timelineContent?: React.ReactNode;
+  defaultTab?:
+    | "map"
+    | "table"
+    | "chart"
+    | "land"
+    | "staffing"
+    | "emergency"
+    | "newsfeed"
+    | "timeline";
 }
 
 export function DataPanel({
@@ -45,6 +58,11 @@ export function DataPanel({
   mapContent,
   tableContent,
   chartContent,
+  landContent,
+  staffingContent,
+  emergencyContent,
+  newsfeedContent,
+  timelineContent,
   defaultTab = "map",
 }: DataPanelProps) {
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
@@ -78,14 +96,23 @@ export function DataPanel({
   // AI action: switch tabs
   useCopilotAction({
     name: "switch_data_tab",
-    description: "Switch the data panel view between Map, Table, and Chart tabs",
+    description: "Switch the data panel view between Map, Table, Chart, and Land tabs",
     parameters: [
       {
         name: "tab",
         type: "string",
         description: "The tab to switch to",
         required: true,
-        enum: ["map", "table", "chart"],
+        enum: [
+          "map",
+          "table",
+          "chart",
+          ...(landContent ? ["land"] : []),
+          ...(staffingContent ? ["staffing"] : []),
+          ...(emergencyContent ? ["emergency"] : []),
+          ...(newsfeedContent ? ["newsfeed"] : []),
+          ...(timelineContent ? ["timeline"] : []),
+        ],
       },
     ],
     handler: ({ tab }) => {
@@ -153,6 +180,56 @@ export function DataPanel({
               <BarChart3 size={16} />
               <span className="hidden @[440px]:inline">Chart</span>
             </TabsTrigger>
+            {landContent && (
+              <TabsTrigger
+                value="land"
+                data-tour-step-id="business-land-tab"
+                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              >
+                <Building2 className="size-4" />
+                <span className="hidden @[440px]:inline">Properties</span>
+              </TabsTrigger>
+            )}
+            {staffingContent && (
+              <TabsTrigger
+                value="staffing"
+                data-tour-step-id="citystaff-staffing-tab"
+                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              >
+                <Users className="size-4" />
+                <span className="hidden @[440px]:inline">Staffing</span>
+              </TabsTrigger>
+            )}
+            {emergencyContent && (
+              <TabsTrigger
+                value="emergency"
+                data-tour-step-id="resident-emergency-tab"
+                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              >
+                <Phone className="size-4" />
+                <span className="hidden @[440px]:inline">Emergency</span>
+              </TabsTrigger>
+            )}
+            {newsfeedContent && (
+              <TabsTrigger
+                value="newsfeed"
+                data-tour-step-id="resident-newsfeed-tab"
+                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              >
+                <Radio className="size-4" />
+                <span className="hidden @[440px]:inline">Incidents</span>
+              </TabsTrigger>
+            )}
+            {timelineContent && (
+              <TabsTrigger
+                value="timeline"
+                data-tour-step-id="researcher-timeline-tab"
+                className="gap-1.5 px-2.5 @[440px]:gap-2 @[440px]:px-4"
+              >
+                <Landmark className="size-4" />
+                <span className="hidden @[440px]:inline">Civil Rights</span>
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Year filter + portal slot — wraps naturally when space is tight */}
@@ -213,6 +290,51 @@ export function DataPanel({
         <TabsContent value="chart" className="min-h-0 flex-1 overflow-auto p-4">
           {mountedTabs.has("chart") ? chartContent : null}
         </TabsContent>
+        {landContent && (
+          <TabsContent
+            value="land"
+            forceMount
+            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {landContent}
+          </TabsContent>
+        )}
+        {staffingContent && (
+          <TabsContent
+            value="staffing"
+            forceMount
+            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {staffingContent}
+          </TabsContent>
+        )}
+        {emergencyContent && (
+          <TabsContent
+            value="emergency"
+            forceMount
+            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {emergencyContent}
+          </TabsContent>
+        )}
+        {newsfeedContent && (
+          <TabsContent
+            value="newsfeed"
+            forceMount
+            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {newsfeedContent}
+          </TabsContent>
+        )}
+        {timelineContent && (
+          <TabsContent
+            value="timeline"
+            forceMount
+            className="flex-1 overflow-auto data-[state=inactive]:hidden"
+          >
+            {timelineContent}
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

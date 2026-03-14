@@ -9,6 +9,7 @@ import { YearFilterProvider } from "@/lib/contexts/year-filter";
 import { CityStaffChart } from "./components/CityStaffChart";
 import { CityStaffMap } from "./components/CityStaffMap";
 import { CityStaffTable } from "./components/CityStaffTable";
+import { StaffingDashboard } from "./components/StaffingDashboard";
 
 function CityStaffContent() {
   useCopilotReadable({
@@ -29,6 +30,7 @@ function CityStaffContent() {
           mapContent={<CityStaffMap />}
           tableContent={<CityStaffTable />}
           chartContent={<CityStaffChart />}
+          staffingContent={<StaffingDashboard />}
         />
       </PortalLayout>
     </main>

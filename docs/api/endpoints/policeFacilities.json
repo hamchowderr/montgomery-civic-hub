@@ -1,0 +1,77 @@
+{
+  "key": "policeFacilities",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Police_Facilities/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 18,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Facility_Name",
+      "type": "esriFieldTypeString",
+      "alias": "Facility_Name",
+      "length": 75,
+      "sampleValue": "Public Affairs Building-Police Headquarters"
+    },
+    {
+      "name": "Facility_Address",
+      "type": "esriFieldTypeString",
+      "alias": "Facility_Address",
+      "length": 50,
+      "sampleValue": "320 North Ripley St"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{B187E8B4-9BCD-48D7-A334-E6F26E74E222}"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "Facility_Name": "Public Affairs Building-Police Headquarters",
+    "Facility_Address": "320 North Ripley St",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": null,
+    "last_edited_date": null,
+    "GlobalID": "{B187E8B4-9BCD-48D7-A334-E6F26E74E222}"
+  },
+  "probedAt": "2026-03-13T20:21:24.554Z",
+  "error": null
+}

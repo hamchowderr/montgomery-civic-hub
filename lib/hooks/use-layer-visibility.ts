@@ -3,13 +3,23 @@
 import { useCallback, useEffect, useState } from "react";
 import type { MapLayer } from "@/lib/hooks/use-map-data";
 
+/** Layer IDs that start hidden (heavy polygon layers loaded on demand) */
+const DEFAULT_HIDDEN = new Set([
+  "garbage-schedule",
+  "curbside-trash",
+  "flood-zones",
+  "zoning",
+  "neighborhoods",
+  "census-tracts",
+]);
+
 export function useLayerVisibility(layers: MapLayer[]) {
   const [visibleLayers, setVisibleLayers] = useState<Set<string>>(new Set());
 
-  // Initialize: all layers visible when layers array first populates
+  // Initialize: show all layers except default-hidden ones
   useEffect(() => {
     if (layers.length > 0) {
-      setVisibleLayers(new Set(layers.map((l) => l.id)));
+      setVisibleLayers(new Set(layers.filter((l) => !DEFAULT_HIDDEN.has(l.id)).map((l) => l.id)));
     }
   }, [layers]);
 
@@ -31,10 +41,7 @@ export function useLayerVisibility(layers: MapLayer[]) {
     });
   }, []);
 
-  const isVisible = useCallback(
-    (layerId: string) => visibleLayers.has(layerId),
-    [visibleLayers],
-  );
+  const isVisible = useCallback((layerId: string) => visibleLayers.has(layerId), [visibleLayers]);
 
   return { visibleLayers, toggle, setLayerVisible, isVisible };
 }

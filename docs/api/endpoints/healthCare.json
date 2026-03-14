@@ -1,0 +1,172 @@
+{
+  "key": "healthCare",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/Health_Care_Facility/MapServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 36,
+  "fields": [
+    {
+      "name": "OBJECTID_1",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID_1",
+      "length": null,
+      "sampleValue": 19
+    },
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeInteger",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Status",
+      "type": "esriFieldTypeString",
+      "alias": "Status",
+      "length": 1,
+      "sampleValue": "M"
+    },
+    {
+      "name": "Score",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Score",
+      "length": null,
+      "sampleValue": 100
+    },
+    {
+      "name": "ARC_Street",
+      "type": "esriFieldTypeString",
+      "alias": "ARC_Street",
+      "length": 60,
+      "sampleValue": "400 TAYLOR RD"
+    },
+    {
+      "name": "COMPANY_NA",
+      "type": "esriFieldTypeString",
+      "alias": "COMPANY_NA",
+      "length": 50,
+      "sampleValue": "BAPTIST MEDICAL CENTER EAST"
+    },
+    {
+      "name": "ADDRESS",
+      "type": "esriFieldTypeString",
+      "alias": "ADDRESS",
+      "length": 21,
+      "sampleValue": "400 TAYLOR RD"
+    },
+    {
+      "name": "PHONE",
+      "type": "esriFieldTypeString",
+      "alias": "PHONE",
+      "length": 10,
+      "sampleValue": "244-8330"
+    },
+    {
+      "name": "TYPE_FACIL",
+      "type": "esriFieldTypeString",
+      "alias": "TYPE_FACIL",
+      "length": 36,
+      "sampleValue": "HOSPITAL"
+    },
+    {
+      "name": "EMPLOY",
+      "type": "esriFieldTypeInteger",
+      "alias": "EMPLOY",
+      "length": null,
+      "sampleValue": 550
+    },
+    {
+      "name": "BEDS_UNITS",
+      "type": "esriFieldTypeDouble",
+      "alias": "BEDS_UNITS",
+      "length": null,
+      "sampleValue": 150
+    },
+    {
+      "name": "Reference",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Reference",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "LASTUPDATE",
+      "length": 8,
+      "sampleValue": 1547424000000
+    },
+    {
+      "name": "LASTEDITOR",
+      "type": "esriFieldTypeString",
+      "alias": "LASTEDITOR",
+      "length": 50,
+      "sampleValue": "NPJ"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": "brandolph"
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": 1391196429000
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "npjackson"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1547491727000
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{24E53983-1505-4C00-A7AE-8A2DFC995DF9}"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID_1": 19,
+    "OBJECTID": 1,
+    "Status": "M",
+    "Score": 100,
+    "ARC_Street": "400 TAYLOR RD",
+    "COMPANY_NA": "BAPTIST MEDICAL CENTER EAST",
+    "ADDRESS": "400 TAYLOR RD",
+    "PHONE": "244-8330",
+    "TYPE_FACIL": "HOSPITAL",
+    "EMPLOY": 550,
+    "BEDS_UNITS": 150,
+    "Reference": 1,
+    "LASTUPDATE": 1547424000000,
+    "LASTEDITOR": "NPJ",
+    "created_user": "brandolph",
+    "created_date": 1391196429000,
+    "last_edited_user": "npjackson",
+    "last_edited_date": 1547491727000,
+    "GlobalID": "{24E53983-1505-4C00-A7AE-8A2DFC995DF9}"
+  },
+  "probedAt": "2026-03-13T20:21:30.158Z",
+  "error": null
+}

@@ -1,0 +1,341 @@
+{
+  "key": "businessLicense",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Business_License/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 123398,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "ObjectID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "PaccNumber",
+      "type": "esriFieldTypeString",
+      "alias": "PaccNumber",
+      "length": 1073741822,
+      "sampleValue": "9351819-BUS"
+    },
+    {
+      "name": "custCOMPANY_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "custCOMPANY_NAME",
+      "length": 1073741822,
+      "sampleValue": "ACCESS NEW TECHNOLOGY SOLUTIONS"
+    },
+    {
+      "name": "custDBA",
+      "type": "esriFieldTypeString",
+      "alias": "custDBA",
+      "length": 1073741822,
+      "sampleValue": "ACCESS NEW TECHNOLOGY  SOLUTIONS"
+    },
+    {
+      "name": "pvNUMBER",
+      "type": "esriFieldTypeBigInteger",
+      "alias": "pvNUMBER",
+      "length": null,
+      "sampleValue": 202100008367
+    },
+    {
+      "name": "custID",
+      "type": "esriFieldTypeInteger",
+      "alias": "custID",
+      "length": null,
+      "sampleValue": 28464
+    },
+    {
+      "name": "pvYEAR",
+      "type": "esriFieldTypeInteger",
+      "alias": "pvYEAR",
+      "length": null,
+      "sampleValue": 2021
+    },
+    {
+      "name": "pvEFFDATE",
+      "type": "esriFieldTypeDateOnly",
+      "alias": "pvEFFDATE",
+      "length": 8,
+      "sampleValue": "2021-01-01"
+    },
+    {
+      "name": "pvEXPIRE",
+      "type": "esriFieldTypeDateOnly",
+      "alias": "pvEXPIRE",
+      "length": 8,
+      "sampleValue": "2021-12-31"
+    },
+    {
+      "name": "contCREATED",
+      "type": "esriFieldTypeDateOnly",
+      "alias": "contCREATED",
+      "length": 8,
+      "sampleValue": "2021-02-25"
+    },
+    {
+      "name": "contCALCDATE",
+      "type": "esriFieldTypeDateOnly",
+      "alias": "contCALCDATE",
+      "length": 8,
+      "sampleValue": "2021-01-31"
+    },
+    {
+      "name": "contPOSTDATE",
+      "type": "esriFieldTypeDateOnly",
+      "alias": "contPOSTDATE",
+      "length": 8,
+      "sampleValue": "2021-01-31"
+    },
+    {
+      "name": "paccCOMPANY",
+      "type": "esriFieldTypeString",
+      "alias": "paccCOMPANY",
+      "length": 1073741822,
+      "sampleValue": "ACCESS NEW TECHNOLOGY SOLUTIONS"
+    },
+    {
+      "name": "addrNUMBER_MAIL",
+      "type": "esriFieldTypeString",
+      "alias": "addrNUMBER_MAIL",
+      "length": 1073741822,
+      "sampleValue": "3110"
+    },
+    {
+      "name": "addrSTREET1_MAIL",
+      "type": "esriFieldTypeString",
+      "alias": "addrSTREET1_MAIL",
+      "length": 1073741822,
+      "sampleValue": "KNIGHTSBRIDGE CURV"
+    },
+    {
+      "name": "addrSTREET2_MAIL",
+      "type": "esriFieldTypeString",
+      "alias": "addrSTREET2_MAIL",
+      "length": 1073741822,
+      "sampleValue": null
+    },
+    {
+      "name": "addrCITY_MAIL",
+      "type": "esriFieldTypeString",
+      "alias": "addrCITY_MAIL",
+      "length": 1073741822,
+      "sampleValue": "MONTGOMERY"
+    },
+    {
+      "name": "stABBR_MAIL",
+      "type": "esriFieldTypeString",
+      "alias": "stABBR_MAIL",
+      "length": 1073741822,
+      "sampleValue": "AL"
+    },
+    {
+      "name": "addrZIP_MAIL",
+      "type": "esriFieldTypeDouble",
+      "alias": "addrZIP_MAIL",
+      "length": null,
+      "sampleValue": 361111206
+    },
+    {
+      "name": "Full_Address",
+      "type": "esriFieldTypeString",
+      "alias": "Full_Address",
+      "length": 1073741822,
+      "sampleValue": "3110 KNIGHTSBRIDGE CURV"
+    },
+    {
+      "name": "addrNUMBER_PHYSICAL",
+      "type": "esriFieldTypeString",
+      "alias": "addrNUMBER_PHYSICAL",
+      "length": 1073741822,
+      "sampleValue": "3110"
+    },
+    {
+      "name": "addrSTREET1_PHYSICAL",
+      "type": "esriFieldTypeString",
+      "alias": "addrSTREET1_PHYSICAL",
+      "length": 1073741822,
+      "sampleValue": "KNIGHTSBRIDGE CURV"
+    },
+    {
+      "name": "addrSTREET2_PHYSICAL",
+      "type": "esriFieldTypeString",
+      "alias": "addrSTREET2_PHYSICAL",
+      "length": 1073741822,
+      "sampleValue": null
+    },
+    {
+      "name": "addrZIP_PHYSICAL",
+      "type": "esriFieldTypeDouble",
+      "alias": "addrZIP_PHYSICAL",
+      "length": null,
+      "sampleValue": 361111206
+    },
+    {
+      "name": "scID",
+      "type": "esriFieldTypeInteger",
+      "alias": "scID",
+      "length": null,
+      "sampleValue": 675
+    },
+    {
+      "name": "scCODE",
+      "type": "esriFieldTypeString",
+      "alias": "scCODE",
+      "length": 1073741822,
+      "sampleValue": "541600"
+    },
+    {
+      "name": "scNAME",
+      "type": "esriFieldTypeString",
+      "alias": "scNAME",
+      "length": 1073741822,
+      "sampleValue": "CONSULTANT"
+    },
+    {
+      "name": "pvscDESC",
+      "type": "esriFieldTypeString",
+      "alias": "pvscDESC",
+      "length": 1073741822,
+      "sampleValue": "CONSULTANT"
+    },
+    {
+      "name": "nbiCODE",
+      "type": "esriFieldTypeString",
+      "alias": "nbiCODE",
+      "length": 1073741822,
+      "sampleValue": null
+    },
+    {
+      "name": "pvrtCODE",
+      "type": "esriFieldTypeString",
+      "alias": "pvrtCODE",
+      "length": 1073741822,
+      "sampleValue": null
+    },
+    {
+      "name": "pvrtDESC",
+      "type": "esriFieldTypeString",
+      "alias": "pvrtDESC",
+      "length": 1073741822,
+      "sampleValue": "Renew"
+    },
+    {
+      "name": "CITY",
+      "type": "esriFieldTypeString",
+      "alias": "CITY",
+      "length": 255,
+      "sampleValue": "YES"
+    },
+    {
+      "name": "addrCITY_PHYSICAL",
+      "type": "esriFieldTypeString",
+      "alias": "addrCITY_PHYSICAL",
+      "length": 1073741822,
+      "sampleValue": "MONTGOMERY"
+    },
+    {
+      "name": "stABBR_PHYSICAL",
+      "type": "esriFieldTypeString",
+      "alias": "stABBR_PHYSICAL",
+      "length": 1073741822,
+      "sampleValue": "AL"
+    },
+    {
+      "name": "Id",
+      "type": "esriFieldTypeInteger",
+      "alias": "Id",
+      "length": null,
+      "sampleValue": 7
+    },
+    {
+      "name": "postYear",
+      "type": "esriFieldTypeString",
+      "alias": "postYear",
+      "length": 4,
+      "sampleValue": "2021"
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{88F1CD02-8D76-4C72-AE54-01F081BC04A2}"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": null
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "PaccNumber": "9351819-BUS",
+    "custCOMPANY_NAME": "ACCESS NEW TECHNOLOGY SOLUTIONS",
+    "custDBA": "ACCESS NEW TECHNOLOGY  SOLUTIONS",
+    "pvNUMBER": 202100008367,
+    "custID": 28464,
+    "pvYEAR": 2021,
+    "pvEFFDATE": "2021-01-01",
+    "pvEXPIRE": "2021-12-31",
+    "contCREATED": "2021-02-25",
+    "contCALCDATE": "2021-01-31",
+    "contPOSTDATE": "2021-01-31",
+    "paccCOMPANY": "ACCESS NEW TECHNOLOGY SOLUTIONS",
+    "addrNUMBER_MAIL": "3110",
+    "addrSTREET1_MAIL": "KNIGHTSBRIDGE CURV",
+    "addrSTREET2_MAIL": null,
+    "addrCITY_MAIL": "MONTGOMERY",
+    "stABBR_MAIL": "AL",
+    "addrZIP_MAIL": 361111206,
+    "Full_Address": "3110 KNIGHTSBRIDGE CURV",
+    "addrNUMBER_PHYSICAL": "3110",
+    "addrSTREET1_PHYSICAL": "KNIGHTSBRIDGE CURV",
+    "addrSTREET2_PHYSICAL": null,
+    "addrZIP_PHYSICAL": 361111206,
+    "scID": 675,
+    "scCODE": "541600",
+    "scNAME": "CONSULTANT",
+    "pvscDESC": "CONSULTANT",
+    "nbiCODE": null,
+    "pvrtCODE": null,
+    "pvrtDESC": "Renew",
+    "CITY": "YES",
+    "addrCITY_PHYSICAL": "MONTGOMERY",
+    "stABBR_PHYSICAL": "AL",
+    "Id": 7,
+    "postYear": "2021",
+    "GlobalID": "{88F1CD02-8D76-4C72-AE54-01F081BC04A2}",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": null,
+    "last_edited_date": null
+  },
+  "probedAt": "2026-03-13T20:21:22.341Z",
+  "error": null
+}

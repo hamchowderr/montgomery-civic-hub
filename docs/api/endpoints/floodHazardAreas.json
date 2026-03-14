@@ -1,0 +1,150 @@
+{
+  "key": "floodHazardAreas",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/OneView/Flood_Hazard_Areas/FeatureServer/0",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 794,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 8788
+    },
+    {
+      "name": "FLD_AR_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Area ID",
+      "length": 11,
+      "sampleValue": "01101C_9"
+    },
+    {
+      "name": "FLD_ZONE",
+      "type": "esriFieldTypeString",
+      "alias": "Flood Zone",
+      "length": 55,
+      "sampleValue": "A"
+    },
+    {
+      "name": "FLOODWAY",
+      "type": "esriFieldTypeString",
+      "alias": "Floodway",
+      "length": 30,
+      "sampleValue": " "
+    },
+    {
+      "name": "SFHA_TF",
+      "type": "esriFieldTypeString",
+      "alias": "Special Flood Hazard Area T/F",
+      "length": 1,
+      "sampleValue": "T"
+    },
+    {
+      "name": "STATIC_BFE",
+      "type": "esriFieldTypeDouble",
+      "alias": "Static Base Flood Elevation",
+      "length": null,
+      "sampleValue": -9999
+    },
+    {
+      "name": "V_DATUM",
+      "type": "esriFieldTypeString",
+      "alias": "Vertical Datum",
+      "length": 6,
+      "sampleValue": " "
+    },
+    {
+      "name": "DEPTH",
+      "type": "esriFieldTypeDouble",
+      "alias": "Depth",
+      "length": null,
+      "sampleValue": -9999
+    },
+    {
+      "name": "LEN_UNIT",
+      "type": "esriFieldTypeString",
+      "alias": "Length Unit",
+      "length": 20,
+      "sampleValue": " "
+    },
+    {
+      "name": "VELOCITY",
+      "type": "esriFieldTypeDouble",
+      "alias": "Velocity",
+      "length": null,
+      "sampleValue": -9999
+    },
+    {
+      "name": "VEL_UNIT",
+      "type": "esriFieldTypeString",
+      "alias": "Velocity Unit",
+      "length": 20,
+      "sampleValue": " "
+    },
+    {
+      "name": "AR_REVERT",
+      "type": "esriFieldTypeString",
+      "alias": "AR Revert",
+      "length": 6,
+      "sampleValue": " "
+    },
+    {
+      "name": "BFE_REVERT",
+      "type": "esriFieldTypeDouble",
+      "alias": "BFE Revert",
+      "length": null,
+      "sampleValue": -9999
+    },
+    {
+      "name": "DEP_REVERT",
+      "type": "esriFieldTypeDouble",
+      "alias": "DEP Revert",
+      "length": null,
+      "sampleValue": -9999
+    },
+    {
+      "name": "SOURCE_CIT",
+      "type": "esriFieldTypeString",
+      "alias": "Source Citation",
+      "length": 11,
+      "sampleValue": "01101C_STUDY1"
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 2128010.2669130173
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 14750.111869162143
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 8788,
+    "FLD_AR_ID": "01101C_9",
+    "FLD_ZONE": "A",
+    "FLOODWAY": " ",
+    "SFHA_TF": "T",
+    "STATIC_BFE": -9999,
+    "V_DATUM": " ",
+    "DEPTH": -9999,
+    "LEN_UNIT": " ",
+    "VELOCITY": -9999,
+    "VEL_UNIT": " ",
+    "AR_REVERT": " ",
+    "BFE_REVERT": -9999,
+    "DEP_REVERT": -9999,
+    "SOURCE_CIT": "01101C_STUDY1",
+    "Shape__Area": 2128010.2669130173,
+    "Shape__Length": 14750.111869162143,
+    "ZONE_SUBTY": " "
+  },
+  "probedAt": "2026-03-13T20:21:34.593Z",
+  "error": null
+}

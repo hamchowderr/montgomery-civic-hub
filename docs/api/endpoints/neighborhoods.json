@@ -1,0 +1,53 @@
+{
+  "key": "neighborhoods",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/NSD_Neighborhoods/FeatureServer/0",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 185,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Id",
+      "type": "esriFieldTypeInteger",
+      "alias": "Id",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "NEIGHBRHD",
+      "type": "esriFieldTypeString",
+      "alias": "Neighborhood Name",
+      "length": 50,
+      "sampleValue": "Boylston Community"
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 3156175.475467869
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 8602.748118122565
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "Id": 1,
+    "NEIGHBRHD": "Boylston Community",
+    "Shape__Area": 3156175.475467869,
+    "Shape__Length": 8602.748118122565
+  },
+  "probedAt": "2026-03-13T20:21:32.350Z",
+  "error": null
+}

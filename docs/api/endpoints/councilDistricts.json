@@ -1,0 +1,148 @@
+{
+  "key": "councilDistricts",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/SDE_City_Council/MapServer/0",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 9,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 4150
+    },
+    {
+      "name": "Id",
+      "type": "esriFieldTypeInteger",
+      "alias": "Id",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "LASTUPDATE",
+      "length": 8,
+      "sampleValue": 1702512000000
+    },
+    {
+      "name": "LASTEDITOR",
+      "type": "esriFieldTypeString",
+      "alias": "LASTEDITOR",
+      "length": 50,
+      "sampleValue": "ANB - post-2023 Election Info Update"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": "ABOWEN"
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": 1740675256000
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "NPJACKSON"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1744835989000
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "Name",
+      "type": "esriFieldTypeString",
+      "alias": "Name",
+      "length": 50,
+      "sampleValue": "ED GRIMES"
+    },
+    {
+      "name": "Phone",
+      "type": "esriFieldTypeString",
+      "alias": "Phone",
+      "length": 20,
+      "sampleValue": "(334) 544-0248"
+    },
+    {
+      "name": "Address",
+      "type": "esriFieldTypeString",
+      "alias": "Address",
+      "length": 50,
+      "sampleValue": "P.O. BOX 1111"
+    },
+    {
+      "name": "Email",
+      "type": "esriFieldTypeString",
+      "alias": "Email",
+      "length": 50,
+      "sampleValue": "egrimes@montgomeryal.gov"
+    },
+    {
+      "name": "ImageLink",
+      "type": "esriFieldTypeString",
+      "alias": "ImageLink",
+      "length": 255,
+      "sampleValue": "https://www.montgomeryal.gov/home/showpublishedimage/12614/637677209485700000"
+    },
+    {
+      "name": "District",
+      "type": "esriFieldTypeString",
+      "alias": "District",
+      "length": 20,
+      "sampleValue": "District 1"
+    },
+    {
+      "name": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 400243838.2904008
+    },
+    {
+      "name": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 240598.7708053845
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 4150,
+    "Id": 1,
+    "LASTUPDATE": 1702512000000,
+    "LASTEDITOR": "ANB - post-2023 Election Info Update",
+    "created_user": "ABOWEN",
+    "created_date": 1740675256000,
+    "last_edited_user": "NPJACKSON",
+    "last_edited_date": 1744835989000,
+    "Name": "ED GRIMES",
+    "Phone": "(334) 544-0248",
+    "Address": "P.O. BOX 1111",
+    "Email": "egrimes@montgomeryal.gov",
+    "ImageLink": "https://www.montgomeryal.gov/home/showpublishedimage/12614/637677209485700000",
+    "District": "District 1",
+    "Shape.STArea()": 400243838.2904008,
+    "Shape.STLength()": 240598.7708053845
+  },
+  "probedAt": "2026-03-13T20:21:32.349Z",
+  "error": null
+}

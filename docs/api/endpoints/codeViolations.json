@@ -1,0 +1,189 @@
+{
+  "key": "codeViolations",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Code_Violations/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 78943,
+  "fields": [
+    {
+      "name": "OffenceNum",
+      "type": "esriFieldTypeString",
+      "alias": "OffenceNum",
+      "length": 1073741822,
+      "sampleValue": "C00127179"
+    },
+    {
+      "name": "CaseDate",
+      "type": "esriFieldTypeDateOnly",
+      "alias": "CaseDate",
+      "length": 8,
+      "sampleValue": "2021-10-27"
+    },
+    {
+      "name": "CaseType",
+      "type": "esriFieldTypeString",
+      "alias": "CaseType",
+      "length": 1073741822,
+      "sampleValue": "NUISANCE"
+    },
+    {
+      "name": "CaseStatus",
+      "type": "esriFieldTypeString",
+      "alias": "CaseStatus",
+      "length": 1073741822,
+      "sampleValue": "DEBUG_TEST"
+    },
+    {
+      "name": "LienStatus",
+      "type": "esriFieldTypeString",
+      "alias": "LienStatus",
+      "length": 1073741822,
+      "sampleValue": "Lien Filed"
+    },
+    {
+      "name": "ParcelNo",
+      "type": "esriFieldTypeString",
+      "alias": "ParcelNo",
+      "length": 1073741822,
+      "sampleValue": "11 06 24 3 015 032.000"
+    },
+    {
+      "name": "CouncilDistrict",
+      "type": "esriFieldTypeString",
+      "alias": "CouncilDistrict",
+      "length": 1073741822,
+      "sampleValue": "DISTRICT 4"
+    },
+    {
+      "name": "City",
+      "type": "esriFieldTypeString",
+      "alias": "City",
+      "length": 1073741822,
+      "sampleValue": null
+    },
+    {
+      "name": "STATE",
+      "type": "esriFieldTypeString",
+      "alias": "State",
+      "length": 1073741822,
+      "sampleValue": "AL"
+    },
+    {
+      "name": "Zip",
+      "type": "esriFieldTypeInteger",
+      "alias": "Zip",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "ComplaintRem",
+      "type": "esriFieldTypeString",
+      "alias": "ComplaintRem",
+      "length": 1073741822,
+      "sampleValue": null
+    },
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "ObjectID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "ParcelNo_X",
+      "type": "esriFieldTypeDouble",
+      "alias": "ParcelNo_X",
+      "length": null,
+      "sampleValue": 3.25888889
+    },
+    {
+      "name": "ParcelNo_Y",
+      "type": "esriFieldTypeDouble",
+      "alias": "ParcelNo_Y",
+      "length": null,
+      "sampleValue": 11.10666667
+    },
+    {
+      "name": "Address1",
+      "type": "esriFieldTypeString",
+      "alias": "Address1",
+      "length": 1073741822,
+      "sampleValue": null
+    },
+    {
+      "name": "Year",
+      "type": "esriFieldTypeString",
+      "alias": "Year",
+      "length": 4,
+      "sampleValue": "2021"
+    },
+    {
+      "name": "Month",
+      "type": "esriFieldTypeString",
+      "alias": "Month",
+      "length": 20,
+      "sampleValue": "10"
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{972D2E4C-47DF-417A-918E-98DB05A64BFD}"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "HNAM"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1754488553000
+    }
+  ],
+  "sampleRecord": {
+    "OffenceNum": "C00127179",
+    "CaseDate": "2021-10-27",
+    "CaseType": "NUISANCE",
+    "CaseStatus": "DEBUG_TEST",
+    "LienStatus": "Lien Filed",
+    "ParcelNo": "11 06 24 3 015 032.000",
+    "CouncilDistrict": "DISTRICT 4",
+    "City": null,
+    "STATE": "AL",
+    "Zip": null,
+    "ComplaintRem": null,
+    "OBJECTID": 1,
+    "ParcelNo_X": 3.25888889,
+    "ParcelNo_Y": 11.10666667,
+    "Address1": null,
+    "Year": "2021",
+    "Month": "10",
+    "GlobalID": "{972D2E4C-47DF-417A-918E-98DB05A64BFD}",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": "HNAM",
+    "last_edited_date": 1754488553000
+  },
+  "probedAt": "2026-03-13T20:21:22.345Z",
+  "error": null
+}

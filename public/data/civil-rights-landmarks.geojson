@@ -1,0 +1,185 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3077, 32.3769] },
+      "properties": {
+        "name": "Rosa Parks Museum",
+        "year": 1955,
+        "event": "Montgomery Bus Boycott",
+        "era": "Bus Boycott Era",
+        "significance": "landmark",
+        "description": "Located at 252 Montgomery Street, the museum marks the site where Rosa Parks was arrested for refusing to give up her bus seat, sparking the 381-day Montgomery Bus Boycott.",
+        "details": "On December 1, 1955, Rosa Parks, a 42-year-old seamstress and NAACP secretary, boarded the Cleveland Avenue bus after a long day of work. When the bus driver James Blake demanded she give up her seat in the 'colored' section to a white passenger, she refused. Her arrest ignited one of the most significant mass protests in American history. The 381-day boycott crippled the city's bus system financially — 75% of riders were Black — and ultimately led to the Supreme Court ruling in Browder v. Gayle that segregated buses were unconstitutional.",
+        "keyFigures": ["Rosa Parks", "E.D. Nixon", "Jo Ann Robinson", "Fred Gray"],
+        "imageUrl": "/images/civil-rights/rosa-parks-museum.jpg",
+        "imageCaption": "Rosa Parks Museum at Troy University, Montgomery",
+        "dateSpecific": "December 1, 1955",
+        "outcome": "Supreme Court ruled bus segregation unconstitutional (Browder v. Gayle, 1956)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3028, 32.3773] },
+      "properties": {
+        "name": "Dexter Avenue King Memorial Baptist Church",
+        "year": 1955,
+        "event": "Bus Boycott Leadership Headquarters",
+        "era": "Bus Boycott Era",
+        "significance": "landmark",
+        "description": "At 454 Dexter Avenue, this National Historic Landmark is where Dr. Martin Luther King Jr. served as pastor (1954–1960) and helped organize the Montgomery Bus Boycott.",
+        "details": "Dr. King arrived at Dexter Avenue Baptist Church in 1954 as a 25-year-old pastor. Within a year, he was thrust into the national spotlight as president of the Montgomery Improvement Association, which coordinated the bus boycott. The church basement served as the boycott's nerve center — organizing carpools for 40,000 daily riders, raising funds, and strategizing legal challenges. It was here that King developed the philosophy of nonviolent resistance that would define the entire civil rights movement. On January 30, 1956, King's home was bombed while his wife Coretta and baby daughter were inside. Standing on his shattered porch, he calmed an angry armed crowd with words of peace.",
+        "keyFigures": ["Dr. Martin Luther King Jr.", "Coretta Scott King", "Ralph Abernathy", "Vernon Johns"],
+        "imageUrl": "/images/civil-rights/dexter-avenue-church.jpg",
+        "imageCaption": "Dexter Avenue King Memorial Baptist Church, a National Historic Landmark",
+        "dateSpecific": "December 5, 1955 – December 20, 1956",
+        "outcome": "Launched Dr. King's national leadership and the philosophy of nonviolent protest"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.2988, 32.3791] },
+      "properties": {
+        "name": "First Baptist Church (Brick-a-Day)",
+        "year": 1961,
+        "event": "Freedom Riders Under Siege",
+        "era": "Freedom Rides",
+        "significance": "landmark",
+        "description": "At 347 N. Ripley Street, this historic church sheltered Freedom Riders in May 1961 when a violent mob of over 3,000 surrounded the building.",
+        "details": "On the night of May 21, 1961, over 1,500 people gathered inside First Baptist Church to honor the Freedom Riders. Outside, a white mob of over 3,000 surrounded the church, hurling rocks and firebombs. Dr. King flew in and addressed the terrified congregation by phone while U.S. Attorney General Robert F. Kennedy negotiated with Alabama Governor John Patterson. The siege lasted through the night. Federal marshals used tear gas to hold back the mob, but gas seeped into the church, affecting those inside — including children. By dawn, the Alabama National Guard finally dispersed the crowd. The incident forced President Kennedy to take a stronger stance on civil rights and demonstrated the Federal government's obligation to protect peaceful protesters.",
+        "keyFigures": ["Ralph Abernathy", "Dr. Martin Luther King Jr.", "Robert F. Kennedy", "John Lewis"],
+        "imageUrl": "/images/civil-rights/first-baptist-church.jpg",
+        "imageCaption": "First Baptist Church ('Brick-a-Day'), site of the 1961 siege",
+        "dateSpecific": "May 21, 1961",
+        "outcome": "Forced federal intervention; Kennedy administration committed to protecting civil rights workers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3092, 32.3747] },
+      "properties": {
+        "name": "Freedom Rides Museum",
+        "year": 1961,
+        "event": "Freedom Rides Arrival",
+        "era": "Freedom Rides",
+        "significance": "landmark",
+        "description": "At 210 S. Court Street, the restored 1951 Greyhound Bus Station is where Freedom Riders were brutally attacked by a segregationist mob upon arrival in Montgomery.",
+        "details": "On May 20, 1961, a Greyhound bus carrying Freedom Riders pulled into this station after harrowing journeys through the Deep South. Despite promises of protection, no police were present when the riders arrived. A mob armed with baseball bats, pipes, and chains attacked the riders and bystanders, including journalists. John Lewis was beaten unconscious. Jim Zwerg, a white student from Wisconsin, was pulled from the bus and beaten so severely he required extensive hospitalization. The brutality, captured by photographers and broadcast worldwide, shocked the nation and the international community. The images became a powerful catalyst for the Civil Rights Act of 1964.",
+        "keyFigures": ["John Lewis", "Jim Zwerg", "Diane Nash", "James Farmer"],
+        "imageUrl": "/images/civil-rights/freedom-rides-museum.jpg",
+        "imageCaption": "The restored 1951 Greyhound Bus Station, now the Freedom Rides Museum",
+        "dateSpecific": "May 20, 1961",
+        "outcome": "ICC ordered desegregation of all interstate travel facilities (September 1961)"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-87.0350, 32.4074] },
+      "properties": {
+        "name": "Brown Chapel AME Church",
+        "year": 1965,
+        "event": "Selma to Montgomery March Origin",
+        "era": "Voting Rights",
+        "significance": "landmark",
+        "description": "In Selma, Alabama, Brown Chapel AME Church served as the starting point and organizational headquarters for the three Selma to Montgomery voting rights marches.",
+        "details": "In early 1965, only 2% of eligible Black voters in Dallas County (Selma) were registered, despite comprising over half the population. The Southern Christian Leadership Conference, led by Dr. King, chose Selma as the focal point for a voting rights campaign. Brown Chapel became ground zero. On March 7, 1965 — 'Bloody Sunday' — 600 marchers left Brown Chapel heading for Montgomery. At the Edmund Pettus Bridge, state troopers on horseback attacked them with tear gas, clubs, and whips. The televised brutality galvanized the nation. Two more attempts followed: 'Turnaround Tuesday' on March 9, and the successful five-day march beginning March 21, when 3,200 marchers set out under federal protection, swelling to 25,000 by the time they reached Montgomery.",
+        "keyFigures": ["Dr. Martin Luther King Jr.", "John Lewis", "Hosea Williams", "Amelia Boynton Robinson"],
+        "imageUrl": "/images/civil-rights/brown-chapel.jpg",
+        "imageCaption": "Brown Chapel AME Church in Selma, starting point of the historic marches",
+        "dateSpecific": "March 7–25, 1965",
+        "outcome": "Directly led to the Voting Rights Act of 1965, signed by President Johnson on August 6"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.2997, 32.3793] },
+      "properties": {
+        "name": "Alabama State Capitol",
+        "year": 1965,
+        "event": "Selma to Montgomery March Culmination",
+        "era": "Voting Rights",
+        "significance": "landmark",
+        "description": "The Capitol was the destination of the 54-mile Selma to Montgomery marches, where Dr. King delivered his 'How Long, Not Long' speech to 25,000 marchers on the Capitol steps.",
+        "details": "On March 25, 1965, after five days of walking along U.S. Route 80 through rural Alabama — sleeping in fields and church yards — the marchers arrived at the Alabama State Capitol. The crowd had swelled from 3,200 to an estimated 25,000. Standing on the steps of the Capitol — the same building where Jefferson Davis took the oath as Confederate president — Dr. King delivered one of his most powerful speeches: 'How long? Not long, because the arc of the moral universe is long, but it bends toward justice.' The march's televised impact, combined with Bloody Sunday, created overwhelming public pressure that led President Lyndon B. Johnson to introduce the Voting Rights Act. Within five months, the landmark legislation was law.",
+        "keyFigures": ["Dr. Martin Luther King Jr.", "Ralph Bunche", "A. Philip Randolph", "Rosa Parks"],
+        "imageUrl": "/images/civil-rights/alabama-capitol.jpg",
+        "imageCaption": "Alabama State Capitol, where Dr. King addressed 25,000 marchers",
+        "dateSpecific": "March 25, 1965",
+        "outcome": "Voting Rights Act signed into law August 6, 1965"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3018, 32.3780] },
+      "properties": {
+        "name": "Selma to Montgomery National Historic Trail",
+        "year": 1996,
+        "event": "Civil Rights Heritage Preservation",
+        "era": "Legacy & Remembrance",
+        "significance": "heritage",
+        "description": "This marker is part of the Selma to Montgomery National Historic Trail, connecting key sites of the civil rights movement along the 54-mile route.",
+        "details": "In 1996, Congress designated the 54-mile route from Selma to Montgomery as a National Historic Trail, administered by the National Park Service. The trail follows U.S. Route 80 through Lowndes County — once known as 'Bloody Lowndes' for its violent resistance to Black voter registration. The trail preserves the campsite locations, the route through rural Alabama, and interpretive sites explaining the courage of the marchers. Today, thousands walk portions of the trail each year, especially during the annual Bridge Crossing Jubilee in March. The trail serves as a living classroom, connecting visitors to the sacrifice and determination that secured the right to vote for millions of Americans.",
+        "keyFigures": ["National Park Service", "John Lewis", "Foot Soldiers"],
+        "imageUrl": "/images/civil-rights/historic-trail.jpg",
+        "imageCaption": "Selma to Montgomery National Historic Trail marker",
+        "dateSpecific": "November 12, 1996",
+        "outcome": "Preserved the march route as a National Historic Trail for future generations"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3101, 32.3770] },
+      "properties": {
+        "name": "The Legacy Museum",
+        "year": 2018,
+        "event": "From Enslavement to Mass Incarceration",
+        "era": "Legacy & Remembrance",
+        "significance": "landmark",
+        "description": "At 400 N. Court Street, this Equal Justice Initiative museum tells the story of racial injustice from slavery through mass incarceration using immersive technology.",
+        "details": "Opened in April 2018 by Bryan Stevenson's Equal Justice Initiative, the Legacy Museum is built on a site where enslaved people were warehoused in Montgomery — once the largest domestic slave trading hub in the Deep South. Using immersive technology, the museum takes visitors through the history of American racial injustice: from the transatlantic slave trade through the domestic slave trade that tore apart families in Montgomery's Court Square, through racial terror lynchings, Jim Crow, and into the modern era of mass incarceration. Holographic sculptures of enslaved people in holding cells, interactive exhibits on the convict leasing system, and a powerful wall of jars containing soil from lynching sites create an experience that has been called 'the most important museum in America.' Over 1 million visitors came in its first two years.",
+        "keyFigures": ["Bryan Stevenson", "Equal Justice Initiative"],
+        "imageUrl": "/images/civil-rights/legacy-museum.jpg",
+        "imageCaption": "The Legacy Museum: From Enslavement to Mass Incarceration",
+        "dateSpecific": "April 26, 2018",
+        "outcome": "Over 1 million visitors in first two years; sparked national conversation on racial justice"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3028, 32.3719] },
+      "properties": {
+        "name": "National Memorial for Peace and Justice",
+        "year": 2018,
+        "event": "National Lynching Memorial",
+        "era": "Legacy & Remembrance",
+        "significance": "landmark",
+        "description": "At 417 Caroline Street, the nation's first memorial dedicated to victims of racial terror lynching, featuring over 800 steel monuments.",
+        "details": "Often called the 'Lynching Memorial,' this six-acre site opened alongside the Legacy Museum in 2018. It commemorates over 4,400 documented victims of racial terror lynching between 1877 and 1950. The memorial's centerpiece is a collection of over 800 weathered steel monuments — one for each U.S. county where a lynching took place — suspended from the ceiling of an open-air pavilion. As visitors walk through, the columns rise from ground level to overhead, evoking the experience of witnessing a lynching. Duplicate columns rest in a field nearby, waiting to be claimed by the counties they represent — a challenge to communities across America to acknowledge their history. The memorial also includes a sculpture garden, a wall of water, and soil collection jars from lynching sites. It has fundamentally changed how Americans confront the legacy of racial violence.",
+        "keyFigures": ["Bryan Stevenson", "Equal Justice Initiative", "MASS Design Group"],
+        "imageUrl": "/images/civil-rights/peace-justice-memorial.jpg",
+        "imageCaption": "National Memorial for Peace and Justice, the nation's first lynching memorial",
+        "dateSpecific": "April 26, 2018",
+        "outcome": "First national memorial to victims of lynching; counties across the US began claiming their monuments"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-86.3055, 32.3775] },
+      "properties": {
+        "name": "Court Square Fountain & Slave Market",
+        "year": 1850,
+        "event": "Domestic Slave Trade Hub",
+        "era": "Before the Movement",
+        "significance": "heritage",
+        "description": "Court Square in downtown Montgomery was one of the most active slave trading sites in the antebellum South, where thousands of enslaved people were sold.",
+        "details": "Before the Civil War, Montgomery's Court Square was the commercial heart of the domestic slave trade. Enslaved people were marched in coffles — chained together — from the Upper South to be sold at auction in and around this square. Slave traders maintained 'pens' and warehouses nearby where people were held before sale. An estimated tens of thousands of enslaved people were sold in Montgomery during the antebellum period, torn from their families and communities. The artesian basin fountain that stands today was built in 1885, but the square's history as a marketplace of human suffering is inseparable from the story of Montgomery and the civil rights movement that would emerge a century later. It was at this same Court Square that Rosa Parks boarded the bus on December 1, 1955.",
+        "keyFigures": [],
+        "imageUrl": "/images/civil-rights/court-square.jpg",
+        "imageCaption": "Court Square Fountain, site of Montgomery's antebellum slave market",
+        "dateSpecific": "1820s–1860s",
+        "outcome": "Became a symbol connecting slavery's legacy to the civil rights movement"
+      }
+    }
+  ]
+}

@@ -724,6 +724,8 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
     // Dynamically import maplibre to avoid SSR issues
     import("maplibre-gl").then((maplibregl) => {
       if (!mapContainerRef.current) return;
+      // Use pre-built worker to avoid Turbopack SWC helper issues
+      maplibregl.setWorkerUrl("/maplibre-gl-csp-worker.js");
 
       const isDark =
         document.documentElement.classList.contains("dark") ||

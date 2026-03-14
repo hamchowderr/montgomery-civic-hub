@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
+import { useState } from "react";
+import { CouncilDistrictsLayer } from "@/components/CouncilDistrictsLayer";
+import { MapLoadingOverlay, polygonCentroid } from "@/components/map-helpers";
 import {
   Map,
   MapClusterLayer,
-  MapPopup,
   MapControls,
-  MapPolygonLayer,
   MapLayerFilter,
+  MapPolygonLayer,
+  MapPopup,
   type MapViewport,
 } from "@/components/ui/map";
-
-import { useMapData } from "@/lib/hooks/use-map-data";
+import { MONTGOMERY_BOUNDS, MONTGOMERY_CENTER } from "@/lib/arcgis-helpers";
 import { useLayerVisibility } from "@/lib/hooks/use-layer-visibility";
-import { CouncilDistrictsLayer } from "@/components/CouncilDistrictsLayer";
-import { polygonCentroid, MapLoadingOverlay } from "@/components/map-helpers";
-import { MONTGOMERY_CENTER, MONTGOMERY_BOUNDS } from "@/lib/arcgis-helpers";
+import { useMapData } from "@/lib/hooks/use-map-data";
+import { CivilRightsLayer } from "./CivilRightsLayer";
 
 const emptyGeoJSON: GeoJSON.FeatureCollection<GeoJSON.Point> = {
   type: "FeatureCollection",
@@ -35,21 +35,13 @@ function renderResearcherPopup(props: ResearcherPointProperties) {
     return (
       <div className="space-y-1 p-1">
         <p className="text-xs font-semibold text-blue-600">311 Request</p>
-        <p className="text-sm font-medium">
-          {String(props.Request_Type ?? "")}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Dept: {String(props.Department ?? "")}
-        </p>
+        <p className="text-sm font-medium">{String(props.Request_Type ?? "")}</p>
+        <p className="text-xs text-muted-foreground">Dept: {String(props.Department ?? "")}</p>
         {props.Status ? (
-          <p className="text-xs text-muted-foreground">
-            Status: {String(props.Status)}
-          </p>
+          <p className="text-xs text-muted-foreground">Status: {String(props.Status)}</p>
         ) : null}
         {props.District ? (
-          <p className="text-xs text-muted-foreground">
-            District: {String(props.District)}
-          </p>
+          <p className="text-xs text-muted-foreground">District: {String(props.District)}</p>
         ) : null}
       </div>
     );
@@ -61,14 +53,10 @@ function renderResearcherPopup(props: ResearcherPointProperties) {
         <p className="text-xs font-semibold text-red-600">Code Violation</p>
         <p className="text-sm font-medium">{String(props.CaseType ?? "")}</p>
         {props.CaseStatus ? (
-          <p className="text-xs text-muted-foreground">
-            Status: {String(props.CaseStatus)}
-          </p>
+          <p className="text-xs text-muted-foreground">Status: {String(props.CaseStatus)}</p>
         ) : null}
         {props.District ? (
-          <p className="text-xs text-muted-foreground">
-            District: {String(props.District)}
-          </p>
+          <p className="text-xs text-muted-foreground">District: {String(props.District)}</p>
         ) : null}
       </div>
     );
@@ -77,21 +65,13 @@ function renderResearcherPopup(props: ResearcherPointProperties) {
   if (layerId === "nuisance") {
     return (
       <div className="space-y-1 p-1">
-        <p className="text-xs font-semibold text-fuchsia-600">
-          Nuisance Complaint
-        </p>
-        <p className="text-sm font-medium">
-          {String(props.Type ?? "Nuisance")}
-        </p>
+        <p className="text-xs font-semibold text-fuchsia-600">Nuisance Complaint</p>
+        <p className="text-sm font-medium">{String(props.Type ?? "Nuisance")}</p>
         {props.Location ? (
-          <p className="text-xs text-muted-foreground">
-            {String(props.Location)}
-          </p>
+          <p className="text-xs text-muted-foreground">{String(props.Location)}</p>
         ) : null}
         {props.District ? (
-          <p className="text-xs text-muted-foreground">
-            District: {String(props.District)}
-          </p>
+          <p className="text-xs text-muted-foreground">District: {String(props.District)}</p>
         ) : null}
       </div>
     );
@@ -101,16 +81,10 @@ function renderResearcherPopup(props: ResearcherPointProperties) {
     return (
       <div className="space-y-1 p-1">
         <p className="text-xs font-semibold text-blue-600">Business License</p>
-        <p className="text-sm font-medium">
-          {String(props.custCOMPANY_NAME ?? "")}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {String(props.Full_Address ?? "")}
-        </p>
+        <p className="text-sm font-medium">{String(props.custCOMPANY_NAME ?? "")}</p>
+        <p className="text-xs text-muted-foreground">{String(props.Full_Address ?? "")}</p>
         {props.scNAME ? (
-          <p className="text-xs text-muted-foreground">
-            Category: {String(props.scNAME)}
-          </p>
+          <p className="text-xs text-muted-foreground">Category: {String(props.scNAME)}</p>
         ) : null}
       </div>
     );
@@ -119,19 +93,11 @@ function renderResearcherPopup(props: ResearcherPointProperties) {
   if (layerId === "permits") {
     return (
       <div className="space-y-1 p-1">
-        <p className="text-xs font-semibold text-amber-600">
-          Construction Permit
-        </p>
-        <p className="text-sm font-medium">
-          {String(props.PermitDescription ?? "")}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {String(props.PhysicalAddress ?? "")}
-        </p>
+        <p className="text-xs font-semibold text-amber-600">Construction Permit</p>
+        <p className="text-sm font-medium">{String(props.PermitDescription ?? "")}</p>
+        <p className="text-xs text-muted-foreground">{String(props.PhysicalAddress ?? "")}</p>
         {props.PermitStatus ? (
-          <p className="text-xs text-muted-foreground">
-            Status: {String(props.PermitStatus)}
-          </p>
+          <p className="text-xs text-muted-foreground">Status: {String(props.PermitStatus)}</p>
         ) : null}
       </div>
     );
@@ -140,19 +106,13 @@ function renderResearcherPopup(props: ResearcherPointProperties) {
   if (layerId === "city-properties") {
     return (
       <div className="space-y-1 p-1">
-        <p className="text-xs font-semibold text-teal-600">
-          City-Owned Property
-        </p>
+        <p className="text-xs font-semibold text-teal-600">City-Owned Property</p>
         <p className="text-sm font-medium">{String(props.PROP_ADDRE ?? "")}</p>
         {props.Use_ ? (
-          <p className="text-xs text-muted-foreground">
-            Use: {String(props.Use_)}
-          </p>
+          <p className="text-xs text-muted-foreground">Use: {String(props.Use_)}</p>
         ) : null}
         {props.ZONING ? (
-          <p className="text-xs text-muted-foreground">
-            Zoning: {String(props.ZONING)}
-          </p>
+          <p className="text-xs text-muted-foreground">Zoning: {String(props.ZONING)}</p>
         ) : null}
         {props.CALC_ACRE ? (
           <p className="text-xs text-muted-foreground">
@@ -167,13 +127,9 @@ function renderResearcherPopup(props: ResearcherPointProperties) {
     return (
       <div className="space-y-1 p-1">
         <p className="text-xs font-semibold text-purple-600">Census Tract</p>
-        <p className="text-sm font-medium">
-          {String(props.NAME20 ?? props.GEOID20 ?? "")}
-        </p>
+        <p className="text-sm font-medium">{String(props.NAME20 ?? props.GEOID20 ?? "")}</p>
         {props.GEOID20 && props.NAME20 ? (
-          <p className="text-xs text-muted-foreground">
-            GEOID: {String(props.GEOID20)}
-          </p>
+          <p className="text-xs text-muted-foreground">GEOID: {String(props.GEOID20)}</p>
         ) : null}
       </div>
     );
@@ -210,8 +166,7 @@ export function ResearcherMap() {
   } | null>(null);
 
   const { geojson, isLoading, layers } = useMapData("researcher");
-  const { visibleLayers, toggle, setLayerVisible, isVisible } =
-    useLayerVisibility(layers);
+  const { visibleLayers, toggle, setLayerVisible, isVisible } = useLayerVisibility(layers);
 
   useCopilotReadable({
     description: "Researcher map layer visibility state",
@@ -250,28 +205,18 @@ export function ResearcherMap() {
       (f) => f.geometry?.type === "Point" && isVisible(f.properties?._layerId),
     ) ?? [];
 
-  const clusterData: GeoJSON.FeatureCollection<
-    GeoJSON.Point,
-    ResearcherPointProperties
-  > =
+  const clusterData: GeoJSON.FeatureCollection<GeoJSON.Point, ResearcherPointProperties> =
     visibleFeatures.length > 0
       ? {
           type: "FeatureCollection",
-          features: visibleFeatures as GeoJSON.Feature<
-            GeoJSON.Point,
-            ResearcherPointProperties
-          >[],
+          features: visibleFeatures as GeoJSON.Feature<GeoJSON.Point, ResearcherPointProperties>[],
         }
-      : (emptyGeoJSON as GeoJSON.FeatureCollection<
-          GeoJSON.Point,
-          ResearcherPointProperties
-        >);
+      : (emptyGeoJSON as GeoJSON.FeatureCollection<GeoJSON.Point, ResearcherPointProperties>);
 
   const polygonFeatures =
     geojson?.features?.filter(
       (f) =>
-        (f.geometry?.type === "Polygon" ||
-          f.geometry?.type === "MultiPolygon") &&
+        (f.geometry?.type === "Polygon" || f.geometry?.type === "MultiPolygon") &&
         isVisible(f.properties?._layerId),
     ) ?? [];
 
@@ -343,6 +288,8 @@ export function ResearcherMap() {
               {renderResearcherPopup(selectedPoint.properties)}
             </MapPopup>
           )}
+
+          <CivilRightsLayer setViewport={setViewport} />
         </Map>
 
         {isLoading && <MapLoadingOverlay />}

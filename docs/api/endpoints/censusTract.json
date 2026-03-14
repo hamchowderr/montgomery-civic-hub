@@ -1,0 +1,140 @@
+{
+  "key": "censusTract",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/Census_Boundaries/MapServer/0",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 71,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "STATEFP20",
+      "type": "esriFieldTypeString",
+      "alias": "STATEFP20",
+      "length": 2,
+      "sampleValue": "01"
+    },
+    {
+      "name": "COUNTYFP20",
+      "type": "esriFieldTypeString",
+      "alias": "COUNTYFP20",
+      "length": 3,
+      "sampleValue": "101"
+    },
+    {
+      "name": "TRACTCE20",
+      "type": "esriFieldTypeString",
+      "alias": "TRACTCE20",
+      "length": 6,
+      "sampleValue": "000100"
+    },
+    {
+      "name": "GEOID20",
+      "type": "esriFieldTypeString",
+      "alias": "GEOID20",
+      "length": 12,
+      "sampleValue": "01101000100"
+    },
+    {
+      "name": "NAME20",
+      "type": "esriFieldTypeString",
+      "alias": "NAME20",
+      "length": 7,
+      "sampleValue": "1"
+    },
+    {
+      "name": "NAMELSAD20",
+      "type": "esriFieldTypeString",
+      "alias": "NAMELSAD20",
+      "length": 13,
+      "sampleValue": "Census Tract"
+    },
+    {
+      "name": "MTFCC20",
+      "type": "esriFieldTypeString",
+      "alias": "MTFCC20",
+      "length": 5,
+      "sampleValue": "G5020"
+    },
+    {
+      "name": "FUNCSTAT20",
+      "type": "esriFieldTypeString",
+      "alias": "FUNCSTAT20",
+      "length": 1,
+      "sampleValue": "S"
+    },
+    {
+      "name": "ALAND20",
+      "type": "esriFieldTypeDouble",
+      "alias": "ALAND20",
+      "length": null,
+      "sampleValue": 2245795
+    },
+    {
+      "name": "AWATER20",
+      "type": "esriFieldTypeDouble",
+      "alias": "AWATER20",
+      "length": null,
+      "sampleValue": 92968
+    },
+    {
+      "name": "INTPTLAT20",
+      "type": "esriFieldTypeString",
+      "alias": "INTPTLAT20",
+      "length": 11,
+      "sampleValue": "+32.3792437"
+    },
+    {
+      "name": "INTPTLON20",
+      "type": "esriFieldTypeString",
+      "alias": "INTPTLON20",
+      "length": 12,
+      "sampleValue": "-086.3083898"
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 0.00022412097834432595
+    },
+    {
+      "name": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 0.0807856432528706
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "STATEFP20": "01",
+    "COUNTYFP20": "101",
+    "TRACTCE20": "000100",
+    "GEOID20": "01101000100",
+    "NAME20": "1",
+    "NAMELSAD20": "Census Tract",
+    "MTFCC20": "G5020",
+    "FUNCSTAT20": "S",
+    "ALAND20": 2245795,
+    "AWATER20": 92968,
+    "INTPTLAT20": "+32.3792437",
+    "INTPTLON20": "-086.3083898",
+    "Shape_Area": 0.00022412097834432595,
+    "Shape_Length": 0.0807856432528706
+  },
+  "probedAt": "2026-03-13T20:21:32.350Z",
+  "error": null
+}

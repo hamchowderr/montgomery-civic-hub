@@ -1,0 +1,125 @@
+{
+  "key": "nuisance",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Nuisance/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 6178,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "ObjectID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "OffenseNo",
+      "type": "esriFieldTypeString",
+      "alias": "OffenseNo",
+      "length": 255,
+      "sampleValue": "C00172467"
+    },
+    {
+      "name": "Location",
+      "type": "esriFieldTypeString",
+      "alias": "Location",
+      "length": 255,
+      "sampleValue": "3109 GENTILLY CT"
+    },
+    {
+      "name": "Remark",
+      "type": "esriFieldTypeString",
+      "alias": "Remark",
+      "length": 255,
+      "sampleValue": "Junk Vehicles, Litter, Junk, Trash, Overgrown Grass, WeedsThere Is A Black Car And A Black Van In The Back. Have To Use The Alleyway."
+    },
+    {
+      "name": "ParcelNo",
+      "type": "esriFieldTypeString",
+      "alias": "ParcelNo",
+      "length": 255,
+      "sampleValue": "15 02 03 1 003 029.000"
+    },
+    {
+      "name": "Type",
+      "type": "esriFieldTypeString",
+      "alias": "Type",
+      "length": 255,
+      "sampleValue": "NUISANCE"
+    },
+    {
+      "name": "Date",
+      "type": "esriFieldTypeDate",
+      "alias": "Date",
+      "length": 8,
+      "sampleValue": 1736208000000
+    },
+    {
+      "name": "District",
+      "type": "esriFieldTypeString",
+      "alias": "Council District",
+      "length": 15,
+      "sampleValue": "6"
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{0CE88267-1AEC-4318-B287-2E5B7105DB9B}"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "HNAM"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1769178803000
+    },
+    {
+      "name": "HearingDate",
+      "type": "esriFieldTypeString",
+      "alias": "HearingDate",
+      "length": 10,
+      "sampleValue": "2025/01/07"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "OffenseNo": "C00172467",
+    "Location": "3109 GENTILLY CT",
+    "Remark": "Junk Vehicles, Litter, Junk, Trash, Overgrown Grass, WeedsThere Is A Black Car And A Black Van In The Back. Have To Use The Alleyway.",
+    "ParcelNo": "15 02 03 1 003 029.000",
+    "Type": "NUISANCE",
+    "Date": 1736208000000,
+    "District": "6",
+    "GlobalID": "{0CE88267-1AEC-4318-B287-2E5B7105DB9B}",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": "HNAM",
+    "last_edited_date": 1769178803000,
+    "HearingDate": "2025/01/07"
+  },
+  "probedAt": "2026-03-13T20:21:27.337Z",
+  "error": null
+}

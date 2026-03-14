@@ -1,0 +1,109 @@
+{
+  "key": "entertainmentDistricts",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/OneView/Entertainment_Districts/FeatureServer/0",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 5,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 2
+    },
+    {
+      "name": "Id",
+      "type": "esriFieldTypeInteger",
+      "alias": "Id",
+      "length": null,
+      "sampleValue": 5
+    },
+    {
+      "name": "Ordinance",
+      "type": "esriFieldTypeString",
+      "alias": "Ordinance",
+      "length": 15,
+      "sampleValue": "RES.36-2013"
+    },
+    {
+      "name": "Adopt_Date",
+      "type": "esriFieldTypeDate",
+      "alias": "Adopted Date",
+      "length": 8,
+      "sampleValue": 1377993600000
+    },
+    {
+      "name": "Approved",
+      "type": "esriFieldTypeString",
+      "alias": "Approved",
+      "length": 25,
+      "sampleValue": "Todd Strange"
+    },
+    {
+      "name": "Appr_Date",
+      "type": "esriFieldTypeDate",
+      "alias": "Approved Date",
+      "length": 8,
+      "sampleValue": 1372809600000
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "ABOWEN"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1685550324000
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 428087.485707599
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 3461.8531884799336
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 2,
+    "Id": 5,
+    "Ordinance": "RES.36-2013",
+    "Adopt_Date": 1377993600000,
+    "Approved": "Todd Strange",
+    "Appr_Date": 1372809600000,
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": "ABOWEN",
+    "last_edited_date": 1685550324000,
+    "Shape__Area": 428087.485707599,
+    "Shape__Length": 3461.8531884799336
+  },
+  "probedAt": "2026-03-13T20:21:30.159Z",
+  "error": null
+}

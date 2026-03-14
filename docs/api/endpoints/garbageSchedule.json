@@ -1,0 +1,116 @@
+{
+  "key": "garbageSchedule",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/QAlert/QAlert_311/MapServer/5",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 4,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 1
+    },
+    {
+      "name": "Day_1",
+      "type": "esriFieldTypeString",
+      "alias": "Day_1",
+      "length": 50,
+      "sampleValue": "Monday"
+    },
+    {
+      "name": "Day_2",
+      "type": "esriFieldTypeString",
+      "alias": "Day_2",
+      "length": 50,
+      "sampleValue": "Thursday"
+    },
+    {
+      "name": "Shape_STAr",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_STAr",
+      "length": null,
+      "sampleValue": 1450303998.44
+    },
+    {
+      "name": "Shape_STLe",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_STLe",
+      "length": null,
+      "sampleValue": 326845.628929
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "length": null,
+      "sampleValue": null
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{DEC1B83E-C326-4984-9DA7-6E0EA6713DE7}"
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 1450427476.515959
+    },
+    {
+      "name": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 322331.61893518537
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 1,
+    "Day_1": "Monday",
+    "Day_2": "Thursday",
+    "Shape_STAr": 1450303998.44,
+    "Shape_STLe": 326845.628929,
+    "GlobalID": "{DEC1B83E-C326-4984-9DA7-6E0EA6713DE7}",
+    "created_user": null,
+    "created_date": null,
+    "last_edited_user": null,
+    "last_edited_date": null,
+    "Shape.STArea()": 1450427476.515959,
+    "Shape.STLength()": 322331.61893518537
+  },
+  "probedAt": "2026-03-13T20:21:30.159Z",
+  "error": null
+}

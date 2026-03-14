@@ -6,6 +6,7 @@ import { DataPanel } from "@/components/DataPanel";
 import { PortalLayout } from "@/components/PortalLayout";
 import { PortalNav } from "@/components/PortalNav";
 import { YearFilterProvider } from "@/lib/contexts/year-filter";
+import { CivilRightsTimeline } from "./components/CivilRightsTimeline";
 import { ResearcherChart } from "./components/ResearcherChart";
 import { ResearcherMap } from "./components/ResearcherMap";
 import { ResearcherTable } from "./components/ResearcherTable";
@@ -13,7 +14,7 @@ import { ResearcherTable } from "./components/ResearcherTable";
 function ResearcherContent() {
   useCopilotReadable({
     description: "Current portal context",
-    value: { portal: "researcher", availableViews: ["map", "table", "chart"] },
+    value: { portal: "researcher", availableViews: ["map", "table", "chart", "timeline"] },
   });
 
   return (
@@ -29,6 +30,7 @@ function ResearcherContent() {
           mapContent={<ResearcherMap />}
           tableContent={<ResearcherTable />}
           chartContent={<ResearcherChart />}
+          timelineContent={<CivilRightsTimeline />}
         />
       </PortalLayout>
     </main>

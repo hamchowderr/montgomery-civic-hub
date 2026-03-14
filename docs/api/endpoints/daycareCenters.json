@@ -1,0 +1,213 @@
+{
+  "key": "daycareCenters",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/HostedDatasets/Daycare_Centers/FeatureServer/0",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "totalRecords": 178,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 268
+    },
+    {
+      "name": "Name",
+      "type": "esriFieldTypeString",
+      "alias": "Name",
+      "length": 254,
+      "sampleValue": "EARLY AGE HOME CHILD CARE"
+    },
+    {
+      "name": "Director",
+      "type": "esriFieldTypeString",
+      "alias": "Director",
+      "length": 254,
+      "sampleValue": "Sharon Murphy"
+    },
+    {
+      "name": "Phone",
+      "type": "esriFieldTypeString",
+      "alias": "Phone",
+      "length": 254,
+      "sampleValue": "(334)244-6978"
+    },
+    {
+      "name": "Address",
+      "type": "esriFieldTypeString",
+      "alias": "Address",
+      "length": 254,
+      "sampleValue": "101 Salem Dr"
+    },
+    {
+      "name": "City",
+      "type": "esriFieldTypeString",
+      "alias": "City",
+      "length": 254,
+      "sampleValue": "MONTGOMERY"
+    },
+    {
+      "name": "Zip",
+      "type": "esriFieldTypeDouble",
+      "alias": "Zip",
+      "length": null,
+      "sampleValue": 36109
+    },
+    {
+      "name": "Day_Hours",
+      "type": "esriFieldTypeString",
+      "alias": "Day_Hours",
+      "length": 254,
+      "sampleValue": "7:00 - 5:30"
+    },
+    {
+      "name": "Day_Ages",
+      "type": "esriFieldTypeString",
+      "alias": "Day_Ages",
+      "length": 254,
+      "sampleValue": "6 Wks to 5 Yrs"
+    },
+    {
+      "name": "Night_Hour",
+      "type": "esriFieldTypeString",
+      "alias": "Night_Hour",
+      "length": 254,
+      "sampleValue": "N/A"
+    },
+    {
+      "name": "Night_Ages",
+      "type": "esriFieldTypeString",
+      "alias": "Night_Ages",
+      "length": 254,
+      "sampleValue": "N/A"
+    },
+    {
+      "name": "Status_1",
+      "type": "esriFieldTypeString",
+      "alias": "Status_1",
+      "length": 254,
+      "sampleValue": " "
+    },
+    {
+      "name": "Contact",
+      "type": "esriFieldTypeString",
+      "alias": "Contact",
+      "length": 254,
+      "sampleValue": "Sharon Murphy"
+    },
+    {
+      "name": "F13",
+      "type": "esriFieldTypeDouble",
+      "alias": "F13",
+      "length": null,
+      "sampleValue": 6
+    },
+    {
+      "name": "F14",
+      "type": "esriFieldTypeDouble",
+      "alias": "F14",
+      "length": null,
+      "sampleValue": 6
+    },
+    {
+      "name": "date_",
+      "type": "esriFieldTypeDate",
+      "alias": "date_",
+      "length": 8,
+      "sampleValue": -2209161600000
+    },
+    {
+      "name": "time",
+      "type": "esriFieldTypeDate",
+      "alias": "time",
+      "length": 8,
+      "sampleValue": -2209161600000
+    },
+    {
+      "name": "Status1",
+      "type": "esriFieldTypeString",
+      "alias": "Status1",
+      "length": 254,
+      "sampleValue": "Updated"
+    },
+    {
+      "name": "Notes",
+      "type": "esriFieldTypeString",
+      "alias": "Notes",
+      "length": 254,
+      "sampleValue": "In home daycare"
+    },
+    {
+      "name": "F19",
+      "type": "esriFieldTypeString",
+      "alias": "F19",
+      "length": 254,
+      "sampleValue": " "
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": "brandolph"
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": 1459266222000
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "brandolph"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1459266710000
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "length": 38,
+      "sampleValue": "{078A363F-B49F-41A2-9059-06C9418A9834}"
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 268,
+    "Name": "EARLY AGE HOME CHILD CARE",
+    "Director": "Sharon Murphy",
+    "Phone": "(334)244-6978",
+    "Address": "101 Salem Dr",
+    "City": "MONTGOMERY",
+    "Zip": 36109,
+    "Day_Hours": "7:00 - 5:30",
+    "Day_Ages": "6 Wks to 5 Yrs",
+    "Night_Hour": "N/A",
+    "Night_Ages": "N/A",
+    "Status_1": " ",
+    "Contact": "Sharon Murphy",
+    "F13": 6,
+    "F14": 6,
+    "date_": -2209161600000,
+    "time": -2209161600000,
+    "Status1": "Updated",
+    "Notes": "In home daycare",
+    "F19": " ",
+    "created_user": "brandolph",
+    "created_date": 1459266222000,
+    "last_edited_user": "brandolph",
+    "last_edited_date": 1459266710000,
+    "GlobalID": "{078A363F-B49F-41A2-9059-06C9418A9834}"
+  },
+  "probedAt": "2026-03-13T20:21:27.336Z",
+  "error": null
+}

@@ -9,6 +9,16 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    // Tree-shake heavy barrel exports for faster dev compilation
+    optimizePackageImports: [
+      "@copilotkit/react-core",
+      "@copilotkit/react-ui",
+      "lucide-react",
+      "recharts",
+      "motion/react",
+    ],
+  },
 };
 
 export default nextConfig;

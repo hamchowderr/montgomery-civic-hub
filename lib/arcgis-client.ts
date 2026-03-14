@@ -288,7 +288,7 @@ export async function queryFeaturesAsGeoJSON(options: {
 
     const fc: GeoJSON.FeatureCollection = {
       type: "FeatureCollection",
-      features: filterValidGeometry(allFeatures),
+      features: returnGeometry ? filterValidGeometry(allFeatures) : allFeatures,
     };
 
     setCache(cacheKey, fc);

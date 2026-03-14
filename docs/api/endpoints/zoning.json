@@ -1,0 +1,141 @@
+{
+  "key": "zoning",
+  "url": "https://gis.montgomeryal.gov/server/rest/services/Zoning/FeatureServer/0",
+  "geometryType": "esriGeometryPolygon",
+  "maxRecordCount": 2000,
+  "totalRecords": 2036,
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "length": null,
+      "sampleValue": 45735
+    },
+    {
+      "name": "Id",
+      "type": "esriFieldTypeInteger",
+      "alias": "Id",
+      "length": null,
+      "sampleValue": 0
+    },
+    {
+      "name": "ZoningCode",
+      "type": "esriFieldTypeString",
+      "alias": "ZoningCode",
+      "length": 15,
+      "sampleValue": "T4-O"
+    },
+    {
+      "name": "ZoningDesc",
+      "type": "esriFieldTypeString",
+      "alias": "ZoningDesc",
+      "length": 35,
+      "sampleValue": "General Urban Open"
+    },
+    {
+      "name": "Ordinance",
+      "type": "esriFieldTypeString",
+      "alias": "Ordinance",
+      "length": 12,
+      "sampleValue": "2007-036"
+    },
+    {
+      "name": "Ord_Date",
+      "type": "esriFieldTypeString",
+      "alias": "Ord_Date",
+      "length": 12,
+      "sampleValue": "2007-05-02"
+    },
+    {
+      "name": "File_No",
+      "type": "esriFieldTypeString",
+      "alias": "File_No",
+      "length": 12,
+      "sampleValue": "None"
+    },
+    {
+      "name": "LASTUPDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "LASTUPDATE",
+      "length": 8,
+      "sampleValue": null
+    },
+    {
+      "name": "LASTEDITOR",
+      "type": "esriFieldTypeString",
+      "alias": "LASTEDITOR",
+      "length": 50,
+      "sampleValue": null
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "length": 255,
+      "sampleValue": "ISAAC.MURRAY"
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "length": 8,
+      "sampleValue": 1740686261000
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "length": 255,
+      "sampleValue": "ISAAC.MURRAY"
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "length": 8,
+      "sampleValue": 1740686261000
+    },
+    {
+      "name": "OrdDoc_Link",
+      "type": "esriFieldTypeString",
+      "alias": "OrdDoc_Link",
+      "length": 255,
+      "sampleValue": null
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "length": null,
+      "sampleValue": 4589960.735995876
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "length": null,
+      "sampleValue": 20392.588858033596
+    }
+  ],
+  "sampleRecord": {
+    "OBJECTID": 45735,
+    "Id": 0,
+    "ZoningCode": "T4-O",
+    "ZoningDesc": "General Urban Open",
+    "Ordinance": "2007-036",
+    "Ord_Date": "2007-05-02",
+    "File_No": "None",
+    "LASTUPDATE": null,
+    "LASTEDITOR": null,
+    "created_user": "ISAAC.MURRAY",
+    "created_date": 1740686261000,
+    "last_edited_user": "ISAAC.MURRAY",
+    "last_edited_date": 1740686261000,
+    "OrdDoc_Link": null,
+    "Shape__Area": 4589960.735995876,
+    "Shape__Length": 20392.588858033596
+  },
+  "probedAt": "2026-03-13T20:21:34.593Z",
+  "error": null
+}

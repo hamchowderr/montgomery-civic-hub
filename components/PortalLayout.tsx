@@ -34,10 +34,8 @@ interface PortalLayoutProps {
 }
 
 function useMediaQuery(query: string) {
-  const [matches, setMatches] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia(query).matches;
-  });
+  // Always start false to match SSR — useEffect sets the real value after hydration
+  const [matches, setMatches] = useState(false);
   useEffect(() => {
     const mql = window.matchMedia(query);
     setMatches(mql.matches);
