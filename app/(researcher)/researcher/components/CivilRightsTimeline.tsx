@@ -854,7 +854,7 @@ export function CivilRightsTimeline({ onSelectLandmark }: CivilRightsTimelinePro
   const handleSelect = useCallback(
     (landmark: TimelineLandmark) => {
       setSelectedName((prev) => (prev === landmark.name ? null : landmark.name));
-      onSelectLandmark(landmark);
+      onSelectLandmark?.(landmark);
     },
     [onSelectLandmark],
   );
