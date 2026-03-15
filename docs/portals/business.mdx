@@ -1,13 +1,13 @@
 ---
 title: "Business Portal"
 sidebarTitle: "Business"
-description: "Permits, licenses, zoning, and economic intelligence for Montgomery business owners and entrepreneurs."
+description: "Permits, licenses, zoning, vacant land exploration, and economic intelligence for Montgomery business owners and entrepreneurs."
 icon: "briefcase"
 ---
 
 ## Who Is This For?
 
-Business owners, entrepreneurs, investors, and anyone exploring economic opportunities in Montgomery. The Business Portal provides data-driven intelligence about permits, licenses, commercial zones, and development opportunities.
+Business owners, entrepreneurs, investors, and anyone exploring economic opportunities in Montgomery. The Business Portal provides data-driven intelligence about permits, licenses, commercial zones, vacant land, and development opportunities.
 
 ## Available Datasets
 
@@ -28,6 +28,26 @@ The Business Portal map shows:
 - **Entertainment Districts** — Zone boundaries
 - **Council Districts** — Toggleable boundary overlay
 
+## Sub-Pages
+
+### Vacant Land Explorer
+
+An interactive map and analytics dashboard for exploring **900+ city-owned properties** available for development or reuse. The Vacant Land Explorer includes:
+
+- **Interactive map** — All city-owned parcels plotted with color-coding by disposition status
+- **Neighborhood analytics** — Total acreage, appraisal values, and availability percentage for each neighborhood
+- **Status filtering** — Filter properties by disposition status:
+  - **Available** — Ready for development or sale
+  - **Holding** — City is holding for future use
+  - **Use** — Currently in use by the city
+  - **Leased** — Leased to a third party
+- **Neighborhood filtering** — Focus on a specific neighborhood to see its parcels
+- **AI-powered reuse suggestions** — Ask the AI for development ideas based on parcel size, location, and zoning
+
+<Tip>
+Ask the AI "What vacant land is available near downtown?" or "Suggest reuse ideas for parcels in Capitol Heights" to get AI-powered analysis of development opportunities.
+</Tip>
+
 ## Example AI Questions
 
 <CardGroup cols={1}>
@@ -40,11 +60,11 @@ The Business Portal map shows:
   <Card title="Zoning">
     "What's the zoning for parcels on Eastern Blvd?"
   </Card>
-  <Card title="Entertainment Districts">
-    "Show me entertainment district boundaries"
+  <Card title="Vacant Land">
+    "Show me available vacant land in Capitol Heights"
   </Card>
-  <Card title="Business Types">
-    "What types of businesses are in the 36104 zip code?"
+  <Card title="Land Reuse">
+    "Suggest reuse ideas for large parcels near the riverfront"
   </Card>
   <Card title="Development Sites">
     "Which city-owned properties near downtown are zoned commercial?"
@@ -60,6 +80,16 @@ The Business Portal AI assistant:
 - Provides context on Montgomery's **data center economy** (Meta's $1.5B campus, DC BLOX)
 - Identifies **potential development sites** using city-owned property and zoning data
 - Connects city data to **investment and expansion decisions**
+- Can **filter vacant land** by neighborhood or disposition status
+- Can **suggest reuse ideas** for specific parcels based on AI analysis
+
+### AI Actions
+
+| Action | What It Does |
+|---|---|
+| `filter_land_by_neighborhood` | Filters the Vacant Land Explorer to show parcels in a specific neighborhood |
+| `filter_land_by_status` | Filters parcels by disposition status (Available, Holding, Use, Leased) |
+| `suggest_land_reuse` | Generates AI-powered reuse and development ideas for selected parcels |
 
 <Note>
 Montgomery's economy is anchored by government (state capital), Hyundai Motor Manufacturing, Maxwell Air Force Base, and a rapidly growing data center sector. The AI provides economic context alongside raw data.

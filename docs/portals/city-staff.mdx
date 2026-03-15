@@ -1,7 +1,7 @@
 ---
 title: "City Staff Portal"
 sidebarTitle: "City Staff"
-description: "Infrastructure tracking, code enforcement, paving projects, and executive briefing mode for Montgomery city employees."
+description: "Infrastructure tracking, code enforcement, MPD staffing analytics, paving projects, and executive briefing mode for Montgomery city employees."
 icon: "building-columns"
 ---
 
@@ -28,6 +28,22 @@ The City Staff Portal map shows:
 - **311 Service Requests** — Request density and status
 - **Council Districts** — Toggleable boundary overlay
 
+## Sub-Pages
+
+### MPD Staffing Dashboard
+
+A comprehensive staffing and service demand dashboard for the Montgomery Police Department and related city services:
+
+- **Officer vacancy tracking** — Authorized vs. filled positions across all ranks (Chief, Captain, Lieutenant, Sergeant, Corporal, Officer)
+- **911 center staffing** — Current staffing levels and vacancy rates for the 911 dispatch center
+- **District-level service demand** — 311 requests and code violations broken down by council district, showing which districts have the highest service needs
+- **Paving infrastructure totals** — Summary of paving project miles and status across the city
+- **AI-generated staffing reports** — Ask the AI to generate a formatted staffing report ready for presentations
+
+<Tip>
+Ask the AI "Generate a staffing report for the MPD" to get a structured report with vacancy rates, district service demand, and infrastructure metrics — ready for council presentations.
+</Tip>
+
 ## Example AI Questions
 
 <CardGroup cols={1}>
@@ -43,11 +59,11 @@ The City Staff Portal map shows:
   <Card title="Infrastructure">
     "Show pavement assessment scores for major corridors"
   </Card>
-  <Card title="Cross-Reference">
-    "Cross-reference 311 complaints with code violations in Chisholm"
+  <Card title="Staffing Report">
+    "Generate a staffing report for the MPD"
   </Card>
-  <Card title="Staffing Context">
-    "Summarize public safety staffing challenges for the council meeting"
+  <Card title="911 Center">
+    "What's the 911 center vacancy rate?"
   </Card>
 </CardGroup>
 
@@ -61,10 +77,6 @@ When you ask for a "report," "briefing," or "summary for the mayor," the AI stru
 4. **Recommendation** — What the data suggests the city should consider
 5. **Data Sources** — Which datasets were used
 
-<Tip>
-The City Staff AI cross-references datasets automatically. Ask it to correlate 311 requests with code violations, or overlay paving projects with pavement assessment scores.
-</Tip>
-
 ## What the AI Can Do
 
 The City Staff Portal AI assistant:
@@ -74,3 +86,14 @@ The City Staff Portal AI assistant:
 - **Cross-references datasets** for interdisciplinary insights
 - Incorporates **public safety context** (MPD staffing, 911 center vacancies)
 - Structures data for **easy inclusion in reports**
+- Can **generate formatted staffing reports** with vacancy data and service demand metrics
+
+### AI Actions
+
+| Action | What It Does |
+|---|---|
+| `generate_staffing_report` | Generates a formatted MPD staffing report with vacancy rates, district service demand, and infrastructure metrics |
+
+<Tip>
+The City Staff AI cross-references datasets automatically. Ask it to correlate 311 requests with code violations, or overlay paving projects with pavement assessment scores.
+</Tip>

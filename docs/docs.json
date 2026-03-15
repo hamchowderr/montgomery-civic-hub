@@ -7,10 +7,10 @@
     "light": "#D4754F",
     "dark": "#1E3054"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/montgomery-seal.png",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/montgomery-seal.png",
+    "dark": "/montgomery-seal.png"
   },
   "navbar": {
     "primary": {
@@ -34,7 +34,9 @@
               "portals/resident",
               "portals/business",
               "portals/city-staff",
-              "portals/researcher"
+              "portals/researcher",
+              "portals/executive",
+              "portals/insights"
             ]
           },
           {
