@@ -15,7 +15,6 @@ import {
   Store,
   Trees,
   User,
-  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -110,9 +109,6 @@ export function PropertyDetail({ property, onClose }: PropertyDetailProps) {
             </Badge>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="size-7 shrink-0" onClick={onClose}>
-          <X className="size-4" />
-        </Button>
       </div>
 
       {/* Tabs */}

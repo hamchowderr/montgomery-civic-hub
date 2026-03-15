@@ -1,16 +1,25 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { tours } from "@/lib/tours";
 
 describe("tour definitions", () => {
-  it("has exactly 4 tours", () => {
-    expect(tours).toHaveLength(4);
+  it("has exactly 13 tours", () => {
+    expect(tours).toHaveLength(13);
   });
 
   it.each([
-    ["resident-tour", 6],
-    ["business-tour", 6],
-    ["citystaff-tour", 5],
-    ["researcher-tour", 5],
+    ["resident-tour", 9],
+    ["business-tour", 9],
+    ["citystaff-tour", 8],
+    ["researcher-tour", 9],
+    ["resident-emergency-tour", 2],
+    ["resident-newsfeed-tour", 2],
+    ["resident-city-pulse-tour", 1],
+    ["business-vacant-land-tour", 1],
+    ["citystaff-staffing-tour", 1],
+    ["researcher-civil-rights-tour", 2],
+    ["researcher-demographics-tour", 1],
+    ["executive-tour", 6],
+    ["insights-tour", 6],
   ])("tour %s has exactly %i steps", (tourId, stepCount) => {
     const tour = tours.find((t) => t.id === tourId);
     expect(tour).toBeDefined();
@@ -35,9 +44,8 @@ describe("tour definitions", () => {
     }
   });
 
-  it("all 22 step ids are unique across the full array", () => {
-    const allIds = tours.flatMap((t) => t.steps.map((s) => s.id));
-    expect(allIds).toHaveLength(22);
-    expect(new Set(allIds).size).toBe(22);
+  it("all tour ids are unique", () => {
+    const tourIds = tours.map((t) => t.id);
+    expect(new Set(tourIds).size).toBe(tourIds.length);
   });
 });

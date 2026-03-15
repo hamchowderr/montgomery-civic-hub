@@ -14,9 +14,38 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://montgomery-civichub.otakusolutions.io"),
+  metadataBase: new URL("https://montgomery-civic-hub.vercel.app"),
   title: "Montgomery Civic Hub",
-  description: "A civic engagement platform for Montgomery County",
+  description:
+    "A four-portal civic dashboard for Montgomery, Alabama — real-time city data, AI-powered insights, interactive maps, and public safety analytics.",
+  icons: {
+    icon: "/montgomery-seal.png",
+    apple: "/montgomery-seal.png",
+  },
+  openGraph: {
+    title: "Montgomery Civic Hub",
+    description:
+      "Real-time civic data, AI-powered insights, and interactive maps for Montgomery, Alabama.",
+    url: "https://montgomery-civic-hub.vercel.app",
+    siteName: "Montgomery Civic Hub",
+    images: [
+      {
+        url: "/montgomery-seal.png",
+        width: 512,
+        height: 512,
+        alt: "City of Montgomery Seal",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Montgomery Civic Hub",
+    description:
+      "Real-time civic data, AI-powered insights, and interactive maps for Montgomery, Alabama.",
+    images: ["/montgomery-seal.png"],
+  },
 };
 
 export default function RootLayout({

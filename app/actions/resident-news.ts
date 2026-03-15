@@ -8,8 +8,7 @@
 // MCP endpoint is used as a fallback to refresh data when the JSON is stale.
 // ---------------------------------------------------------------------------
 
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import pulseData from "./city-pulse-data.json";
 
 export interface NewsResult {
   title: string;
@@ -19,45 +18,15 @@ export interface NewsResult {
 }
 
 // ---------------------------------------------------------------------------
-// Static data layer — read from MCP-fetched JSON
+// Static data layer — imported JSON (bundled at build time)
 // ---------------------------------------------------------------------------
 
 type CategoryKey = "news" | "government" | "safety" | "events" | "infrastructure";
 
-interface PulseData {
-  fetchedAt: string;
-  news: NewsResult[];
-  government: NewsResult[];
-  safety: NewsResult[];
-  events: NewsResult[];
-  infrastructure: NewsResult[];
-}
-
-let cachedPulseData: PulseData | null = null;
-let cacheLoadedAt = 0;
-const CACHE_TTL_MS = 5 * 60 * 1000; // re-read file every 5 min
-
-async function loadPulseData(): Promise<PulseData | null> {
-  if (cachedPulseData && Date.now() - cacheLoadedAt < CACHE_TTL_MS) {
-    return cachedPulseData;
-  }
-
-  try {
-    const filePath = join(process.cwd(), "app", "actions", "city-pulse-data.json");
-    const raw = await readFile(filePath, "utf-8");
-    cachedPulseData = JSON.parse(raw) as PulseData;
-    cacheLoadedAt = Date.now();
-    return cachedPulseData;
-  } catch (error) {
-    console.error("[resident-news] Failed to load pulse data:", error);
-    return null;
-  }
-}
-
 async function getCategoryData(key: CategoryKey): Promise<NewsResult[]> {
-  const data = await loadPulseData();
-  if (data && data[key] && data[key].length > 0) {
-    return data[key];
+  const category = (pulseData as Record<string, unknown>)[key];
+  if (Array.isArray(category) && category.length > 0) {
+    return category as NewsResult[];
   }
 
   // Fallback: try HTTP MCP if static data missing
