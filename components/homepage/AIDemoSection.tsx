@@ -237,6 +237,7 @@ type DemoPhase = "typing" | "thinking" | "toolcall" | "responding" | "pause" | "
 interface VisibleMessage {
   role: "user" | "ai";
   text: string;
+  tool?: { name: string; detail: string };
 }
 
 function ChatDemoCard() {
@@ -303,7 +304,10 @@ function ChatDemoCard() {
           break;
         case "toolcall":
           timerRef.current = setTimeout(() => {
-            setMessages((prev) => [...prev, { role: "ai", text: currentExchange.ai }]);
+            setMessages((prev) => [
+              ...prev,
+              { role: "ai", text: currentExchange.ai, tool: currentExchange.tool },
+            ]);
             setPhase("responding");
           }, 2000);
           break;
@@ -386,7 +390,7 @@ function ChatDemoCard() {
 
   const showTyping = phase === "typing" && !questionDone;
   const showThinking = phase === "thinking";
-  const showToolCall = (phase === "toolcall" || phase === "responding" || phase === "pause" || phase === "chips") && currentExchange?.tool;
+  const showToolCall = phase === "toolcall" && currentExchange?.tool;
   const showChips = phase === "chips";
 
   return (
@@ -401,7 +405,7 @@ function ChatDemoCard() {
       {/* Messages area — scrollable */}
       <div
         ref={scrollRef}
-        className="flex h-[380px] flex-col gap-3 overflow-y-auto p-4 scroll-smooth"
+        className="flex h-[460px] flex-col gap-3 overflow-y-auto p-4 scroll-smooth"
       >
         {/* Completed messages */}
         {messages.map((msg, i) => (
@@ -410,28 +414,37 @@ function ChatDemoCard() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className={cn("flex items-start gap-2", msg.role === "user" && "justify-end")}
+            className={cn(
+              msg.role === "user" ? "flex items-start justify-end gap-2" : "flex flex-col gap-2 pl-0",
+            )}
           >
-            {msg.role === "ai" && (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted">
-                <Bot size={14} className="text-muted-foreground" />
+            {msg.role === "ai" && msg.tool && (
+              <div className="pl-9">
+                <ToolCallDropdown tool={msg.tool} isRunning={false} />
               </div>
             )}
-            <div
-              className={cn(
-                "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm",
-                msg.role === "user"
-                  ? "rounded-br-sm bg-accent text-accent-foreground"
-                  : "rounded-bl-sm bg-muted whitespace-pre-line leading-relaxed text-muted-foreground",
+            <div className={cn("flex items-start gap-2", msg.role === "user" && "justify-end")}>
+              {msg.role === "ai" && (
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <Bot size={14} className="text-muted-foreground" />
+                </div>
               )}
-            >
-              {msg.role === "ai" ? <FormattedResponse text={msg.text} /> : msg.text}
-            </div>
-            {msg.role === "user" && (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/20">
-                <User size={14} className="text-accent" />
+              <div
+                className={cn(
+                  "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm",
+                  msg.role === "user"
+                    ? "rounded-br-sm bg-accent text-accent-foreground"
+                    : "rounded-bl-sm bg-muted whitespace-pre-line leading-relaxed text-muted-foreground",
+                )}
+              >
+                {msg.role === "ai" ? <FormattedResponse text={msg.text} /> : msg.text}
               </div>
-            )}
+              {msg.role === "user" && (
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/20">
+                  <User size={14} className="text-accent" />
+                </div>
+              )}
+            </div>
           </motion.div>
         ))}
 
