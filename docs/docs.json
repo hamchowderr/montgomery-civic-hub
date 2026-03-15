@@ -1,6 +1,5 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "subdirectory": "docs",
   "theme": "maple",
   "name": "Montgomery Civic Hub",
   "colors": {
