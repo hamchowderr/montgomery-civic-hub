@@ -607,25 +607,26 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
    Inline Map Demo — Real MapLibre map
    ═══════════════════════════════════════════════════════ */
 
-const PORTAL_HEX: Record<PortalId, string> = {
-  resident: "#1482c8",
-  business: "#f07818",
-  citystaff: "#279a6b",
-  researcher: "#7c4dcc",
-};
-
-const PORTAL_HEX_SECONDARY: Record<PortalId, string> = {
-  resident: "#3b82f6",
-  business: "#f59e0b",
-  citystaff: "#10b981",
-  researcher: "#a78bfa",
-};
-
-const mapLegendLayers: Record<PortalId, string[]> = {
-  resident: ["311 Requests", "Code Violations", "Services"],
-  business: ["Permits", "Licenses", "Dev Sites"],
-  citystaff: ["Fire Incidents", "Violations", "Infrastructure"],
-  researcher: ["Crime Data", "Demographics", "Land Use"],
+/** Per-portal map layer configs — each portal gets 2–3 distinct data layers */
+const mapLayerConfigs: Record<PortalId, { label: string; color: string }[]> = {
+  resident: [
+    { label: "311 Requests", color: "#3b82f6" },
+    { label: "Code Violations", color: "#ef4444" },
+  ],
+  business: [
+    { label: "Permits", color: "#f07818" },
+    { label: "Licenses", color: "#3b82f6" },
+  ],
+  citystaff: [
+    { label: "Fire Incidents", color: "#ef4444" },
+    { label: "Violations", color: "#f59e0b" },
+    { label: "Infrastructure", color: "#279a6b" },
+  ],
+  researcher: [
+    { label: "Crime Data", color: "#ef4444" },
+    { label: "Demographics", color: "#7c4dcc" },
+    { label: "Land Use", color: "#10b981" },
+  ],
 };
 
 /** Generate demo GeoJSON points scattered around Montgomery */
@@ -698,13 +699,13 @@ function makeDemoPoints(portalId: PortalId): GeoJSON.FeatureCollection<GeoJSON.P
     ],
   };
 
-  const layerLabels = mapLegendLayers[portalId];
+  const layers = mapLayerConfigs[portalId];
   return {
     type: "FeatureCollection",
     features: seeds[portalId].map((coords, i) => ({
       type: "Feature" as const,
       geometry: { type: "Point" as const, coordinates: coords },
-      properties: { layer: i % 3, label: layerLabels[i % 3] },
+      properties: { layer: i % layers.length, label: layers[i % layers.length].label },
     })),
   };
 }
@@ -713,10 +714,8 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const styles = portalStyles[portalId];
-  const primary = PORTAL_HEX[portalId];
-  const secondary = PORTAL_HEX_SECONDARY[portalId];
-  const legendLayers = mapLegendLayers[portalId];
-  const layerColors = [primary, secondary, PORTAL_HEX_SECONDARY[portalId]];
+  const layers = mapLayerConfigs[portalId];
+  const layerColors = layers.map((l) => l.color);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -746,8 +745,8 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
       map.on("load", () => {
         const points = makeDemoPoints(portalId);
 
-        // Add three separate layers for the three data categories
-        [0, 1, 2].forEach((layerIdx) => {
+        // Add separate layers for each data category
+        layers.forEach((_, layerIdx) => {
           const filtered: GeoJSON.FeatureCollection<GeoJSON.Point> = {
             type: "FeatureCollection",
             features: points.features.filter((f) => f.properties?.layer === layerIdx),
@@ -795,7 +794,8 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [portalId, primary, secondary, layerColors]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [portalId]);
 
   return (
     <div className="flex flex-col gap-0 overflow-hidden">
@@ -839,13 +839,13 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
           <span className="text-[0.5rem] font-semibold uppercase tracking-widest text-white/50">
             Layers
           </span>
-          {legendLayers.map((label, i) => (
-            <div key={label} className="flex items-center gap-1.5">
+          {layers.map((layer) => (
+            <div key={layer.label} className="flex items-center gap-1.5">
               <span
                 className="inline-block h-2 w-2 shrink-0 rounded-full"
-                style={{ backgroundColor: layerColors[i] }}
+                style={{ backgroundColor: layer.color }}
               />
-              <span className="text-[0.6rem] text-white/70">{label}</span>
+              <span className="text-[0.6rem] text-white/70">{layer.label}</span>
             </div>
           ))}
         </motion.div>
@@ -854,10 +854,7 @@ function InlineMapDemo({ portalId }: { portalId: PortalId }) {
       {/* Stats bar */}
       <div className="grid grid-cols-3 divide-x border-t bg-muted/20">
         {[
-          {
-            label: "Data Points",
-            value: `${makeDemoPoints(portalId).features.length * 80}+`,
-          },
+          { label: "Layers", value: `${layers.length}` },
           { label: "Districts", value: "9" },
           { label: "Updated", value: "Live" },
         ].map((stat) => (
