@@ -22,7 +22,20 @@ const isPublicRoute = createRouteMatcher([
 
 const PRODUCTION_DOMAIN = "montgomery-civichub.otakusolutions.io";
 
+// Mintlify doc pages that need redirecting to /docs/* prefix
+// These match sidebar links that Mintlify generates without the /docs prefix
+const MINTLIFY_DOC_ROUTES = /^\/(introduction|getting-started|portals\/|features\/|data\/)(.*)/;
+
 export default clerkMiddleware(async (auth, req) => {
+  const { pathname } = req.nextUrl;
+
+  // Redirect Mintlify sidebar links to /docs/* prefix
+  if (MINTLIFY_DOC_ROUTES.test(pathname)) {
+    const url = req.nextUrl.clone();
+    url.pathname = `/docs${pathname}`;
+    return NextResponse.redirect(url, 307);
+  }
+
   // Redirect Vercel deployment URLs to the custom domain
   const host = req.headers.get("host") ?? "";
   if (host.endsWith(".vercel.app") && process.env.VERCEL_ENV === "production") {
