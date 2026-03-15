@@ -16,6 +16,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/copilotkit",
   "/api/chat/(.*)",
   "/api/webhooks/(.*)",
+  "/docs(.*)",
+  "/_mintlify(.*)",
 ]);
 
 const PRODUCTION_DOMAIN = "montgomery-civichub.otakusolutions.io";
