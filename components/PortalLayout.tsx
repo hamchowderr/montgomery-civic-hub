@@ -17,6 +17,7 @@ import { PortalChat } from "@/components/PortalChat";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useFoldableDevice } from "@/lib/hooks/use-foldable-device";
 
 const portalIcons: Record<string, ComponentType<{ size?: number; className?: string }>> = {
   resident: Shield,
@@ -70,6 +71,7 @@ export function PortalLayout({
 
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const foldable = useFoldableDevice();
 
   // AI-readable: layout state
   useCopilotReadable({
@@ -79,7 +81,14 @@ export function PortalLayout({
       chatOpen,
       isMobile,
       isDesktop,
-      layout: isMobile ? "mobile-sheet" : isDesktop ? "desktop-resizable" : "tablet-fixed",
+      isFoldable: foldable.isFoldable,
+      layout: isMobile
+        ? "mobile-sheet"
+        : foldable.isFoldable && foldable.isVerticalFold
+          ? "foldable-split"
+          : isDesktop
+            ? "desktop-resizable"
+            : "tablet-fixed",
     },
   });
 
@@ -200,6 +209,30 @@ export function PortalLayout({
             {chatContent}
           </SheetContent>
         </Sheet>
+      </div>
+    );
+  }
+
+  // Foldable: use the fold as a natural divider between data and chat
+  if (foldable.isFoldable && foldable.isVerticalFold) {
+    const leftWidth = foldable.segments[0]?.width ?? Math.floor(window.innerWidth / 2);
+    const foldGap = foldable.foldWidth;
+    return (
+      <div className="min-h-0 flex-1 overflow-hidden rounded-lg border bg-card">
+        <div
+          className="foldable-layout flex h-full w-full"
+          style={{ gap: foldGap > 0 ? `${foldGap}px` : undefined }}
+        >
+          <div
+            className="min-w-0 shrink-0 overflow-hidden"
+            style={{ width: `${leftWidth}px` }}
+          >
+            {children}
+          </div>
+          <div className="min-w-0 flex-1 overflow-hidden border-l">
+            {chatContent}
+          </div>
+        </div>
       </div>
     );
   }
