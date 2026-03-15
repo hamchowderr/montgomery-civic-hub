@@ -162,9 +162,9 @@ export function PortalNav() {
               }
             >
               <portal.icon size={14} />
-              <span className="hidden sm:inline">{portal.label}</span>
+              <span className="hidden sm:inline portal-nav-label">{portal.label}</span>
               {hasSubPages && isActive && (
-                <ChevronDown size={12} className="hidden sm:inline text-muted-foreground" />
+                <ChevronDown size={12} className="hidden sm:inline portal-nav-label text-muted-foreground" />
               )}
             </Button>
           );
@@ -212,8 +212,8 @@ export function PortalNav() {
           );
         })}
 
-        {/* Divider + dashboards — hidden on mobile, shown on sm+ */}
-        <div className="hidden sm:flex sm:items-center sm:gap-0.5">
+        {/* Divider + dashboards — hidden on mobile, shown on sm+ or foldable */}
+        <div className="hidden sm:flex sm:items-center sm:gap-0.5 foldable-show">
           <div className="mx-1.5 h-5 w-px bg-border" />
           {dashboards.map((dash) => {
             const isActive = pathname.startsWith(dash.href);
@@ -229,7 +229,7 @@ export function PortalNav() {
                   )}
                 >
                   <dash.icon size={14} />
-                  <span className="hidden sm:inline">{dash.label}</span>
+                  <span className="hidden sm:inline portal-nav-label">{dash.label}</span>
                 </Button>
               </Link>
             );

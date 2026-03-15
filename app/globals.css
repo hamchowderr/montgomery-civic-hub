@@ -451,3 +451,27 @@
     transform: translateY(0);
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Foldable device support
+   ═══════════════════════════════════════════════════════ */
+
+/* When the device has two horizontal viewport segments (vertical fold),
+   show nav labels even on narrower segments since we have two screens */
+@media (horizontal-viewport-segments: 2) {
+  .portal-nav-label {
+    display: inline !important;
+  }
+
+  /* Ensure the fold gap doesn't cause visual artifacts */
+  .foldable-layout {
+    column-gap: env(viewport-segment-left 1 0, 0px);
+  }
+}
+
+/* Foldable nav: show dashboard links when there's enough space */
+@media (horizontal-viewport-segments: 2), (min-width: 840px) {
+  .foldable-show {
+    display: flex !important;
+  }
+}
