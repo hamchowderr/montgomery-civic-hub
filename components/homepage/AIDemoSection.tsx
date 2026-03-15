@@ -164,6 +164,29 @@ const portalDotColors: Record<PortalId, string> = {
   researcher: "bg-portal-researcher",
 };
 
+const portalChatStyles: Record<PortalId, { bubble: string; avatar: string; chip: string }> = {
+  resident: {
+    bubble: "bg-portal-resident text-white",
+    avatar: "bg-portal-resident/20",
+    chip: "border-portal-resident/20 bg-portal-resident/5 text-portal-resident",
+  },
+  business: {
+    bubble: "bg-portal-business text-white",
+    avatar: "bg-portal-business/20",
+    chip: "border-portal-business/20 bg-portal-business/5 text-portal-business",
+  },
+  citystaff: {
+    bubble: "bg-portal-citystaff text-white",
+    avatar: "bg-portal-citystaff/20",
+    chip: "border-portal-citystaff/20 bg-portal-citystaff/5 text-portal-citystaff",
+  },
+  researcher: {
+    bubble: "bg-portal-researcher text-white",
+    avatar: "bg-portal-researcher/20",
+    chip: "border-portal-researcher/20 bg-portal-researcher/5 text-portal-researcher",
+  },
+};
+
 const capabilities = [
   { icon: Database, label: "Live ArcGIS Data" },
   { icon: MessageSquare, label: "Natural Language" },
@@ -388,6 +411,7 @@ function ChatDemoCard() {
     goToScript((scriptIndex + 1) % chatScripts.length);
   }, [scriptIndex, goToScript]);
 
+  const chatStyles = portalChatStyles[script.portal];
   const showTyping = phase === "typing" && !questionDone;
   const showThinking = phase === "thinking";
   const showToolCall = phase === "toolcall" && currentExchange?.tool;
@@ -433,15 +457,15 @@ function ChatDemoCard() {
                 className={cn(
                   "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm",
                   msg.role === "user"
-                    ? "rounded-br-sm bg-accent text-accent-foreground"
+                    ? cn("rounded-br-sm", chatStyles.bubble)
                     : "rounded-bl-sm bg-muted whitespace-pre-line leading-relaxed text-muted-foreground",
                 )}
               >
                 {msg.role === "ai" ? <FormattedResponse text={msg.text} /> : msg.text}
               </div>
               {msg.role === "user" && (
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/20">
-                  <User size={14} className="text-accent" />
+                <div className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full", chatStyles.avatar)}>
+                  <User size={14} className="text-current opacity-70" />
                 </div>
               )}
             </div>
@@ -459,12 +483,12 @@ function ChatDemoCard() {
               transition={{ duration: 0.3 }}
               className="flex items-start justify-end gap-2"
             >
-              <div className="rounded-2xl rounded-br-sm bg-accent px-4 py-2.5 text-sm text-accent-foreground ml-auto max-w-[85%]">
+              <div className={cn("rounded-2xl rounded-br-sm px-4 py-2.5 text-sm ml-auto max-w-[85%]", chatStyles.bubble)}>
                 {typedQuestion}
-                <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-accent-foreground/70" />
+                <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-white/70" />
               </div>
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/20">
-                <User size={14} className="text-accent" />
+              <div className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full", chatStyles.avatar)}>
+                <User size={14} className="text-current opacity-70" />
               </div>
             </motion.div>
           )}
@@ -524,7 +548,7 @@ function ChatDemoCard() {
               {script.chips.map((chip) => (
                 <span
                   key={chip}
-                  className="rounded-full border border-accent/20 bg-accent/5 px-3 py-1 text-xs font-medium text-accent"
+                  className={cn("rounded-full border px-3 py-1 text-xs font-medium", chatStyles.chip)}
                 >
                   {chip}
                 </span>

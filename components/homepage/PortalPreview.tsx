@@ -139,17 +139,17 @@ const portals: PortalConfig[] = [
     href: "/business",
     features: [
       {
-        id: "map",
-        name: "Permit & License Map",
-        description: "Find active construction permits, business licenses, and development sites.",
-        icon: MapPin,
-        featured: true,
-      },
-      {
         id: "chat",
         name: "Business AI Assistant",
         description: "Get answers about permits, zoning, and economic opportunities in Montgomery.",
         icon: MessageSquare,
+        featured: true,
+      },
+      {
+        id: "map",
+        name: "Permit & License Map",
+        description: "Find active construction permits, business licenses, and development sites.",
+        icon: MapPin,
       },
       {
         id: "table",
@@ -172,11 +172,10 @@ const portals: PortalConfig[] = [
     href: "/citystaff",
     features: [
       {
-        id: "chart",
-        name: "Executive Dashboard",
-        description:
-          "Key performance indicators for public safety, infrastructure, and 311 trends.",
-        icon: BarChart3,
+        id: "chat",
+        name: "Staff AI Briefing",
+        description: "Generate data-backed briefings for the mayor and department heads.",
+        icon: MessageSquare,
         featured: true,
       },
       {
@@ -186,16 +185,17 @@ const portals: PortalConfig[] = [
         icon: MapPin,
       },
       {
-        id: "chat",
-        name: "Staff AI Briefing",
-        description: "Generate data-backed briefings for the mayor and department heads.",
-        icon: MessageSquare,
-      },
-      {
         id: "table",
         name: "Operations Data",
         description: "Access violation records, inspection logs, and compliance tracking.",
         icon: Table2,
+      },
+      {
+        id: "chart",
+        name: "Executive Dashboard",
+        description:
+          "Key performance indicators for public safety, infrastructure, and 311 trends.",
+        icon: BarChart3,
       },
     ],
   },
@@ -206,18 +206,11 @@ const portals: PortalConfig[] = [
     href: "/researcher",
     features: [
       {
-        id: "table",
-        name: "Dataset Explorer",
-        description:
-          "Access 40+ city datasets with full attribute details and export capabilities.",
-        icon: Table2,
+        id: "chat",
+        name: "Research AI",
+        description: "Query datasets with methodology transparency and data source citations.",
+        icon: MessageSquare,
         featured: true,
-      },
-      {
-        id: "chart",
-        name: "Cross-Dataset Analysis",
-        description: "Compare crime trends, demographics, and land use patterns across districts.",
-        icon: BarChart3,
       },
       {
         id: "map",
@@ -227,10 +220,17 @@ const portals: PortalConfig[] = [
         icon: MapPin,
       },
       {
-        id: "chat",
-        name: "Research AI",
-        description: "Query datasets with methodology transparency and data source citations.",
-        icon: MessageSquare,
+        id: "table",
+        name: "Dataset Explorer",
+        description:
+          "Access 40+ city datasets with full attribute details and export capabilities.",
+        icon: Table2,
+      },
+      {
+        id: "chart",
+        name: "Cross-Dataset Analysis",
+        description: "Compare crime trends, demographics, and land use patterns across districts.",
+        icon: BarChart3,
       },
     ],
   },
