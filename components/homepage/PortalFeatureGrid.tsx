@@ -283,10 +283,10 @@ export function PortalFeatureGrid() {
           <SectionAccent className="mt-4" />
         </FadeInWhenVisible>
 
-        {/* Comparison Table */}
+        {/* Comparison Table — desktop */}
         <FadeInWhenVisible delay={0.1}>
-          <div className="mt-12 overflow-x-auto rounded-xl border bg-card">
-            <table className="w-full min-w-[640px]">
+          <div className="mt-12 hidden md:block overflow-x-auto rounded-xl border bg-card">
+            <table className="w-full">
               {/* Portal headers */}
               <thead>
                 <tr className="border-b">
@@ -348,6 +348,68 @@ export function PortalFeatureGrid() {
             </table>
           </div>
         </FadeInWhenVisible>
+
+        {/* Mobile card layout */}
+        <div className="mt-12 grid grid-cols-1 gap-4 md:hidden">
+          {portals.map((portal) => {
+            const portalFeatures = features.filter(
+              (f) =>
+                f[
+                  portal.id as keyof Pick<
+                    FeatureRow,
+                    "resident" | "business" | "citystaff" | "researcher"
+                  >
+                ] === true,
+            );
+            return (
+              <FadeInWhenVisible key={portal.id} delay={0.05}>
+                <div className="rounded-xl border bg-card overflow-hidden">
+                  {/* Portal header */}
+                  <div className="flex items-center gap-3 border-b px-4 py-3">
+                    <div
+                      className={cn(
+                        "grid h-9 w-9 place-items-center rounded-lg",
+                        portal.color.bgLight,
+                        portal.color.text,
+                      )}
+                    >
+                      <portal.icon className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold">{portal.name}</div>
+                      <div className="text-[11px] text-muted-foreground">{portal.icp}</div>
+                    </div>
+                    <Link
+                      href={portal.href}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+                        portal.color.bg,
+                        "text-white hover:opacity-90",
+                      )}
+                    >
+                      Enter
+                      <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  </div>
+                  {/* Feature list */}
+                  <div className="px-4 py-3">
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                      {portalFeatures.map((f) => (
+                        <div key={f.feature} className="flex items-center gap-1.5">
+                          <Check
+                            className={cn("h-3 w-3 shrink-0", portal.color.text)}
+                            strokeWidth={3}
+                          />
+                          <span className="text-xs text-muted-foreground">{f.feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </FadeInWhenVisible>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

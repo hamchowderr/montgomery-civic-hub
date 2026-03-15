@@ -37,7 +37,7 @@ function MiniMapCard() {
     "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/export?bbox=-86.34,32.33,-86.24,32.40&bboxSR=4326&size=800,500&format=png&f=image";
 
   return (
-    <div className="rounded-xl border bg-card overflow-hidden h-[420px]">
+    <div className="rounded-xl border bg-card overflow-hidden h-[280px] md:h-[420px]">
       <div className="bg-muted/50 px-4 py-2.5 border-b flex items-center gap-2">
         <MapPin size={14} className="text-portal-resident" />
         <span className="text-xs font-medium">District 4 — Neighborhood Map</span>
@@ -150,7 +150,7 @@ function MiniMapCard() {
 
 function ChatCard() {
   return (
-    <div className="rounded-xl border bg-card overflow-hidden h-[420px] flex flex-col">
+    <div className="rounded-xl border bg-card overflow-hidden h-[280px] md:h-[420px] flex flex-col">
       <div className="bg-muted/50 px-4 py-2.5 border-b flex items-center gap-2">
         <MessageSquare size={14} className="text-portal-resident" />
         <span className="text-xs font-medium">AI Civic Assistant</span>
@@ -184,7 +184,7 @@ function ChatCard() {
 
 function AIResponseCard() {
   return (
-    <div className="rounded-xl border bg-card overflow-hidden h-[420px] flex flex-col">
+    <div className="rounded-xl border bg-card overflow-hidden h-[280px] md:h-[420px] flex flex-col">
       <div className="bg-muted/50 px-4 py-2.5 border-b flex items-center gap-2">
         <BarChart3 size={14} className="text-portal-resident" />
         <span className="text-xs font-medium">AI Response — Live Data</span>
@@ -226,7 +226,7 @@ function AIResponseCard() {
 
 function ExportCard() {
   return (
-    <div className="rounded-xl border bg-card overflow-hidden h-[420px] flex flex-col">
+    <div className="rounded-xl border bg-card overflow-hidden h-[280px] md:h-[420px] flex flex-col">
       <div className="bg-muted/50 px-4 py-2.5 border-b flex items-center gap-2">
         <Share2 size={14} className="text-portal-resident" />
         <span className="text-xs font-medium">Export & Share</span>
@@ -286,46 +286,46 @@ export function DataStorySection() {
   return (
     <section ref={containerRef} className="relative civic-topo" style={{ height: "160vh" }}>
       <div className="sticky top-0 flex h-screen items-center overflow-hidden px-4">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 md:flex-row md:items-center md:gap-16">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 md:flex-row md:items-center md:gap-16">
           {/* Left — progress + labels */}
           <div className="md:w-[38%] md:shrink-0">
             <FadeInWhenVisible>
               <span className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-accent">
                 See It In Action
               </span>
-              <h2 className="mt-3 font-display text-fluid-3xl tracking-tight">
+              <h2 className="mt-2 md:mt-3 font-display text-2xl md:text-fluid-3xl tracking-tight">
                 A day in Maria&apos;s
                 <br />
                 neighborhood.
               </h2>
-              <div className="mt-4 h-[3px] w-12 rounded-full bg-accent" />
+              <div className="mt-3 md:mt-4 h-[3px] w-12 rounded-full bg-accent" />
             </FadeInWhenVisible>
 
-            <div className="relative mt-12 flex flex-col">
+            <div className="relative mt-6 md:mt-12 flex flex-col">
               {/* Background line */}
-              <div className="absolute left-[19px] top-0 h-full w-[2px] bg-border" />
+              <div className="absolute left-[15px] md:left-[19px] top-0 h-full w-[2px] bg-border" />
               {/* Filled progress line */}
               <motion.div
-                className="absolute left-[19px] top-0 w-[2px] bg-accent"
+                className="absolute left-[15px] md:left-[19px] top-0 w-[2px] bg-accent"
                 style={{ height: lineHeight }}
               />
 
               {storySteps.map((step, i) => (
-                <div key={step.title} className="relative flex gap-5 pb-10">
+                <div key={step.title} className="relative flex gap-3 md:gap-5 pb-4 md:pb-10">
                   <div
                     className={cn(
-                      "relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-500",
+                      "relative z-10 flex h-8 w-8 md:h-10 md:w-10 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-500",
                       activeStep >= i
                         ? "border-accent bg-accent text-accent-foreground"
                         : "border-border bg-background text-muted-foreground",
                     )}
                   >
-                    <span className="text-sm font-bold">{i + 1}</span>
+                    <span className="text-xs md:text-sm font-bold">{i + 1}</span>
                   </div>
-                  <div className="pt-1.5">
+                  <div className="pt-1 md:pt-1.5">
                     <h3
                       className={cn(
-                        "font-semibold tracking-tight transition-colors duration-500",
+                        "text-sm md:text-base font-semibold tracking-tight transition-colors duration-500",
                         activeStep >= i ? "text-foreground" : "text-muted-foreground",
                       )}
                     >
@@ -338,7 +338,7 @@ export function DataStorySection() {
           </div>
 
           {/* Right — animated step cards */}
-          <div className="md:w-[62%]">
+          <div className="md:w-[62%] flex-1 min-h-0">
             <div className="relative">
               <AnimatePresence mode="wait">
                 <motion.div
