@@ -1,6 +1,8 @@
 # Montgomery Civic Hub
 
-A six-portal civic dashboard for Montgomery, Alabama — powered by AI agents (CopilotKit + AG-UI), live ArcGIS data, interactive maps, and real-time analytics. Four portals serve specific audiences (residents, business owners, city staff, researchers), plus two cross-cutting analytical dashboards for executive leadership and data-driven insights.
+An AI-native civic dashboard for Montgomery, Alabama. Six portals serve different audiences — residents, business owners, city staff, researchers, executives, and data analysts — each with a Claude-powered AI agent that can **query live city data, search the web, and directly control the dashboard UI** in real time.
+
+The AI isn't a sidebar chatbot. It's an embedded copilot with full awareness of what's on screen — which map layers are visible, what dataset the table shows, the current year filter, layout state — and can manipulate all of it through natural conversation. Ask it to "show me 311 requests on the map and filter to 2024" and it switches the view, toggles the layer, and sets the year range in one response.
 
 ![Homepage](screenshots/fresh-full.png)
 
@@ -17,21 +19,31 @@ A six-portal civic dashboard for Montgomery, Alabama — powered by AI agents (C
 
 ### Portal Dashboards (Resident, Business, City Staff, Researcher)
 
-Each portal includes:
+Each portal includes a shared foundation:
 
 - **AI Chat** — Claude-powered agent with tool use (ArcGIS queries + web search) via CopilotKit
-- **Interactive Map** — MapLibre GL with toggleable council district overlays
-- **Data Table** — Sortable/filterable tables via TanStack Table
+- **Interactive Map** — MapLibre GL with toggleable data layers and council district overlays
+- **Data Table** — Sortable/filterable tables via TanStack Table with dataset switching
 - **Charts** — Recharts visualizations of portal-specific datasets
 - **Year Filter** — Global date range filter across all data views
 
+Plus portal-specific features:
+
+**Resident** — City Pulse newsfeed (Bright Data web search across 5 categories: news, government, safety, events, infrastructure), 311 incident newsfeed with live stats and filtering, emergency contact directory with facility counts and community resources.
+
+**Business** — Vacant Land Explorer with interactive map of 900+ city-owned properties, neighborhood-level analytics (acreage, appraisal value, availability %), filterable by status (Available/Holding/Use/Leased) and neighborhood. AI can suggest reuse ideas for specific parcels based on zoning and acreage.
+
+**City Staff** — MPD Staffing Dashboard with officer vacancy tracking (authorized vs. filled positions across ranks), 911 center staffing, district-level service demand (311 requests + code violations per district), paving infrastructure totals, and AI-generated staffing reports.
+
+**Researcher** — Civil Rights Heritage Layer with 10 historically significant landmarks (Rosa Parks Museum, Legacy Museum, Dexter Avenue King Memorial Baptist Church, etc.) and 2 march routes (1955 Bus Boycott, 1965 Selma-to-Montgomery) overlaid on the map. AI can fly the map to any landmark. Demographics dashboard with 2020 Census racial breakdown and per-district equity indicators (311 requests, code violations, service ratios). CivilRightsTimeline component for temporal analysis.
+
 ### Analytical Dashboards (Executive, Insights)
 
-These are AI-powered analytical dashboards — no map/table/chart tabs, focused on cross-cutting analysis:
+AI-powered analytical dashboards focused on cross-cutting analysis:
 
 **Executive** (`/executive`) — Scrollable command center for city leadership:
 
-- Morning briefing generator (AI-powered)
+- Morning briefing generator (AI-powered, quick or detailed format)
 - KPI grid with sparkline trends (311 requests, violations, MPD vacancy, permits)
 - Alert priority queue with severity-coded items and "Discuss with AI" buttons
 - Cross-portal pulse cards (safety, business, infrastructure, public safety)
@@ -46,28 +58,64 @@ These are AI-powered analytical dashboards — no map/table/chart tabs, focused 
 - **Districts** — Deep dive into any district with rankings and city-average comparisons
 - **Stories** — AI-generated narrative analysis from computed data
 
-### AI-Controlled Interactivity
+## How the AI Works
 
-The AI agent can control all interactive UI elements through CopilotKit actions:
+### Two-Way Communication
 
-| Action                     | Portal(s)     | What the AI can do                                          |
-| -------------------------- | ------------- | ----------------------------------------------------------- |
-| `switch_data_tab`          | All 4 portals | Switch between Map, Table, and Chart views                  |
-| `set_year_range`           | All 4 portals | Adjust the global year filter across all data views         |
-| `set_map_layer_visibility` | All 4 portals | Show/hide individual data layers on the map                 |
-| `select_table_dataset`     | All 4 portals | Switch which dataset the data table displays                |
-| `set_chat_position`        | All 6         | Move the chat panel to left or right side (desktop)         |
-| `toggle_chat_panel`        | All 6         | Open/close the mobile chat sheet                            |
-| `toggle_council_districts` | All 4 portals | Show/hide the 9-district council boundary overlay on maps   |
-| `generate_briefing`        | Executive     | Generate a quick or detailed morning briefing               |
-| `highlight_alert`          | Executive     | Scroll to and highlight a specific priority alert           |
-| `switch_executive_view`    | Executive     | Navigate to a dashboard section                             |
-| `switch_insight_tab`       | Insights      | Switch between Overview, Equity, Trends, Districts, Stories |
-| `select_district`          | Insights      | Focus on a specific district (D1-D9) for deep analysis      |
-| `toggle_metric`            | Insights      | Show/hide metrics on the trends chart                       |
-| `generate_data_story`      | Insights      | Generate a narrative data story on a chosen topic           |
+The AI integration uses CopilotKit's action/readable pattern to create a bidirectional link between the AI agent and the UI:
 
-The AI is also aware of all current UI state (active tab, visible layers, selected dataset, year range, layout mode, district overlay status, selected district, active insight tab) via CopilotKit readables.
+**Readables** (UI → AI) — The AI continuously sees:
+
+- Which portal it's in and what views are available
+- Active data tab (Map/Table/Chart/Land), year range, available years
+- Which map layers are visible and which are available
+- Selected table dataset and available datasets
+- Chat panel position (left/right), open/closed state, mobile/desktop mode
+- Council district overlay visibility and selected district
+- Portal-specific state: insights tab, selected metrics, staffing levels, vacancy rates, service demand by district, paving totals, violation breakdowns, 311 stats, emergency contacts, news summaries, civil rights landmarks, demographics data, land explorer filters and neighborhood summaries
+
+**Actions** (AI → UI) — The AI can trigger:
+
+| Action                         | Portal(s)     | What the AI can do                                          |
+| ------------------------------ | ------------- | ----------------------------------------------------------- |
+| `switch_data_tab`              | All 4 portals | Switch between Map, Table, Chart, and Land views            |
+| `set_year_range`               | All 4 portals | Adjust the global year filter across all data views         |
+| `set_map_layer_visibility`     | All 4 portals | Show/hide individual data layers on the map                 |
+| `select_table_dataset`         | All 4 portals | Switch which dataset the data table displays                |
+| `set_chat_position`            | All 6         | Move the chat panel to left or right side (desktop)         |
+| `toggle_chat_panel`            | All 6         | Open/close the mobile chat sheet                            |
+| `toggle_council_districts`     | All 4 portals | Show/hide the 9-district council boundary overlay on maps   |
+| `refresh_news_category`        | Resident      | Refresh City Pulse news for a specific category             |
+| `filter_land_by_neighborhood`  | Business      | Filter the Vacant Land Explorer to specific neighborhoods   |
+| `filter_land_by_status`        | Business      | Filter properties by disposition status                     |
+| `suggest_land_reuse`           | Business      | Generate AI reuse ideas for a specific city-owned parcel    |
+| `generate_staffing_report`     | City Staff    | Generate a formatted markdown staffing report for MPD       |
+| `fly_to_civil_rights_landmark` | Researcher    | Pan the map to a named civil rights landmark                |
+| `generate_briefing`            | Executive     | Generate a quick or detailed morning briefing               |
+| `highlight_alert`              | Executive     | Scroll to and highlight a specific priority alert           |
+| `switch_executive_view`        | Executive     | Navigate to a dashboard section                             |
+| `switch_insight_tab`           | Insights      | Switch between Overview, Equity, Trends, Districts, Stories |
+| `select_district`              | Insights      | Focus on a specific district (D1-D9) for deep analysis      |
+| `toggle_metric`                | Insights      | Show/hide metrics on the trends chart                       |
+| `generate_data_story`          | Insights      | Generate a narrative data story on a chosen topic           |
+
+### Server-Side Tools
+
+Each AI agent also has two server-side tools for fetching data:
+
+- **`arcgis_query`** — Queries Montgomery's ArcGIS FeatureServer with SQL-style WHERE clauses. Covers 30+ datasets: 311 requests, permits, violations, facilities, census data, boundaries, and more. Results are geometry-stripped and cached in Convex (15-min TTL).
+- **`brightdata_search`** — Web search via Bright Data for current events, news, council agendas, and information beyond structured city data. Cached in Convex (1-hour TTL).
+
+### Per-Portal AI Personas
+
+Each portal gets a tailored system prompt with Montgomery-specific context (population, demographics, economy, civil rights heritage, public safety stats) plus a persona matched to the audience:
+
+- **Resident** — Friendly, plain language, neighborhood-focused. Suggests practical next steps.
+- **Business** — Professional, data-forward, opportunity-minded. Highlights growth areas and development sites.
+- **City Staff** — Analytical, report-oriented. Structures responses for presentations. Cross-references datasets.
+- **Researcher** — Methodologically transparent. Cites dataset names, field names, record counts. Suggests interdisciplinary analyses. Includes civil rights spatial overlay analysis.
+- **Executive** — AI chief of staff. Leads with headline findings, closes with actionable recommendations. Generates briefings.
+- **Insights** — Civic data analyst. Speaks in comparative statistics and z-scores. Generates narrative data stories.
 
 ![Chat Demo](screenshots/fresh-chat-demo.png)
 
@@ -91,77 +139,96 @@ The AI is also aware of all current UI state (active tab, visible layers, select
 
 ## Architecture
 
-### Dual AI Backend
-
-Two parallel AI systems coexist, both using the same tools and prompts:
-
-**CopilotKit + AG-UI (primary):**
+### AI Backend
 
 ```
-Portal UI → CopilotProvider(agent) → POST /api/copilotkit
-              → CivicAgent (AG-UI AbstractAgent, RxJS Observable streams)
-                ├→ arcgis_query → ArcGIS FeatureServer
-                └→ brightdata_search → Bright Data web search
-              → Convex (persist messages + cache results)
+Portal UI → CopilotProvider(agent="portal") → POST /api/copilotkit
+              → CopilotRuntime (6 CivicAgent instances)
+                → CivicAgent (AG-UI AbstractAgent, RxJS Observable streams)
+                  ├→ arcgis_query → ArcGIS FeatureServer (30+ datasets)
+                  └→ brightdata_search → Bright Data web search
+                → Convex (cache query results)
 ```
 
-**Original streaming endpoint (legacy):**
+CivicAgent (`lib/ai/civic-agent.ts`) extends AG-UI's `AbstractAgent` and implements a Claude tool-use loop with up to 5 iterations per request. It emits AG-UI events (RUN_STARTED, TOOL_CALL_START, TEXT_MESSAGE_CONTENT, etc.) as RxJS Observables that CopilotKit consumes on the client. Token limits scale by portal complexity: 4096 for resident/business, 8192 for citystaff/researcher/executive/insights.
 
-```
-Portal UI → POST /api/chat/[portal] → Claude tool-use loop (max 5 iterations)
-              → streamed ReadableStream response
-```
+A legacy streaming endpoint (`/api/chat/[portal]`) also exists, using the same tools and prompts.
 
-- **Chat**: CivicAgent emits AG-UI events (RUN_STARTED, TOOL_CALL_START, TEXT_MESSAGE_CONTENT, etc.) as RxJS Observables. CopilotKit runtime consumes these on the client.
-- **Map/Table/Chart data**: Fetched client-side via `lib/arcgis-client.ts` (Montgomery's GIS server blocks cloud IPs, so browser-direct requests are required).
+### Data Flow
+
+- **AI chat data**: Server-side via CivicAgent tool calls → ArcGIS / Bright Data → geometry-stripped, truncated, cached in Convex.
+- **Map/Table/Chart data**: Client-side via `lib/arcgis-client.ts` (Montgomery's GIS server blocks cloud IPs, so browser-direct requests are required). 5-minute in-memory cache.
 - **Year filtering**: Global `YearFilterProvider` context generates ArcGIS SQL WHERE clauses for date-scoped queries across all portal data views.
-- **Caching**: ArcGIS results cached in Convex with 15-min TTL; web scrape results cached with 1-hour TTL.
 
 ### Project Structure
 
 ```
 app/
   (resident)/resident/       # Resident portal + colocated components
+    components/
+      ResidentMap.tsx         #   Map with safety/facility layers
+      ResidentTable.tsx       #   Multi-dataset data table
+      ResidentChart.tsx       #   Portal-specific charts
+      city-pulse/             #   City Pulse newsfeed (Bright Data)
+      newsfeed/               #   311 incident newsfeed
+      emergency/              #   Emergency contacts + community resources
   (business)/business/       # Business portal + colocated components
+    components/
+      BusinessMap.tsx         #   Map with permit/license/zoning layers
+      BusinessTable.tsx       #   Multi-dataset data table
+      BusinessChart.tsx       #   Portal-specific charts
+      vacant-land/            #   Vacant Land Explorer (900+ properties)
   (citystaff)/citystaff/     # City Staff portal + colocated components
+    components/
+      CityStaffMap.tsx        #   Map with infrastructure layers
+      CityStaffTable.tsx      #   Multi-dataset data table
+      CityStaffChart.tsx      #   Portal-specific charts
+      staffing/               #   MPD Staffing Dashboard
   (researcher)/researcher/   # Researcher portal + colocated components
-  executive/                 # Executive dashboard + colocated components
-  insights/                  # Insights analytics workbench + colocated components
+    components/
+      ResearcherMap.tsx       #   Map with all data layers
+      ResearcherTable.tsx     #   Multi-dataset data table
+      ResearcherChart.tsx     #   Portal-specific charts
+      CivilRightsLayer.tsx    #   Heritage landmarks + march routes
+      CivilRightsTimeline.tsx #   Demographics + equity indicators
+      demographics/           #   Demographics dashboard
+      civil-rights/           #   Equity indicators, demographics charts
+  executive/                 # Executive KPI command center
+  insights/                  # Cross-district analytics workbench
   api/
     chat/[portal]/           # Legacy streaming chat endpoint
-    copilotkit/              # CopilotKit runtime endpoint (6 agents)
+    copilotkit/              # CopilotKit runtime (6 CivicAgent instances)
   privacy/, terms/           # Legal pages
-  page.tsx                   # Landing page
+  page.tsx                   # Animated landing page
 
 components/
-  Homepage.tsx               # Animated landing page
-  homepage/                  # Homepage subcomponents (LiveDataShowcase, PortalPreview)
-  CopilotProvider.tsx        # CopilotKit provider wrapper (per-portal agent config)
-  PortalLayout.tsx           # Resizable two-panel layout (chat + data, side toggle)
-  ChatPanel.tsx              # Floating chat panel (compact)
-  ChatWidget.tsx             # Portal-agnostic chat panel (legacy)
-  DataPanel.tsx              # Tabbed Map/Table/Chart interface
-  YearFilterBar.tsx          # Year range filter UI selector
-  CouncilDistrictsLayer.tsx  # Council districts map overlay
+  Homepage.tsx               # Landing page with motion/react animations
+  homepage/                  # LiveDataShowcase, PortalPreview
+  CopilotProvider.tsx        # CopilotKit wrapper (per-portal agent routing)
+  PortalLayout.tsx           # Resizable two-panel layout (chat + data)
+  ChatPanel.tsx              # Floating chat panel
+  DataPanel.tsx              # Tabbed Map/Table/Chart/Land interface
+  CouncilDistrictsLayer.tsx  # 9-district map overlay (all portals)
+  YearFilterBar.tsx          # Year range filter UI
   StatusLegend.tsx           # Semantic status color system
   chart-helpers.tsx          # Chart loading/error states
   map-helpers.tsx            # Reusable MapLibre circle layers
   ui/                        # shadcn/ui primitives
-  ai-elements/               # AI chat UI components (from ai-sdk.dev registry)
+  ai-elements/               # AI chat UI components
 
 lib/
-  ai/client.ts               # Original Claude tool-use loop
-  ai/civic-agent.ts          # CivicAgent (AG-UI AbstractAgent, RxJS Observable streams)
-  ai/prompts.ts              # Portal-specific system prompts
+  ai/civic-agent.ts          # CivicAgent (AG-UI AbstractAgent, RxJS)
+  ai/client.ts               # Legacy Claude tool-use loop
+  ai/prompts.ts              # 6 portal-specific system prompts
   ai/tools.ts                # Tool definitions (arcgis_query, brightdata_search)
-  arcgis-client.ts           # Client-side ArcGIS utility (40+ dataset URLs)
-  arcgis-helpers.ts          # yearWhere(), formatCurrency() utilities
-  contexts/year-filter.tsx   # YearRange context provider + buildWhereClause()
-  hooks/                     # Shared hooks (see below)
+  arcgis-client.ts           # Client-side ArcGIS (40+ dataset URLs)
+  arcgis-helpers.ts          # yearWhere(), formatCurrency()
+  contexts/year-filter.tsx   # YearRange context + buildWhereClause()
+  hooks/                     # Shared data hooks
   tours.ts                   # Portal-specific onboarding tours
 
 convex/
-  schema.ts                  # 7 tables (chat_messages, caches, registry)
+  schema.ts                  # Tables: caches, registry, users
   queries.ts, mutations.ts   # Backend logic
   actions.ts                 # Convex actions
   datasetRegistry.ts         # Dataset registry queries
@@ -169,12 +236,12 @@ convex/
   portalStats.ts             # Portal statistics
 
 tests/
-  unit/                      # Vitest component & logic tests
+  unit/                      # Vitest: tools, prompts, components, tours
   api/                       # Chat endpoint tests
-  e2e/                       # Playwright smoke & visual tests
+  e2e/                       # Playwright: smoke, homepage, showcase
 ```
 
-### Page Structure
+### Page Hierarchy
 
 **Portal dashboards** (resident, business, citystaff, researcher):
 
@@ -182,10 +249,11 @@ tests/
 CopilotProvider(agent="portal")
   └→ YearFilterProvider
        └→ PortalLayout (resizable two-panel: chat + content)
-            └→ DataPanel (tabbed Map/Table/Chart)
-                 ├→ [Portal]Map.tsx
-                 ├→ [Portal]Table.tsx
-                 └→ [Portal]Chart.tsx
+            └→ DataPanel (tabbed Map/Table/Chart + portal-specific tabs)
+                 ├→ [Portal]Map.tsx        ← AI can toggle layers, districts
+                 ├→ [Portal]Table.tsx      ← AI can switch datasets
+                 ├→ [Portal]Chart.tsx
+                 └→ [Portal-specific views] ← AI can filter, generate reports
 ```
 
 **Analytical dashboards** (executive, insights):
@@ -194,7 +262,7 @@ CopilotProvider(agent="portal")
 CopilotProvider(agent="executive|insights")
   └→ YearFilterProvider
        └→ PortalLayout (resizable two-panel: chat + content)
-            └→ [Executive]Dashboard.tsx | InsightsDashboard.tsx (scrollable/tabbed)
+            └→ ExecutiveDashboard | InsightsDashboard
 ```
 
 ### Hooks
@@ -322,7 +390,7 @@ Three levels of geographic granularity for demographic analysis:
 | Dataset                 | Key                | Granularity                     |
 | ----------------------- | ------------------ | ------------------------------- |
 | **Census Tracts**       | `censusTract`      | Largest — ~4,000 people each    |
-| **Census Block Groups** | `censusBlockGroup` | Medium — ~600–3,000 people each |
+| **Census Block Groups** | `censusBlockGroup` | Medium — ~600-3,000 people each |
 | **Census Blocks**       | `censusBlock`      | Smallest — individual blocks    |
 
 ### Infrastructure Assessment
@@ -331,14 +399,14 @@ Three levels of geographic granularity for demographic analysis:
 | ---------------------------- | -------------------- | -------------------------------------------------- |
 | **Pavement Assessment 2025** | `pavementAssessment` | Road condition ratings and pavement quality scores |
 
-### Portal → Dataset Mapping
+### Portal to Dataset Mapping
 
 Each portal surfaces different datasets in its stats, maps, tables, and charts:
 
 | Portal         | Primary Datasets                                                                                     | Stats Displayed                                      |
 | -------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | **Resident**   | 311 requests, health facilities, recycling locations, garbage schedule, community centers, libraries | 311 count, health facilities, recycling locations    |
-| **Business**   | Business licenses, construction permits, entertainment districts, zoning                             | License count, permit count, entertainment districts |
+| **Business**   | Business licenses, construction permits, entertainment districts, zoning, city-owned properties      | License count, permit count, entertainment districts |
 | **City Staff** | Paving projects, code violations, 311 requests, pavement assessment, city-owned properties           | Paving projects, violations, 311 count               |
 | **Researcher** | 311 requests, business licenses, code violations, census data, all boundary layers                   | 311 count, license count, violation count            |
 

@@ -14,8 +14,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Footer } from "@/components/Footer";
+import { AIDemoSection } from "@/components/homepage/AIDemoSection";
+import { DataStorySection } from "@/components/homepage/DataStorySection";
 import { LiveDataShowcase } from "@/components/homepage/LiveDataShowcase";
+import { PortalFeatureGrid } from "@/components/homepage/PortalFeatureGrid";
 import { PortalPreview } from "@/components/homepage/PortalPreview";
+import { TestimonialsSection } from "@/components/homepage/TestimonialsSection";
+import { TrustSection } from "@/components/homepage/TrustSection";
 import {
   ArrowRight,
   BarChart3,
@@ -562,9 +567,14 @@ export function Homepage() {
       <HeroSection />
       <StatsSection />
       <LiveDataShowcase />
+      <AIDemoSection />
       <WhyMontgomerySection />
+      <DataStorySection />
       <PortalPreview />
+      <PortalFeatureGrid />
       <HowItWorksSection />
+      <TrustSection />
+      <TestimonialsSection />
       <CTASection />
       <Footer />
     </div>

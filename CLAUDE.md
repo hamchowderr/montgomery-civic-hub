@@ -19,7 +19,7 @@ Single test: `npx vitest run tests/unit/foo.test.ts`
 
 ## Architecture Overview
 
-Four-portal civic dashboard for Montgomery, AL. Each portal targets a different audience with AI chat, map visualization, data tables, and charts.
+Six-portal AI-native civic dashboard for Montgomery, AL. Each portal has a Claude-powered AI agent that can query live city data, search the web, and directly control the dashboard UI.
 
 | Portal     | Route         | Audience                    |
 | ---------- | ------------- | --------------------------- |
@@ -27,10 +27,12 @@ Four-portal civic dashboard for Montgomery, AL. Each portal targets a different 
 | Business   | `/business`   | Permits, licenses           |
 | City Staff | `/citystaff`  | Infrastructure, budgets     |
 | Researcher | `/researcher` | Crime trends, demographics  |
+| Executive  | `/executive`  | KPI command center          |
+| Insights   | `/insights`   | Cross-district analytics    |
 
 Root `/` renders an animated landing page.
 
-**AI**: CopilotKit + AG-UI agent (primary) and original streaming endpoint (legacy). Both use `arcgis_query` and `brightdata_search` tools. See `.claude/docs/copilotkit.md`.
+**AI**: CivicAgent (AG-UI AbstractAgent + Claude tool-use loop) via CopilotKit. 6 agents with portal-specific personas. AI sees all UI state (readables) and can control UI elements (actions). Server-side tools: `arcgis_query`, `brightdata_search`. See `.claude/docs/copilotkit.md`.
 
 **Data**: Client-side ArcGIS fetching (Montgomery GIS blocks cloud IPs). Convex for persistence/caching. See `.claude/docs/architecture.md`.
 
@@ -39,6 +41,8 @@ Root `/` renders an animated landing page.
 ```
 CopilotProvider(agent) → YearFilterProvider → PortalLayout → DataPanel + ChatPanel
 ```
+
+Portal-specific features: City Pulse + 311 Newsfeed + Emergency (Resident), Vacant Land Explorer (Business), MPD Staffing Dashboard (City Staff), Civil Rights Layer + Demographics (Researcher).
 
 ## Environment Variables
 
@@ -59,7 +63,7 @@ Run `npx convex dev` alongside `npm run dev` — the app needs both servers.
 
 - **Database**: Convex (not Supabase). Use Convex queries/mutations/actions.
 - **AI model**: `claude-sonnet-4-20250514` with tool use.
-- **CopilotKit**: Provider wraps each portal page individually (not global). Runtime at `/api/copilotkit`. 4 agents (one per portal). See `.claude/docs/copilotkit.md`.
+- **CopilotKit**: Provider wraps each portal page individually (not global). Runtime at `/api/copilotkit`. 6 CivicAgent instances (one per portal). See `.claude/docs/copilotkit.md`.
 - **Data hooks**: `use-portal-data`, `use-map-data`, `use-chart-data`, `use-table-data` — all client-side ArcGIS.
 - **Year filtering**: `YearFilterProvider` + `useYearFilter()` + `buildWhereClause()`.
 - **Portal isolation**: Each portal has colocated Chat, Map, Table, Chart components. Prompts in `lib/ai/prompts.ts`.

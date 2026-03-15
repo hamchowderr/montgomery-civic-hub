@@ -1,13 +1,13 @@
 ---
 title: "Resident Portal"
 sidebarTitle: "Resident"
-description: "Your neighborhood dashboard — safety data, city services, flood zones, and community resources for Montgomery residents."
+description: "Your neighborhood dashboard — safety data, city services, flood zones, live news, and community resources for Montgomery residents."
 icon: "house"
 ---
 
 ## Who Is This For?
 
-Montgomery residents who want to understand what's happening in their neighborhood. Whether you're checking on a 311 request, looking up flood zones, or finding your nearest community center, the Resident Portal puts city data at your fingertips.
+Montgomery residents who want to understand what's happening in their neighborhood. Whether you're checking on a 311 request, looking up flood zones, catching up on city news, or finding emergency contacts, the Resident Portal puts city data at your fingertips.
 
 ## Available Datasets
 
@@ -33,6 +33,37 @@ The Resident Portal map shows:
 - **Community Centers & Libraries** — Public resource locations
 - **Council Districts** — Toggleable boundary overlay with 9 color-coded districts
 
+## Sub-Pages
+
+The Resident Portal includes three dedicated sub-pages accessible from the navigation bar:
+
+### City Pulse
+
+A live newsfeed powered by Bright Data web search. City Pulse searches across five categories to surface what's happening in Montgomery right now:
+
+- **News** — General Montgomery news and headlines
+- **Government** — City council, mayor's office, and policy updates
+- **Safety** — Public safety alerts and crime news
+- **Events** — Community events and happenings
+- **Infrastructure** — Road projects, utilities, and construction updates
+
+Each category displays real web results with titles, descriptions, sources, and links. You can ask the AI to refresh any category for the latest results.
+
+### 311 Newsfeed
+
+A live feed of recent 311 service requests with:
+- **Real-time stats** — Total requests, completion rate, and average resolution time
+- **Category filtering** — Filter by Garbage, Drainage, Streets, or Other
+- **District breakdown** — See how 311 requests are distributed across Montgomery's 9 council districts
+- **Individual request details** — Status, location, category, and timestamps
+
+### Emergency Contacts
+
+A directory of emergency services and community resources:
+- **Emergency services** — Police, fire, EMS contact numbers
+- **Facility counts** — How many police stations, fire stations, and other facilities serve Montgomery
+- **Community resources** — Links to relevant city services
+
 ## Example AI Questions
 
 <CardGroup cols={1}>
@@ -45,14 +76,14 @@ The Resident Portal map shows:
   <Card title="311 Requests">
     "How many open 311 requests are in District 5?"
   </Card>
+  <Card title="City News">
+    "What's the latest Montgomery news about infrastructure?"
+  </Card>
   <Card title="Safety Data">
     "Where are the police facilities near my address?"
   </Card>
-  <Card title="Code Violations">
-    "Show me code violations on my street"
-  </Card>
-  <Card title="Community Resources">
-    "Where are the community centers near downtown?"
+  <Card title="Emergency Contacts">
+    "What are the emergency contact numbers for Montgomery?"
   </Card>
 </CardGroup>
 
@@ -65,6 +96,13 @@ The Resident Portal AI assistant:
 - Connects current data to **Montgomery's history** and civic context
 - Proactively mentions **related datasets** you might not know about
 - Can **control the dashboard** — switching map layers, changing date filters, toggling views
+- Can **refresh City Pulse news** for any of the five categories
+
+### AI Actions
+
+| Action | What It Does |
+|---|---|
+| `refresh_news_category` | Refreshes City Pulse news for a specific category (news, government, safety, events, infrastructure) |
 
 <Tip>
 The AI keeps responses short (2-3 sentences) and always suggests what you can do next. If you need more detail, just ask a follow-up question.

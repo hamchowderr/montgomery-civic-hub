@@ -5,7 +5,7 @@ description: "How to use the Montgomery Civic Hub — from choosing your portal 
 
 ## Step 1: Visit the Civic Hub
 
-Go to the Montgomery Civic Hub at [montgomery-civic-hub.vercel.app](https://montgomery-civic-hub.vercel.app). You'll land on the homepage with an overview of all four portals.
+Go to the Montgomery Civic Hub at [montgomery-civic-hub.vercel.app](https://montgomery-civic-hub.vercel.app). You'll land on the homepage with an overview of all six portals.
 
 No account or login required — the platform is free and open to everyone.
 
@@ -19,6 +19,8 @@ Click on the portal that matches your needs:
 | A business owner or entrepreneur | **Business Portal** | `/business` |
 | A city employee or government staff | **City Staff Portal** | `/citystaff` |
 | A researcher, journalist, or analyst | **Researcher Portal** | `/researcher` |
+| A department head, mayor's office, or city leadership | **Executive Portal** | `/executive` |
+| A data analyst or planner wanting cross-district insights | **Insights Portal** | `/insights` |
 
 <Tip>
 Not sure which portal to use? The **Resident Portal** is the best starting point for general questions about Montgomery. You can switch portals at any time.
@@ -36,12 +38,15 @@ The data panel has three tabs you can switch between:
 - **Table** — Sortable, filterable data table
 - **Chart** — Trend visualizations
 
+Many portals also have **dedicated sub-pages** accessible from the navigation bar. These provide specialized views like live newsfeeds, staffing dashboards, vacant land explorers, civil rights heritage maps, and more.
+
 ## Step 4: Ask a Question
 
 Type any question into the chat. The AI assistant will:
 1. Query Montgomery's ArcGIS datasets for structured data
 2. Search the web for additional context when needed
 3. Return a clear, data-backed answer
+4. Optionally control the dashboard to show you relevant data visually
 
 ### Example Questions by Portal
 
@@ -51,38 +56,61 @@ Type any question into the chat. The AI assistant will:
     - "When is my garbage pickup?"
     - "How many open 311 requests are in District 5?"
     - "Where are the community centers near downtown?"
-    - "Show me code violations on my street"
+    - "Show me the latest news about Montgomery infrastructure"
+    - "What are the emergency contacts for my district?"
   </Accordion>
   <Accordion title="Business Portal">
     - "What permits are active near downtown Montgomery?"
     - "How many new business licenses were issued this year?"
     - "What's the zoning for parcels on Eastern Blvd?"
-    - "Show me entertainment district boundaries"
-    - "What types of businesses are in the 36104 zip code?"
+    - "Show me available vacant land in Capitol Heights"
+    - "What city-owned properties are available for development?"
+    - "Suggest reuse ideas for vacant parcels near downtown"
   </Accordion>
   <Accordion title="City Staff Portal">
     - "Give me an executive briefing on District 3 paving projects"
     - "What's the 311 request trend this quarter vs last?"
     - "How many open code violations are in each district?"
     - "Show pavement assessment scores for major corridors"
-    - "Cross-reference 311 complaints with code violations in Chisholm"
+    - "Generate a staffing report for the MPD"
+    - "What's the 911 center vacancy rate?"
   </Accordion>
   <Accordion title="Researcher Portal">
     - "What's the spatial distribution of code violations by census tract?"
     - "Show business license activity trends from 2018-2024"
-    - "How do 311 request patterns correlate with demographic data?"
-    - "What's the methodology change history for violation reporting?"
+    - "Fly to the Rosa Parks Museum on the map"
+    - "What civil rights landmarks are in Montgomery?"
+    - "Show me the demographics breakdown by district"
     - "Compare pre and post-pandemic permit activity"
+  </Accordion>
+  <Accordion title="Executive Portal">
+    - "Generate a morning briefing"
+    - "Give me a detailed briefing with all metrics"
+    - "What alerts need my attention today?"
+    - "How are districts comparing on service delivery?"
+    - "Show me the public safety pulse"
+  </Accordion>
+  <Accordion title="Insights Portal">
+    - "Switch to the equity analysis tab"
+    - "Show me the scorecard for District 4"
+    - "Generate a data story about service equity"
+    - "What are the trending metrics this quarter?"
+    - "Compare 311 response rates across districts"
   </Accordion>
 </AccordionGroup>
 
 ## Step 5: Interact with the Data
 
-The AI can control the dashboard for you. When it finds relevant data, it may:
+The AI can control the dashboard for you. Depending on the portal, it may:
 - Switch to the Map, Table, or Chart tab automatically
 - Toggle map layers on or off
 - Adjust the year filter range
 - Show or hide council district boundaries
+- Navigate to portal sub-pages
+- Generate reports and briefings
+- Filter data by neighborhood, status, or category
+- Fly to specific landmarks on the map
+- Switch between dashboard sections and tabs
 
 You can also control everything manually using the tabs and filters in the data panel.
 
