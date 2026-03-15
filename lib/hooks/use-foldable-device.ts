@@ -93,15 +93,14 @@ export function useFoldableDevice(): FoldableState {
       // Galaxy Z Fold: ~884dp wide inner display
       // These devices have an aspect ratio close to 1:1 when unfolded
       const ua = navigator.userAgent;
-      const dpr = window.devicePixelRatio || 1;
       const screenW = window.screen.width;
       const screenH = window.screen.height;
       const aspectRatio = Math.max(screenW, screenH) / Math.min(screenW, screenH);
 
+      // Match book-style foldables only (not clamshell Z Flip which is SM-F7xx)
       const isFoldableUA =
         /Pixel.*Fold/i.test(ua) ||
         /SM-F9/i.test(ua) || // Galaxy Z Fold 5/6
-        /SM-F7/i.test(ua) || // Galaxy Z Flip
         /Galaxy.*Fold/i.test(ua) ||
         /Surface.*Duo/i.test(ua);
 

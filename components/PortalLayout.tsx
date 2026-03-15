@@ -214,13 +214,13 @@ export function PortalLayout({
   }
 
   // Foldable: use the fold as a natural divider between data and chat
-  if (foldable.isFoldable && foldable.isVerticalFold && !isMobile) {
+  if (foldable.isFoldable && foldable.isVerticalFold) {
     const leftWidth = foldable.segments[0]?.width ?? Math.floor(window.innerWidth / 2);
     const foldGap = foldable.foldWidth;
     return (
       <div className="min-h-0 flex-1 overflow-hidden rounded-lg border bg-card">
         <div
-          className="flex h-full w-full"
+          className="foldable-layout flex h-full w-full"
           style={{ gap: foldGap > 0 ? `${foldGap}px` : undefined }}
         >
           <div
