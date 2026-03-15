@@ -4,6 +4,7 @@ import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import {
   BarChart3,
+  BookOpen,
   Briefcase,
   Building2,
   ChevronDown,
@@ -253,6 +254,17 @@ export function PortalNav() {
             </Link>
           )}
 
+          <Link href="/docs" target="_blank">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Documentation"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <BookOpen size={16} />
+            </Button>
+          </Link>
+
           {tourId && (
             <Button
               variant="ghost"
@@ -439,6 +451,14 @@ export function PortalNav() {
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
                     Settings
                   </p>
+
+                  {/* Docs link */}
+                  <Link href="/docs" target="_blank" onClick={() => setMobileMenuOpen(false)}>
+                    <div className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                      <BookOpen size={16} />
+                      Documentation
+                    </div>
+                  </Link>
 
                   {/* Tour button */}
                   {tourId && (
