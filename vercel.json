@@ -1,6 +1,11 @@
 {
   "redirects": [
     {
+      "source": "/docs",
+      "destination": "/docs/introduction",
+      "permanent": false
+    },
+    {
       "source": "/:path*",
       "has": [
         {
@@ -20,10 +25,6 @@
     {
       "source": "/api/request",
       "destination": "https://otakusolutions.mintlify.app/_mintlify/api/request"
-    },
-    {
-      "source": "/docs",
-      "destination": "https://otakusolutions.mintlify.app/docs"
     },
     {
       "source": "/docs/llms.txt",
@@ -47,7 +48,7 @@
     },
     {
       "source": "/docs/:path*",
-      "destination": "https://otakusolutions.mintlify.app/docs/:path*"
+      "destination": "https://otakusolutions.mintlify.app/:path*"
     },
     {
       "source": "/mintlify-assets/:path+",
