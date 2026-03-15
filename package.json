@@ -12,7 +12,8 @@
     "format": "biome format --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "docs:screenshots": "playwright test docs-screenshots --reporter=list"
   },
   "dependencies": {
     "@ag-ui/client": "^0.0.47",
