@@ -4,7 +4,7 @@ import { Bot, Database } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FadeInWhenVisible, SectionAccent } from "@/components/homepage/shared";
-import { MessageSquare, Shield, Sparkles, User } from "@/components/icons";
+import { ChevronLeft, ChevronRight, MessageSquare, Shield, Sparkles, User } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 /* ═══════════════════════════════════════════════════════
@@ -175,7 +175,7 @@ function FormattedResponse({ text }: { text: string }) {
    Typewriter Hook
    ═══════════════════════════════════════════════════════ */
 
-function useTypewriter(text: string, active: boolean, speed = 30) {
+function useTypewriter(text: string, active: boolean, speed = 55) {
   const [displayed, setDisplayed] = useState("");
   const [done, setDone] = useState(false);
 
@@ -225,6 +225,7 @@ function ChatDemoCard() {
   const [messages, setMessages] = useState<VisibleMessage[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const userScrolledRef = useRef(false);
 
   const script = chatScripts[scriptIndex];
   const currentExchange = script.exchanges[exchangeIndex];
@@ -232,12 +233,29 @@ function ChatDemoCard() {
   const { displayed: typedQuestion, done: questionDone } = useTypewriter(
     currentExchange?.user ?? "",
     phase === "typing",
-    25,
+    45,
   );
 
-  // Auto-scroll to bottom when messages change or phase changes
+  // Detect manual scroll — if user scrolls up, stop auto-scrolling
   useEffect(() => {
-    if (scrollRef.current) {
+    const el = scrollRef.current;
+    if (!el) return;
+    const handleScroll = () => {
+      const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+      userScrolledRef.current = !atBottom;
+    };
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Reset scroll lock when script changes (new portal)
+  useEffect(() => {
+    userScrolledRef.current = false;
+  }, [scriptIndex]);
+
+  // Auto-scroll to bottom only when user hasn't manually scrolled up
+  useEffect(() => {
+    if (scrollRef.current && !userScrolledRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, phase, typedQuestion]);
@@ -257,7 +275,7 @@ function ChatDemoCard() {
             // Add AI response to message history
             setMessages((prev) => [...prev, { role: "ai", text: currentExchange.ai }]);
             setPhase("responding");
-          }, 1200);
+          }, 1800);
           break;
         case "responding":
           timerRef.current = setTimeout(() => {
@@ -267,23 +285,24 @@ function ChatDemoCard() {
             } else {
               setPhase("pause");
             }
-          }, 800);
+          }, 1500);
           break;
         case "pause":
           // Brief pause before next exchange starts typing
           timerRef.current = setTimeout(() => {
             setExchangeIndex((prev) => prev + 1);
             setPhase("typing");
-          }, 600);
+          }, 1200);
           break;
         case "chips":
           timerRef.current = setTimeout(() => {
             // Reset for next portal
             setMessages([]);
             setExchangeIndex(0);
+            userScrolledRef.current = false;
             setScriptIndex((prev) => (prev + 1) % chatScripts.length);
             setPhase("idle");
-          }, 3000);
+          }, 5000);
           break;
       }
     },
@@ -308,9 +327,32 @@ function ChatDemoCard() {
   useEffect(() => {
     if (questionDone && phase === "typing") {
       setMessages((prev) => [...prev, { role: "user", text: currentExchange.user }]);
-      timerRef.current = setTimeout(() => setPhase("thinking"), 400);
+      timerRef.current = setTimeout(() => setPhase("thinking"), 700);
     }
   }, [questionDone, phase, currentExchange]);
+
+  // Navigate to a specific script (portal)
+  const goToScript = useCallback(
+    (index: number) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setMessages([]);
+      setExchangeIndex(0);
+      setScriptIndex(index);
+      userScrolledRef.current = false;
+      setPhase("idle");
+      // Restart after a brief delay
+      timerRef.current = setTimeout(() => setPhase("typing"), 600);
+    },
+    [],
+  );
+
+  const goPrev = useCallback(() => {
+    goToScript((scriptIndex - 1 + chatScripts.length) % chatScripts.length);
+  }, [scriptIndex, goToScript]);
+
+  const goNext = useCallback(() => {
+    goToScript((scriptIndex + 1) % chatScripts.length);
+  }, [scriptIndex, goToScript]);
 
   const showTyping = phase === "typing";
   const showThinking = phase === "thinking";
@@ -429,7 +471,7 @@ function ChatDemoCard() {
         </AnimatePresence>
       </div>
 
-      {/* Footer — portal dots + exchange counter */}
+      {/* Footer — arrows + exchange counter + portal dots */}
       <div className="flex items-center justify-between border-t border-border/40 px-4 py-3">
         <span className="text-xs text-muted-foreground">
           {phase !== "idle" && phase !== "chips"
@@ -438,17 +480,38 @@ function ChatDemoCard() {
               ? `${script.exchanges.length} / ${script.exchanges.length}`
               : ""}
         </span>
-        <div className="flex items-center gap-2">
-          {chatScripts.map((s, i) => (
-            <span
-              key={s.portal}
-              className={cn(
-                "rounded-full transition-all duration-300",
-                portalDotColors[s.portal],
-                i === scriptIndex ? "h-2 w-2" : "h-1.5 w-1.5 opacity-40",
-              )}
-            />
-          ))}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={goPrev}
+            aria-label="Previous portal"
+            className="flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <div className="flex items-center gap-2">
+            {chatScripts.map((s, i) => (
+              <button
+                type="button"
+                key={s.portal}
+                onClick={() => goToScript(i)}
+                aria-label={`Go to ${s.label}`}
+                className={cn(
+                  "rounded-full transition-all duration-300",
+                  portalDotColors[s.portal],
+                  i === scriptIndex ? "h-2.5 w-2.5" : "h-1.5 w-1.5 opacity-40 hover:opacity-70",
+                )}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={goNext}
+            aria-label="Next portal"
+            className="flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <ChevronRight size={16} />
+          </button>
         </div>
       </div>
     </div>

@@ -428,7 +428,7 @@ function InlineChatDemo({ portalId }: { portalId: PortalId }) {
     }
     const timer = setTimeout(
       () => setCharIndex((prev) => Math.min(prev + 1, script.response.length)),
-      25,
+      45,
     );
     return () => clearTimeout(timer);
   }, [phase, charIndex, script.response.length]);
