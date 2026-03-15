@@ -109,7 +109,12 @@ export function PortalNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const portalSlug = pathname.split("/")[1]; // "resident", "business", etc.
-  const tourId = portalSlug ? `${portalSlug}-tour` : null;
+  const subPage = pathname.split("/")[2]; // "emergency", "newsfeed", etc.
+  const tourId = portalSlug
+    ? subPage
+      ? `${portalSlug}-${subPage}-tour`
+      : `${portalSlug}-tour`
+    : null;
 
   return (
     <nav

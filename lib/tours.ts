@@ -282,4 +282,224 @@ export const tours: Tour[] = [
       },
     ],
   },
+
+  // ── Sub-page tours ──────────────────────────────────────────────────────────
+
+  {
+    id: "resident-emergency-tour",
+    steps: [
+      {
+        id: "resident-welcome",
+        title: "Emergency & Safety Resources",
+        content:
+          "This page is your one-stop reference for Montgomery emergency contacts, facility locations, service demand data, and community resources — all sourced from official city systems.",
+        side: "bottom",
+      },
+      {
+        id: "resident-emergency",
+        title: "Emergency Contacts & Facilities",
+        content:
+          "Find critical phone numbers, locate the nearest police stations, fire stations, and medical facilities on an interactive map. Tornado siren locations are included for severe weather preparedness.",
+        side: "bottom",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
+  {
+    id: "resident-newsfeed-tour",
+    steps: [
+      {
+        id: "resident-welcome",
+        title: "Incident Newsfeed",
+        content:
+          "A real-time feed of 311 service requests across Montgomery. Filter by status, district, department, or request type to find exactly what you need.",
+        side: "bottom",
+      },
+      {
+        id: "resident-newsfeed",
+        title: "Browse & Filter Incidents",
+        content:
+          "Each incident card shows the request type, address, status, and department. Use the filters above to narrow results by district, status, or origin. Charts show breakdowns by type and year-over-year trends.",
+        side: "bottom",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
+  {
+    id: "resident-city-pulse-tour",
+    steps: [
+      {
+        id: "resident-welcome",
+        title: "City Pulse Dashboard",
+        content:
+          "City Pulse aggregates local news and 311 data into a single view. See what's happening across Montgomery — government updates, safety alerts, events, and infrastructure news — all sourced from live web searches.",
+        side: "bottom",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
+  {
+    id: "business-vacant-land-tour",
+    steps: [
+      {
+        id: "business-welcome",
+        title: "Vacant Land Explorer",
+        content:
+          "Discover available vacant properties across Montgomery. Browse parcels by zoning type, neighborhood, and size — with nearby permit activity and analytics to help evaluate development potential.",
+        side: "bottom",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
+  {
+    id: "citystaff-staffing-tour",
+    steps: [
+      {
+        id: "citystaff-welcome",
+        title: "Staffing & Workforce Dashboard",
+        content:
+          "Monitor city staffing levels, service demand by district, paving operations, code violation trends, and recruiting actions. Designed for department managers and HR planners tracking workforce allocation.",
+        side: "bottom",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
+  {
+    id: "researcher-civil-rights-tour",
+    steps: [
+      {
+        id: "researcher-welcome",
+        title: "Civil Rights Timeline",
+        content:
+          "Explore Montgomery's civil rights history through an interactive timeline. Key events, landmarks, and figures are mapped chronologically — a research tool for historians, educators, and journalists.",
+        side: "bottom",
+      },
+      {
+        id: "researcher-civil-rights",
+        title: "Interactive Timeline & Map",
+        content:
+          "Browse events chronologically or explore them on the map. Click any event for details including historical context, photos, and source citations suitable for academic use.",
+        side: "bottom",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
+  {
+    id: "researcher-demographics-tour",
+    steps: [
+      {
+        id: "researcher-welcome",
+        title: "Demographics Dashboard",
+        content:
+          "Analyze Montgomery's demographic data — population distribution, racial composition, income levels, and housing statistics across council districts. Built for researchers who need citable, district-level data.",
+        side: "bottom",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
+
+  // ── Dashboard tours ─────────────────────────────────────────────────────────
+
+  {
+    id: "executive-tour",
+    steps: [
+      {
+        id: "executive-welcome",
+        title: "Executive Dashboard",
+        content:
+          "A city-wide command center for leadership. View KPIs, priority alerts, cross-portal trends, and service performance metrics — all aggregated from the four portal datasets into a single briefing view.",
+        side: "bottom",
+      },
+      {
+        id: "executive-map-view",
+        title: "City Overview Map",
+        content:
+          "See all active city data plotted on a single map — service requests, permits, infrastructure projects, and safety incidents. Use layers to focus on specific categories.",
+        side: "bottom",
+        clickTarget: true,
+      },
+      {
+        id: "executive-table-view",
+        title: "Consolidated Data Table",
+        content:
+          "Browse aggregated records from all portals in one searchable table. Sort and filter across departments, districts, and time periods.",
+        side: "bottom",
+        clickTarget: true,
+      },
+      {
+        id: "executive-chart-view",
+        title: "Performance Analytics",
+        content:
+          "Track city-wide performance trends, budget utilization, and service delivery metrics with interactive charts.",
+        side: "bottom",
+        clickTarget: true,
+      },
+      {
+        id: "executive-year-filter",
+        title: "Filter by Year Range",
+        content:
+          "Adjust the time window to compare performance across fiscal years or drill into specific periods.",
+        side: "bottom",
+      },
+      {
+        id: "executive-chat-input",
+        title: "Executive AI Assistant",
+        content:
+          "Ask for daily briefings, KPI summaries, cross-portal insights, or drill into any city metric. Claude can generate quick or detailed executive briefings on demand.",
+        side: "top",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
+  {
+    id: "insights-tour",
+    steps: [
+      {
+        id: "insights-welcome",
+        title: "Insights Lab",
+        content:
+          "A cross-district analytics workspace for deep data exploration. Compare equity metrics, analyze multi-year trends, spotlight individual districts, and generate data-driven narratives.",
+        side: "bottom",
+      },
+      {
+        id: "insights-map-view",
+        title: "District Comparison Map",
+        content:
+          "Visualize metrics across Montgomery's 9 council districts. Toggle between data layers to compare service delivery, permit activity, and safety metrics geographically.",
+        side: "bottom",
+        clickTarget: true,
+      },
+      {
+        id: "insights-table-view",
+        title: "Cross-District Data Table",
+        content:
+          "Explore district-level metrics side by side. Sort by any column to quickly identify outliers and patterns across districts.",
+        side: "bottom",
+        clickTarget: true,
+      },
+      {
+        id: "insights-chart-view",
+        title: "Trend & Equity Charts",
+        content:
+          "Toggle individual metrics on and off to build custom trend comparisons. Equity analysis highlights disparities across districts.",
+        side: "bottom",
+        clickTarget: true,
+      },
+      {
+        id: "insights-year-filter",
+        title: "Filter by Year Range",
+        content:
+          "Control the analysis window for all views. Essential for spotting long-term trends and year-over-year changes.",
+        side: "bottom",
+      },
+      {
+        id: "insights-chat-input",
+        title: "Data Analyst Assistant",
+        content:
+          "Ask Claude to switch tabs, select districts, toggle metrics, or generate full data stories. It can craft narratives with key findings and recommendations based on the cross-district data.",
+        side: "top",
+        nextLabel: "Finish Tour",
+      },
+    ],
+  },
 ];
