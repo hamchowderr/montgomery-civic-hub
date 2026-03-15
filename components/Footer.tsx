@@ -22,6 +22,10 @@ export function Footer() {
           Terms
         </Link>
         <span>·</span>
+        <Link href="/docs" target="_blank" className="transition-colors hover:text-foreground">
+          Docs
+        </Link>
+        <span>·</span>
         <span>
           Made with ❤️ by{" "}
           <a
