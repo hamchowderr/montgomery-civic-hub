@@ -34,7 +34,9 @@
               "portals/resident",
               "portals/business",
               "portals/city-staff",
-              "portals/researcher"
+              "portals/researcher",
+              "portals/executive",
+              "portals/insights"
             ]
           },
           {

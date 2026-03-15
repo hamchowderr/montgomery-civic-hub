@@ -1,13 +1,13 @@
 ---
 title: "Researcher Portal"
 sidebarTitle: "Researcher"
-description: "Longitudinal data, census demographics, methodology transparency, and cross-dataset analysis for academics and analysts."
+description: "Longitudinal data, civil rights heritage sites, census demographics, equity indicators, and cross-dataset analysis for academics and analysts."
 icon: "microscope"
 ---
 
 ## Who Is This For?
 
-Academic researchers, policy analysts, graduate students, and journalists studying Montgomery. The Researcher Portal provides methodological transparency, precise data citations, and interdisciplinary analysis tools.
+Academic researchers, policy analysts, graduate students, and journalists studying Montgomery. The Researcher Portal provides methodological transparency, precise data citations, civil rights historical context, and interdisciplinary analysis tools.
 
 ## Available Datasets
 
@@ -28,7 +28,37 @@ The Researcher Portal map shows all available layers including:
 - **Business Licenses** — Economic activity mapping
 - **Code Violations** — Enforcement pattern visualization
 - **Census boundaries** — Demographic overlay layers
+- **Civil Rights Heritage Sites** — Historical landmarks and march routes
 - **Council Districts** — Toggleable boundary overlay
+
+## Sub-Pages
+
+### Civil Rights Heritage Layer
+
+An interactive map overlay showcasing Montgomery's pivotal role in the civil rights movement. The heritage layer includes:
+
+- **10 historically significant landmarks** — including:
+  - Rosa Parks Museum
+  - Legacy Museum
+  - Dexter Avenue King Memorial Baptist Church
+  - National Memorial for Peace and Justice
+  - Freedom Rides Museum
+  - And 5 more key sites
+- **2 historic march routes** — Traced on the map:
+  - **1955 Bus Boycott Route** — The path of the Montgomery Bus Boycott
+  - **1965 Selma-to-Montgomery March Route** — The historic voting rights march
+- **AI-powered exploration** — Ask the AI to fly to any landmark on the map for a closer look and historical context
+
+### Demographics Dashboard
+
+A visual breakdown of Montgomery's population data with equity analysis:
+
+- **2020 Census racial breakdown** — Population composition across the city
+- **Per-district equity indicators** — For each of the 9 council districts:
+  - 311 request volumes
+  - Code violation counts
+  - Service ratios (requests per capita)
+- **Comparative analysis** — Identify which districts receive more or fewer city services relative to population
 
 ## Example AI Questions
 
@@ -36,20 +66,20 @@ The Researcher Portal map shows all available layers including:
   <Card title="Spatial Analysis">
     "What's the spatial distribution of code violations by census tract?"
   </Card>
-  <Card title="Longitudinal Trends">
-    "Show business license activity trends from 2018-2024"
+  <Card title="Civil Rights History">
+    "What civil rights landmarks are in Montgomery?"
   </Card>
-  <Card title="Correlation">
-    "How do 311 request patterns correlate with demographic data?"
+  <Card title="Fly to Landmark">
+    "Fly to the Rosa Parks Museum"
   </Card>
-  <Card title="Methodology">
-    "What's the methodology change history for violation reporting?"
+  <Card title="Demographics">
+    "Show me the racial demographics breakdown by district"
+  </Card>
+  <Card title="Equity Analysis">
+    "Are 311 services equitably distributed across districts?"
   </Card>
   <Card title="Pre/Post Analysis">
     "Compare pre and post-pandemic permit activity"
-  </Card>
-  <Card title="Environmental Justice">
-    "Are nuisance complaints concentrated in lower-income census tracts?"
   </Card>
 </CardGroup>
 
@@ -61,6 +91,7 @@ The AI assistant proactively suggests interdisciplinary connections:
 - **Economic development + demographics** — How does business license activity map against income levels?
 - **Land use + environmental justice** — Are vacant properties and nuisance complaints concentrated in historically marginalized neighborhoods?
 - **Data center impact + community** — How might the Meta/DC BLOX investments affect surrounding property values and infrastructure demand?
+- **Civil rights + urban planning** — How have historical patterns of segregation shaped current service delivery equity?
 
 ## What the AI Can Do
 
@@ -71,6 +102,13 @@ The Researcher Portal AI assistant:
 - References Montgomery's **unique historical position** as a case study
 - Notes how findings could be **communicated to the public**
 - Maintains **methodological transparency** throughout
+- Can **fly to civil rights landmarks** on the map for visual exploration
+
+### AI Actions
+
+| Action | What It Does |
+|---|---|
+| `fly_to_civil_rights_landmark` | Pans and zooms the map to a specific civil rights landmark with historical context |
 
 <Warning>
 **Data caveat**: Code violation reporting methodology changed in 2021 (switch to QAlert system), creating a discontinuity in year-over-year comparisons. The AI will flag this automatically when relevant.
